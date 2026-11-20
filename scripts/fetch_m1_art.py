@@ -97,7 +97,7 @@ def main() -> int:
         results = list(pool.map(lambda j: fetch(j[2], j[3]), jobs))
 
     sizes: dict[tuple[str, str], tuple[int, int]] = {}
-    for (slug, style, url, path), ok in zip(jobs, results):
+    for (slug, style, url, path), ok in zip(jobs, results, strict=True):
         if not ok:
             missing.append((slug, style, url))
             continue
