@@ -1,0 +1,33 @@
+# secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# node
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# local data
+/data/
+/storage/
+
+# tools and os
+.claude/settings.local.json
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

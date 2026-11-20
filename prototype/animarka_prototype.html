@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>animarka</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a working tool. Controls on the left, the poster as the specimen plate on the right. */
+:root {
+  --bg: #eef1ee; --surface: #ffffff; --ink: #17211c; --muted: #5a685f; --line: #d3dbd5;
+  --accent: #2c6b4f; --accent-soft: #dfeee6;
+  --display: "Spectral", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { color-scheme: dark; --bg: #101612; --surface: #19221d; --ink: #e6eee8; --muted: #9aaba0; --line: #2c3a32; --accent: #6fcfa2; --accent-soft: #1d3a2e; }
+}
+:root[data-theme="dark"] { color-scheme: dark; --bg: #101612; --surface: #19221d; --ink: #e6eee8; --muted: #9aaba0; --line: #2c3a32; --accent: #6fcfa2; --accent-soft: #1d3a2e; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 22px 16px 48px; display: flex; flex-direction: column; gap: 16px; }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(24px, 4vw, 32px); margin: 0; line-height: 1.15; }
+p { margin: 0; }
+a { color: var(--accent); }
+.muted { color: var(--muted); } .small { font-size: 13px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.app { display: grid; grid-template-columns: 320px 1fr; gap: 16px; align-items: start; }
+.panel, .stage { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.label { font-size: 11.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; }
+.fams { display: flex; flex-wrap: wrap; gap: 6px; }
+.fam { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 4px 11px; font-size: 13.5px; }
+.fam[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 600; }
+input[type="search"] { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; }
+.add { display: flex; align-items: center; gap: 8px; border: 1px dashed var(--line); background: transparent; border-radius: 8px; padding: 4px 8px; font-size: 13.5px; text-align: left; }
+.add img { width: 30px; height: 30px; object-fit: contain; }
+.add span { flex: 1; } .add b { color: var(--accent); font-weight: 600; }
+.add:hover { border-color: var(--accent); }
+.chips { list-style: none; margin: 0; padding: 2px; display: flex; flex-wrap: wrap; gap: 6px; max-height: 340px; overflow-y: auto; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid var(--line); background: transparent; color: var(--muted); border-radius: 999px; padding: 3px 11px 3px 5px; font-size: 13px; line-height: 1.2; }
+.chip img { width: 26px; height: 26px; object-fit: contain; filter: grayscale(1); opacity: .5; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); font-weight: 600; }
+.chip[aria-pressed="true"] img { filter: none; opacity: 1; }
+.fam i { font-style: normal; font-weight: 600; margin-left: 5px; font-size: 12px; opacity: .85; }
+.row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; margin: 8px 0 6px; }
+.btn.sm { padding: 4px 10px; font-size: 13px; }
+.btn:disabled { opacity: .45; cursor: default; }
+.tray { max-height: 170px; }
+.tray .chip { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); font-weight: 600; padding-right: 8px; }
+.tray .chip img { filter: none; opacity: 1; }
+.tray .chip .x { font-weight: 400; color: var(--muted); margin-left: 2px; }
+.trayempty { font-size: 13px; color: var(--muted); padding: 4px 2px; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: end; }
+.tool { display: flex; flex-direction: column; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { border: 0; background: transparent; padding: 6px 11px; font-size: 13.5px; border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); font-weight: 600; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 13.5px; font-weight: 600; }
+.btn:hover { border-color: var(--accent); }
+.poster-wrap { display: flex; justify-content: center; }
+.poster { --paper: #f8f4ea; --pink: #1e1b16; --rule: rgba(0,0,0,.25); background-size: cover; background-position: center; position: relative; width: 100%; max-width: 600px; aspect-ratio: 3 / 4; background: var(--paper); color: var(--pink); border-radius: 3px; box-shadow: 0 1px 0 var(--line), 0 10px 30px rgba(0,0,0,.18); container-type: inline-size; overflow: hidden; touch-action: pan-y; }
+.poster-title { position: absolute; left: 4%; top: 3%; width: 92%; height: 8%; text-align: center; font-family: var(--display); font-weight: 700; font-size: 6cqw; line-height: 1; letter-spacing: .08em; text-transform: uppercase; color: var(--pink); background: transparent; border: 1px dashed transparent; border-radius: 6px; padding: 0; }
+.poster-title:hover { border-color: var(--rule); }
+.animal { position: absolute; transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px))); display: flex; flex-direction: column; align-items: center; gap: .6cqw; cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none; border-radius: 8px; outline-offset: 2px; }
+.animal .box { width: var(--w); height: var(--w); flex: none; }
+.animal img { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; transition: transform .25s ease; }
+.animal.flip img { transform: scaleX(-1); }
+.animal .nm { font-family: var(--body); font-weight: 500; font-size: var(--nfs, max(8.5px, 1.75cqw)); line-height: 1.1; text-align: center; max-width: calc(var(--w) * 1.25); color: var(--pink); }
+.animal .no { font-family: var(--body); font-weight: 600; font-size: var(--nofs, max(9px, 2.1cqw)); line-height: 1; min-width: 1.7em; padding: .28em .3em; text-align: center; border-radius: 999px; background: var(--pink); color: var(--paper); font-variant-numeric: tabular-nums; }
+.animal.over { outline: 2px solid #2c6b4f; background: rgba(44,107,79,.10); }
+.animal.dragging { z-index: 5; cursor: grabbing; opacity: .85; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .animal img { transition: none; } }
+.plegend { position: absolute; left: 5%; right: 5%; bottom: 2%; display: grid; grid-template-columns: repeat(3, 1fr); gap: .3cqw 2cqw; border-top: 1px solid var(--rule); padding-top: 1.2cqw; font-family: var(--body); font-size: max(8px, 1.9cqw); line-height: 1.25; color: var(--pink); }
+.plegend div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.plegend b { display: inline-block; min-width: 2.3em; font-variant-numeric: tabular-nums; }
+.empty { position: absolute; left: 10%; right: 10%; top: 42%; text-align: center; font-size: 14px; color: var(--pink); opacity: .7; }
+.hint { font-size: 13px; color: var(--muted); }
+footer { font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+.sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; min-width: 0; }
+.grab, .tabs { display: none; }
+.pane { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+@media (min-width: 801px) { .panes { display: flex; flex-direction: column; } #pane-style { order: -1; border-bottom: 1px solid var(--line); } .stage { position: sticky; top: 12px; } .poster { max-width: min(600px, calc((100vh - 150px) * 0.75)); } }
+.bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.bar .sp { flex: 1; }
+.lay { display: flex; gap: 8px; }
+.lay button { flex: 1; max-width: 110px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 8px 6px 6px; font-size: 12.5px; font-weight: 600; color: var(--muted); min-height: 44px; }
+.lay svg { width: 44px; height: 44px; display: block; } .lay circle { fill: currentColor; }
+.lay button:hover { border-color: var(--accent); }
+.lay button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.bgs { display: flex; flex-wrap: wrap; gap: 8px; }
+.sw { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--line); padding: 0; background-size: cover; background-position: center; }
+.sw.img { width: auto; height: 38px; border-radius: 10px; padding: 0 12px; font-size: 13px; font-weight: 600; text-shadow: 0 0 6px rgba(255,255,255,.5); }
+.sw.img.dark { text-shadow: 0 0 6px rgba(0,0,0,.6); }
+.sw[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+@media (max-width: 800px) {
+  .wrap { padding: 8px 10px calc(46dvh + 16px); gap: 8px; }
+  header p { display: none; } h1 { font-size: 22px; }
+  .app { display: block; }
+  .stage { position: sticky; top: 0; z-index: 2; padding: 8px; gap: 8px; }
+  .stage .hint { display: none; }
+  .bar .btn { padding: 8px 12px; min-height: 40px; }
+  .poster { max-width: max(190px, calc((56dvh - 132px) * 0.75)); }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; height: 44dvh; display: flex; flex-direction: column; border-radius: 16px 16px 0 0; border-bottom: 0; box-shadow: 0 -8px 30px rgba(0,0,0,.22); transition: height .22s ease; }
+  .sheet[data-h="peek"] { height: 96px; } .sheet[data-h="full"] { height: 88dvh; }
+  .grab { display: flex; justify-content: center; align-items: center; width: 100%; height: 26px; border: 0; background: transparent; touch-action: none; flex: none; cursor: grab; }
+  .grab span { width: 44px; height: 5px; border-radius: 99px; background: var(--line); }
+  .tabs { display: flex; gap: 6px; padding: 0 12px 8px; flex: none; }
+  .tabs button { flex: 1; min-height: 44px; border: 1px solid var(--line); background: transparent; border-radius: 10px; font-weight: 600; font-size: 14.5px; }
+  .tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  .panes { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .pane { padding: 4px 12px 20px; } .pane[hidden] { display: none; }
+  #pane-style { border-top: 0; }
+  .chips, .tray { max-height: none; }
+  .chip { padding: 6px 12px 6px 6px; font-size: 14px; } .fam { padding: 7px 12px; }
+  .fams { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; } .fam { flex: none; white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) { .sheet { transition: none; } }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>animarka</h1>
+    <p class="muted">Build your own wildlife poster. Mix any of 118 birds from 10 families on one poster. Every bird comes in two designs.</p>
+  </header>
+  <div class="app">
+    <div class="sheet" id="sheet" data-h="half">
+      <button type="button" class="grab" id="grab" aria-label="Resize the panel"><span></span></button>
+      <div class="tabs" role="tablist" aria-label="Poster controls"><button type="button" role="tab" id="tab-birds" data-p="birds" aria-selected="true" aria-controls="pane-birds">Birds <span id="tabcount"></span></button><button type="button" role="tab" id="tab-style" data-p="style" aria-selected="false" aria-controls="pane-style">Style</button></div>
+      <div class="panes">
+      <section class="pane" id="pane-birds" aria-labelledby="tab-birds">
+      <div>
+        <label class="label" for="search">Add birds from any family</label>
+        <input type="search" id="search" placeholder="Search all birds, try kestrel or heron" autocomplete="off">
+        <div class="fams" id="fams" role="group" aria-label="Show a family" style="margin-top:8px"></div>
+        <div class="row"><span class="small muted" id="showing" aria-live="polite"></span><span style="display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="btn sm" id="only"></button><button type="button" class="btn sm" id="addall"></button></span></div>
+        <ul class="chips" id="chips"></ul>
+      </div>
+      <div>
+        <span class="label">Your poster <span id="count"></span></span>
+        <ul class="chips tray" id="tray"></ul>
+        <div class="row"><button type="button" class="btn sm" id="surprise">Surprise mix</button><button type="button" class="btn sm" id="clear">Clear poster</button></div>
+      </div>
+      </section>
+      <section class="pane" id="pane-style" aria-labelledby="tab-style">
+        <div class="tool"><span class="label" id="st-l">Design</span><div class="seg" id="style" role="group" aria-labelledby="st-l"><button type="button" data-v="fg">Field guide</button><button type="button" data-v="wb">Woodblock</button></div></div>
+        <div class="tool"><span class="label" id="lb-l">Labels</span><div class="seg" id="labels" role="group" aria-labelledby="lb-l"><button type="button" data-v="names">Names</button><button type="button" data-v="legend">Numbers and legend</button><button type="button" data-v="none">No text</button></div></div>
+        <div class="tool"><span class="label" id="ly-l">Layout</span><div class="lay" id="layout" role="group" aria-labelledby="ly-l"><button type="button" data-v="scatter"><svg viewBox='0 0 44 44' aria-hidden='true'><circle cx='9' cy='9' r='4.2'/><circle cx='24' cy='6' r='3.2'/><circle cx='37' cy='12' r='4.6'/><circle cx='6' cy='24' r='3.4'/><circle cx='20' cy='21' r='5'/><circle cx='35' cy='27' r='3.4'/><circle cx='11' cy='37' r='4.6'/><circle cx='25' cy='36' r='3.2'/><circle cx='38' cy='39' r='3.8'/></svg>Scattered</button><button type="button" data-v="grid"><svg viewBox='0 0 44 44' aria-hidden='true'><circle cx='8' cy='8' r='4'/><circle cx='22' cy='8' r='4'/><circle cx='36' cy='8' r='4'/><circle cx='8' cy='22' r='4'/><circle cx='22' cy='22' r='4'/><circle cx='36' cy='22' r='4'/><circle cx='8' cy='36' r='4'/><circle cx='22' cy='36' r='4'/><circle cx='36' cy='36' r='4'/></svg>Grid</button><button type="button" data-v="ring"><svg viewBox='0 0 44 44' aria-hidden='true'><circle cx='22.0' cy='7.0' r='3.8'/><circle cx='32.60660171779821' cy='11.393398282201789' r='3.8'/><circle cx='37.0' cy='22.0' r='3.8'/><circle cx='32.60660171779821' cy='32.60660171779821' r='3.8'/><circle cx='22.0' cy='37.0' r='3.8'/><circle cx='11.393398282201789' cy='32.60660171779821' r='3.8'/><circle cx='7.0' cy='22.000000000000004' r='3.8'/><circle cx='11.393398282201785' cy='11.393398282201789' r='3.8'/><circle cx='22' cy='22' r='4.4'/></svg>Rings</button></div></div>
+        <div class="tool"><span class="label" id="bg-l">Background</span><div class="bgs" id="bgs" role="group" aria-labelledby="bg-l"></div></div>
+      </section>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="bar"><button type="button" class="btn" id="undo">Undo</button><button type="button" class="btn" id="redo">Redo</button><span class="sp"></span><button type="button" class="btn" id="shuffle">Shuffle layout</button></div>
+      <div class="poster-wrap"><div class="poster" id="poster"><input class="poster-title" id="title" aria-label="Poster title" maxlength="32"><div id="grid"></div></div></div>
+      <p class="hint">Tap a bird in the list to add or remove it. On the poster, click a bird to mirror it. Drag a bird onto another to swap their places. Click the title to rename it. With the keyboard, Enter mirrors and the arrow keys move a bird.</p>
+    </div>
+  </div>
+  <footer>
+    <span>Field guide design: <a href="https://github.com/alchaincyf/huashu-bird-sticker">huashu-bird-sticker</a> by Huashu, CC BY 4.0. Woodblock design: illustrations from <a href="https://github.com/adamoberley/HABirdDashboard">HABirdDashboard</a> by Adam Oberley, Teddy Warner and contributors, MIT. Both sets are AI generated and may contain errors.</span>
+    <span>Prototype. Before selling posters, confirm commercial use of the woodblock set with its authors, since part of it comes from a non commercial project.</span>
+  </footer>
+</div>
+<script>
+(function () {
+  var RAW = [["tyto-alba","Western Barn Owl","Tyto alba","Owls",403.3],["asio-flammeus","Short-eared Owl","Asio flammeus","Owls",322.6],["athene-noctua","Little Owl","Athene noctua","Owls",168.9],["asio-otus","Long-eared Owl","Asio otus","Owls",296.6],["bubo-bubo","Eurasian Eagle-Owl","Bubo bubo","Owls",2668.5],["otus-scops","Eurasian Scops Owl","Otus scops","Owls",92.0],["strix-uralensis","Ural Owl","Strix uralensis","Owls",780.6],["aegolius-funereus","Boreal Owl","Aegolius funereus","Owls",137.2],["glaucidium-passerinum","Eurasian Pygmy Owl","Glaucidium passerinum","Owls",57.9],["surnia-ulula","Northern Hawk-Owl","Surnia ulula","Owls",319.9],["tyto-longimembris","Eastern Grass Owl","Tyto longimembris","Owls",423.5],["bubo-virginianus","Great Horned Owl","Bubo virginianus","Owls",1354.5],["alcedo-atthis","Common Kingfisher","Alcedo atthis","Kingfishers",31.1],["megaceryle-alcyon","Belted Kingfisher","Megaceryle alcyon","Kingfishers",148.0],["ceyx-pusillus","Little Kingfisher","Ceyx pusillus","Kingfishers",13.3],["ceyx-azureus","Azure Kingfisher","Ceyx azureus","Kingfishers",34.9],["dacelo-leachii","Blue-winged Kookaburra","Dacelo leachii","Kingfishers",308.0],["todiramphus-macleayii","Forest Kingfisher","Todiramphus macleayii","Kingfishers",37.3],["todiramphus-sanctus","Sacred Kingfisher","Todiramphus sanctus","Kingfishers",53.0],["dacelo-novaeguineae","Laughing Kookaburra","Dacelo novaeguineae","Kingfishers",333.8],["todiramphus-pyrrhopygius","Red-backed Kingfisher","Todiramphus pyrrhopygius","Kingfishers",51.7],["todiramphus-sordidus","Torresian Kingfisher","Todiramphus sordidus","Kingfishers",66.1],["falco-tinnunculus","Common Kestrel","Falco tinnunculus","Falcons",183.2],["falco-subbuteo","Eurasian Hobby","Falco subbuteo","Falcons",208.2],["falco-peregrinus","Peregrine Falcon","Falco peregrinus","Falcons",760.0],["falco-naumanni","Lesser Kestrel","Falco naumanni","Falcons",152.1],["falco-columbarius","Merlin","Falco columbarius","Falcons",188.5],["falco-vespertinus","Red-footed Falcon","Falco vespertinus","Falcons",151.5],["falco-rusticolus","Gyrfalcon","Falco rusticolus","Falcons",1431.7],["falco-sparverius","American Kestrel","Falco sparverius","Falcons",114.6],["falco-mexicanus","Prairie Falcon","Falco mexicanus","Falcons",713.1],["falco-berigora","Brown Falcon","Falco berigora","Falcons",587.0],["falco-longipennis","Australian Hobby","Falco longipennis","Falcons",249.8],["falco-subniger","Black Falcon","Falco subniger","Falcons",776.0],["hieraaetus-pennatus","Booted Eagle","Hieraaetus pennatus","Eagles and hawks",823.8],["milvus-migrans","Black Kite","Milvus migrans","Eagles and hawks",734.1],["clanga-clanga","Greater Spotted Eagle","Clanga clanga","Eagles and hawks",2154.3],["circus-aeruginosus","Western Marsh Harrier","Circus aeruginosus","Eagles and hawks",704.1],["elanus-caeruleus","Black-winged Kite","Elanus caeruleus","Eagles and hawks",259.8],["aegypius-monachus","Cinereous Vulture","Aegypius monachus","Eagles and hawks",9320.6],["circaetus-gallicus","Short-toed Snake Eagle","Circaetus gallicus","Eagles and hawks",1699.1],["aquila-heliaca","Eastern Imperial Eagle","Aquila heliaca","Eagles and hawks",3125.2],["accipiter-nisus","Eurasian Sparrowhawk","Accipiter nisus","Eagles and hawks",220.8],["circus-macrourus","Pallid Harrier","Circus macrourus","Eagles and hawks",384.4],["circus-cyaneus","Hen Harrier","Circus cyaneus","Eagles and hawks",393.0],["haliaeetus-albicilla","White-tailed Eagle","Haliaeetus albicilla","Eagles and hawks",4729.3],["aythya-fuligula","Tufted Duck","Aythya fuligula","Ducks, swans and geese",701.2],["spatula-querquedula","Garganey","Spatula querquedula","Ducks, swans and geese",325.6],["anas-acuta","Northern Pintail","Anas acuta","Ducks, swans and geese",944.6],["spatula-clypeata","Northern Shoveler","Spatula clypeata","Ducks, swans and geese",612.6],["mareca-penelope","Eurasian Wigeon","Mareca penelope","Ducks, swans and geese",770.0],["anas-platyrhynchos","Mallard","Anas platyrhynchos","Ducks, swans and geese",843.4],["tadorna-ferruginea","Ruddy Shelduck","Tadorna ferruginea","Ducks, swans and geese",1235.0],["aythya-nyroca","Ferruginous Duck","Aythya nyroca","Ducks, swans and geese",574.0],["aythya-ferina","Common Pochard","Aythya ferina","Ducks, swans and geese",823.0],["mareca-strepera","Gadwall","Mareca strepera","Ducks, swans and geese",915.6],["cygnus-olor","Mute Swan","Cygnus olor","Ducks, swans and geese",10682.0],["anser-anser","Greylag Goose","Anser anser","Ducks, swans and geese",3302.4],["egretta-garzetta","Little Egret","Egretta garzetta","Herons and egrets",312.0],["nycticorax-nycticorax","Black-crowned Night Heron","Nycticorax nycticorax","Herons and egrets",810.0],["ardea-alba","Great Egret","Ardea alba","Herons and egrets",871.3],["ardea-purpurea","Purple Heron","Ardea purpurea","Herons and egrets",1064.5],["ardea-cinerea","Grey Heron","Ardea cinerea","Herons and egrets",1443.0],["botaurus-stellaris","Eurasian Bittern","Botaurus stellaris","Herons and egrets",1319.5],["butorides-striata","Striated Heron","Butorides striata","Herons and egrets",201.5],["ardeola-ralloides","Squacco Heron","Ardeola ralloides","Herons and egrets",287.0],["egretta-thula","Snowy Egret","Egretta thula","Herons and egrets",371.0],["egretta-caerulea","Little Blue Heron","Egretta caerulea","Herons and egrets",338.6],["ardea-herodias","Great Blue Heron","Ardea herodias","Herons and egrets",2523.4],["botaurus-flavicollis","Black Bittern","Botaurus flavicollis","Herons and egrets",0],["jynx-torquilla","Eurasian Wryneck","Jynx torquilla","Woodpeckers",35.0],["dryocopus-martius","Black Woodpecker","Dryocopus martius","Woodpeckers",321.0],["dendrocopos-major","Great Spotted Woodpecker","Dendrocopos major","Woodpeckers",74.9],["dendrocopos-syriacus","Syrian Woodpecker","Dendrocopos syriacus","Woodpeckers",76.7],["picus-viridis","European Green Woodpecker","Picus viridis","Woodpeckers",176.0],["dendrocoptes-medius","Middle Spotted Woodpecker","Dendrocoptes medius","Woodpeckers",59.0],["dendrocopos-leucotos","White-backed Woodpecker","Dendrocopos leucotos","Woodpeckers",116.8],["dryobates-minor","Lesser Spotted Woodpecker","Dryobates minor","Woodpeckers",19.8],["picoides-tridactylus","Eurasian Three-toed Woodpecker","Picoides tridactylus","Woodpeckers",65.5],["colaptes-auratus","Northern Flicker","Colaptes auratus","Woodpeckers",131.5],["sphyrapicus-varius","Yellow-bellied Sapsucker","Sphyrapicus varius","Woodpeckers",50.3],["dryocopus-pileatus","Pileated Woodpecker","Dryocopus pileatus","Woodpeckers",286.6],["psittacula-krameri","Rose-ringed Parakeet","Psittacula krameri","Parrots and cockatoos",116.1],["psittacula-eupatria","Alexandrine Parakeet","Psittacula eupatria","Parrots and cockatoos",214.0],["myiopsitta-monachus","Monk Parakeet","Myiopsitta monachus","Parrots and cockatoos",120.0],["melopsittacus-undulatus","Budgerigar","Melopsittacus undulatus","Parrots and cockatoos",29.0],["nymphicus-hollandicus","Cockatiel","Nymphicus hollandicus","Parrots and cockatoos",94.6],["psittacula-cyanocephala","Plum-headed Parakeet","Psittacula cyanocephala","Parrots and cockatoos",66.0],["agapornis-roseicollis","Rosy-faced Lovebird","Agapornis roseicollis","Parrots and cockatoos",53.8],["cacatua-sanguinea","Little Corella","Cacatua sanguinea","Parrots and cockatoos",523.7],["cacatua-galerita","Sulphur-crested Cockatoo","Cacatua galerita","Parrots and cockatoos",720.4],["amazona-amazonica","Orange-winged Amazon","Amazona amazonica","Parrots and cockatoos",370.0],["amazona-aestiva","Turquoise-fronted Amazon","Amazona aestiva","Parrots and cockatoos",451.0],["amazona-oratrix","Yellow-headed Amazon","Amazona oratrix","Parrots and cockatoos",476.9],["riparia-riparia","Sand Martin","Riparia riparia","Swallows",12.7],["hirundo-rustica","Barn Swallow","Hirundo rustica","Swallows",17.9],["delichon-urbicum","Western House Martin","Delichon urbicum","Swallows",14.5],["ptyonoprogne-rupestris","Eurasian Crag Martin","Ptyonoprogne rupestris","Swallows",20.4],["tachycineta-bicolor","Tree Swallow","Tachycineta bicolor","Swallows",21.2],["petrochelidon-pyrrhonota","American Cliff Swallow","Petrochelidon pyrrhonota","Swallows",21.6],["tachycineta-thalassina","Violet-green Swallow","Tachycineta thalassina","Swallows",14.1],["progne-subis","Purple Martin","Progne subis","Swallows",53.8],["stelgidopteryx-serripennis","Northern Rough-winged Swallow","Stelgidopteryx serripennis","Swallows",15.7],["petrochelidon-nigricans","Tree Martin","Petrochelidon nigricans","Swallows",15.4],["petrochelidon-ariel","Fairy Martin","Petrochelidon ariel","Swallows",10.8],["hirundo-neoxena","Welcome Swallow","Hirundo neoxena","Swallows",14.7],["fringilla-montifringilla","Brambling","Fringilla montifringilla","Finches",23.2],["fringilla-coelebs","Eurasian Chaffinch","Fringilla coelebs","Finches",23.8],["carpodacus-erythrinus","Common Rosefinch","Carpodacus erythrinus","Finches",24.0],["coccothraustes-coccothraustes","Hawfinch","Coccothraustes coccothraustes","Finches",56.6],["loxia-curvirostra","Red Crossbill","Loxia curvirostra","Finches",38.3],["spinus-spinus","Eurasian Siskin","Spinus spinus","Finches",13.2],["pyrrhula-pyrrhula","Eurasian Bullfinch","Pyrrhula pyrrhula","Finches",24.3],["chloris-chloris","European Greenfinch","Chloris chloris","Finches",26.0],["linaria-cannabina","Common Linnet","Linaria cannabina","Finches",19.5],["carduelis-carduelis","European Goldfinch","Carduelis carduelis","Finches",16.0],["serinus-serinus","European Serin","Serinus serinus","Finches",11.2],["acanthis-flammea","Redpoll","Acanthis flammea","Finches",13.0]];
+  var ALL = {}, GROUPS = {}, ORDER = [];
+  RAW.forEach(function (r) { var b = { id: r[0], name: r[1], sci: r[2], group: r[3], mass: r[4] }; ALL[b.id] = b; if (!GROUPS[b.group]) { GROUPS[b.group] = []; ORDER.push(b.group); } GROUPS[b.group].push(b.id); });
+  var KEY = "bird-poster-v2";
+  var IDS = RAW.map(function (r) { return r[0]; });
+  var STARTER = ["bubo-bubo","alcedo-atthis","falco-peregrinus","haliaeetus-albicilla","anas-platyrhynchos","ardea-cinerea","dendrocopos-major","psittacula-krameri","hirundo-rustica","carduelis-carduelis","tyto-alba","cygnus-olor"].filter(function (id) { return ALL[id]; });
+  var WB_FLIP = {"dacelo-novaeguineae":1,"falco-peregrinus":1,"falco-rusticolus":1,"milvus-migrans":1,"aythya-nyroca":1,"aythya-ferina":1,"cygnus-olor":1,"butorides-striata":1,"egretta-thula":1,"ardea-herodias":1,"jynx-torquilla":1,"dryocopus-martius":1,"picus-viridis":1,"dendrocoptes-medius":1,"dendrocopos-leucotos":1,"dryobates-minor":1,"colaptes-auratus":1,"psittacula-eupatria":1,"myiopsitta-monachus":1,"melopsittacus-undulatus":1,"psittacula-cyanocephala":1,"amazona-aestiva":1,"amazona-oratrix":1,"riparia-riparia":1,"ptyonoprogne-rupestris":1,"tachycineta-bicolor":1,"tachycineta-thalassina":1,"stelgidopteryx-serripennis":1,"spinus-spinus":1};
+  function mirrored(id) { return !!state.flip[id] !== !!(state.style === "wb" && WB_FLIP[id]); }
+  var state = { view: "All", order: [], title: "", titleAuto: true, seed: 7, labels: "names", style: "fg", flip: {}, bg: "cream", layout: "scatter" };
+  function svgUrl(s) { return 'url("data:image/svg+xml,' + encodeURIComponent(s) + '")'; }
+  var NOISE = svgUrl("<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='4'/><feColorMatrix values='0 0 0 0 .42  0 0 0 0 .30  0 0 0 0 .15  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(#n)'/></svg>");
+  var LEAVES = svgUrl("<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><g fill='none' stroke='rgb(150,195,160)' stroke-opacity='.22' stroke-width='1.6' stroke-linecap='round'><path d='M20 112 C30 72 60 52 100 42 C95 82 65 107 20 112 Z'/><path d='M20 112 L100 42'/><path d='M95 142 C97 122 109 111 129 107 C127 127 115 138 95 142 Z'/><path d='M95 142 L129 107'/><path d='M10 42 C12 24 22 14 40 10 C38 28 28 38 10 42 Z'/><path d='M10 42 L40 10'/></g></svg>");
+  var BGS = [
+    { id: "cream", name: "Cream", css: "#f8f4ea", ink: "#1e1b16" },
+    { id: "white", name: "White", css: "#ffffff", ink: "#1e1b16" },
+    { id: "sage", name: "Sage", css: "#e3eadf", ink: "#1f2a22" },
+    { id: "blush", name: "Blush", css: "#f6e4df", ink: "#2a1c1a" },
+    { id: "night", name: "Night", css: "#171b22", ink: "#efe9da", dark: 1 },
+    { id: "aged", name: "Aged paper", img: 1, base: "#e9dcc0", ink: "#2a2014", css: "radial-gradient(ellipse at 22% 14%, rgba(255,250,232,.85), transparent 55%), radial-gradient(ellipse at 84% 92%, rgba(150,108,58,.30), transparent 60%), radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(118,82,38,.28) 100%), " + NOISE + ", #e9dcc0" },
+    { id: "sky", name: "Morning sky", img: 1, base: "#dcebf1", ink: "#1f3347", css: "radial-gradient(ellipse at 24% 20%, rgba(255,255,255,.75), transparent 42%), radial-gradient(ellipse at 78% 34%, rgba(255,255,255,.55), transparent 36%), radial-gradient(ellipse at 50% 108%, rgba(246,196,160,.75), transparent 55%), linear-gradient(180deg, #b7d6ea 0%, #dcebf1 42%, #f7ead9 78%, #f6dcc6 100%)" },
+    { id: "forest", name: "Forest", img: 1, base: "#1f3a2d", ink: "#f1ecdc", dark: 1, css: LEAVES + ", radial-gradient(ellipse at 50% 30%, rgba(70,120,90,.55), transparent 70%), linear-gradient(180deg, #24443a 0%, #183026 100%)" }
+  ];
+  function bgOf(id) { for (var i = 0; i < BGS.length; i++) if (BGS[i].id === id) return BGS[i]; return BGS[0]; }
+  function applyBg() {
+    var b = bgOf(state.bg), p = $("poster");
+    p.style.background = b.css; p.style.setProperty("--paper", b.base || b.css); p.style.setProperty("--pink", b.ink);
+    p.style.setProperty("--rule", b.dark ? "rgba(255,255,255,.4)" : "rgba(0,0,0,.25)");
+    Array.prototype.forEach.call($("bgs").children, function (s) { s.setAttribute("aria-pressed", String(s.getAttribute("data-v") === b.id)); });
+  }
+  function buildBgs() {
+    BGS.forEach(function (b) {
+      var s = el("button", "sw" + (b.img ? " img" : "") + (b.dark ? " dark" : ""), b.img ? b.name : null);
+      s.type = "button"; s.setAttribute("data-v", b.id); s.title = b.name; if (!b.img) s.setAttribute("aria-label", b.name);
+      s.style.background = b.css; s.style.color = b.ink;
+      s.addEventListener("click", function () { if (state.bg === b.id) return; commit(); state.bg = b.id; applyBg(); save(); });
+      $("bgs").appendChild(s);
+    });
+  }
+  var hist = [], fut = [], HKEYS = ["order", "flip", "seed", "title", "titleAuto", "labels", "style", "bg", "layout"];
+  function snap() { var o = {}; HKEYS.forEach(function (k) { o[k] = state[k]; }); return JSON.stringify(o); }
+  function updUndo() { $("undo").disabled = !hist.length; $("redo").disabled = !fut.length; }
+  function commit() { hist.push(snap()); if (hist.length > 40) hist.shift(); fut = []; updUndo(); }
+  function restore(s) { var o = JSON.parse(s); HKEYS.forEach(function (k) { state[k] = o[k]; }); render(); updUndo(); }
+  function undo() { if (!hist.length) return; fut.push(snap()); restore(hist.pop()); }
+  function redo() { if (!fut.length) return; hist.push(snap()); restore(fut.pop()); }
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function src(id) { return state.style + "/" + id + ".webp"; }
+  function rnd(str) { var h = 2166136261; for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return ((h >>> 0) % 10000) / 10000; }
+  function scale(id) { var m = ALL[id].mass || 100; return Math.min(1.35, Math.max(0.72, 0.72 + 0.2 * (Math.log(m) / Math.LN10 - 1))); }
+
+  function load() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (s && Array.isArray(s.order)) {
+        s.order = s.order.filter(function (id, i, arr) { return ALL[id] && arr.indexOf(id) === i; }); if (s.view !== "All" && !GROUPS[s.view]) s.view = "All"; s.titleAuto = !!s.titleAuto; if (typeof s.title !== "string") s.title = "";
+        if (["names", "legend", "none"].indexOf(s.labels) === -1) s.labels = "names";
+        if (["fg", "wb"].indexOf(s.style) === -1) s.style = "fg";
+        if (typeof s.seed !== "number") s.seed = 7; if (bgOf(s.bg).id !== s.bg) s.bg = "cream"; if (["scatter", "grid", "ring"].indexOf(s.layout) === -1) s.layout = "scatter"; if (!s.flip || typeof s.flip !== "object") s.flip = {};
+        state = s; return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+  function has(id) { return state.order.indexOf(id) !== -1; }
+  function autoTitle() {
+    if (!state.titleAuto) return;
+    var gs = {}; state.order.forEach(function (id) { gs[ALL[id].group] = 1; }); var k = Object.keys(gs);
+    state.title = k.length === 1 ? k[0] : "Birds"; $("title").value = state.title;
+  }
+  function changed(focusId) { autoTitle(); renderFams(); renderChips(); renderTray(); renderGrid(); renderCount(); save(); if (focusId) { var f = $(focusId); if (f) f.focus(); } }
+  function toggle(id, focusId) { commit(); if (has(id)) state.order = state.order.filter(function (x) { return x !== id; }); else state.order.push(id); changed(focusId); }
+  function shown() {
+    var q = $("search").value.trim().toLowerCase();
+    if (q) return IDS.filter(function (id) { var a = ALL[id]; return a.name.toLowerCase().indexOf(q) !== -1 || a.sci.toLowerCase().indexOf(q) !== -1 || a.group.toLowerCase().indexOf(q) !== -1; });
+    return state.view === "All" ? IDS : GROUPS[state.view];
+  }
+
+  function renderFams() {
+    var box = $("fams"); box.textContent = "";
+    ["All"].concat(ORDER).forEach(function (g) {
+      var b = el("button", "fam", g), n = g === "All" ? state.order.length : state.order.filter(function (id) { return ALL[id].group === g; }).length;
+      b.type = "button"; b.setAttribute("aria-pressed", String(g === state.view)); if (n) { b.appendChild(el("i", null, String(n))); b.setAttribute("aria-label", g + ", " + n + " on poster"); }
+      b.addEventListener("click", function () { state.view = g; $("search").value = ""; renderFams(); renderChips(); save(); });
+      box.appendChild(b);
+    });
+  }
+  function renderSeg(id, val) { Array.prototype.forEach.call($(id).querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-v") === val)); }); }
+
+  function chipBody(b, id) { var im = el("img"); im.src = src(id); im.alt = ""; im.loading = "lazy"; b.appendChild(im); b.appendChild(el("span", null, ALL[id].name)); }
+  function renderChips() {
+    var ul = $("chips"), list = shown(), q = $("search").value.trim(); ul.textContent = "";
+    var on = list.filter(has).length, all = list.length && on === list.length;
+    $("showing").textContent = !list.length ? "No bird matches that search." : (q ? list.length + " found" : (state.view === "All" ? "All " + list.length + " birds" : state.view + ", " + list.length + " birds")) + (on ? ", " + on + " on poster" : "");
+    var ab = $("addall"); ab.disabled = !list.length; ab.textContent = all ? "Remove these " + list.length : "Add all " + list.length;
+    ab.onclick = function () { commit(); if (all) state.order = state.order.filter(function (id) { return list.indexOf(id) === -1; }); else list.forEach(function (id) { if (!has(id)) state.order.push(id); }); changed("addall"); };
+    var ob = $("only"), isOnly = all && state.order.length === list.length;
+    ob.hidden = !list.length || (state.view === "All" && !q); ob.disabled = isOnly;
+    ob.textContent = q ? "Only these " + list.length : "Only " + state.view.toLowerCase();
+    ob.title = "Replace the poster with just these birds";
+    ob.onclick = function () { commit(); state.order = list.slice(); state.flip = {}; changed("addall"); };
+    list.forEach(function (id) {
+      var isOn = has(id), li = el("li"), b = el("button", "chip");
+      b.type = "button"; b.id = "chip-" + id; b.setAttribute("aria-pressed", String(isOn)); b.title = (isOn ? "Remove from poster: " : "Add to poster: ") + ALL[id].sci + ", " + ALL[id].group;
+      chipBody(b, id); b.addEventListener("click", function () { toggle(id, "chip-" + id); });
+      li.appendChild(b); ul.appendChild(li);
+    });
+  }
+  function renderTray() {
+    var ul = $("tray"); ul.textContent = "";
+    if (!state.order.length) { var e = el("li", "trayempty", "Empty. Pick birds above, or try Surprise mix."); ul.appendChild(e); }
+    state.order.forEach(function (id) {
+      var li = el("li"), b = el("button", "chip"); b.type = "button"; b.title = "Remove " + ALL[id].name; b.setAttribute("aria-label", "Remove " + ALL[id].name + " from poster");
+      chipBody(b, id); var x = el("span", "x", "\u00d7"); x.setAttribute("aria-hidden", "true"); b.appendChild(x);
+      b.addEventListener("click", function () { toggle(id, "clear"); });
+      li.appendChild(b); ul.appendChild(li);
+    });
+    $("clear").disabled = !state.order.length;
+  }
+  function renderCount() { $("tabcount").textContent = state.order.length ? "(" + state.order.length + ")" : ""; var gs = {}; state.order.forEach(function (id) { gs[ALL[id].group] = 1; }); var k = Object.keys(gs).length; $("count").textContent = state.order.length ? "(" + state.order.length + (state.order.length === 1 ? " bird" : " birds") + " from " + k + (k === 1 ? " family)" : " families)") : "(empty)"; }
+
+  function swap(a, b) { var i = state.order.indexOf(a), j = state.order.indexOf(b); if (i === -1 || j === -1 || i === j) return; commit(); state.order[i] = b; state.order[j] = a; renderGrid(); renderTray(); save(); }
+  function flip(id) { commit(); if (state.flip[id]) delete state.flip[id]; else state.flip[id] = 1; var t = $("an-" + id); if (t) t.classList.toggle("flip", mirrored(id)); save(); }
+
+  var drag = null;
+  function bindAnimal(t, id) {
+    t.addEventListener("pointerdown", function (e) {
+      if (e.button) return;
+      drag = { id: id, el: t, x: e.clientX, y: e.clientY, moved: false, over: null };
+      try { t.setPointerCapture(e.pointerId); } catch (x) {}
+    });
+    t.addEventListener("pointermove", function (e) {
+      if (!drag || drag.el !== t) return;
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.moved && Math.abs(dx) + Math.abs(dy) < 7) return;
+      drag.moved = true; t.classList.add("dragging"); t.style.setProperty("--dx", dx + "px"); t.style.setProperty("--dy", dy + "px");
+      var hit = document.elementFromPoint(e.clientX, e.clientY); hit = hit && hit.closest ? hit.closest(".animal") : null;
+      if (drag.over && drag.over !== hit) drag.over.classList.remove("over");
+      if (hit && hit !== t) hit.classList.add("over"); drag.over = hit && hit !== t ? hit : null;
+    });
+    function end(e) {
+      if (!drag || drag.el !== t) return;
+      var d = drag; drag = null; try { t.releasePointerCapture(e.pointerId); } catch (x) {}
+      if (!d.moved) { if (e.type === "pointerup") flip(id); return; }
+      if (d.over) { d.over.classList.remove("over"); swap(id, d.over.getAttribute("data-id")); } else { renderGrid(); }
+    }
+    t.addEventListener("pointerup", end); t.addEventListener("pointercancel", end);
+    t.addEventListener("keydown", function (e) {
+      var i = state.order.indexOf(id), j = -1;
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(id); return; }
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") j = i + 1; else if (e.key === "ArrowLeft" || e.key === "ArrowUp") j = i - 1; else return;
+      e.preventDefault(); if (j < 0 || j >= state.order.length) return;
+      swap(id, state.order[j]); var again = $("an-" + id); if (again) again.focus();
+    });
+  }
+
+  function renderGrid() {
+    var grid = $("grid"); grid.textContent = ""; var n = state.order.length;
+    if (!n) { grid.appendChild(el("div", "empty", "No birds yet. Pick any birds from the list, from as many families as you like.")); return; }
+    var mode = state.labels, lcols = n > 75 ? 5 : (n > 36 ? 4 : 3), legendRows = mode === "legend" ? Math.ceil(n / lcols) : 0;
+    var lfs = legendRows > 9 ? Math.min(1.9, 25 / legendRows / 0.94 - 0.25) : 0;
+    var reserve = mode === "legend" ? (lfs ? 4.5 + legendRows * (lfs * 0.94 + 0.24) : 4.5 + legendRows * 2.9) : 3;
+    var top0 = 13, best = null;
+    for (var c = 2; c <= Math.max(2, Math.min(n, 16)); c++) {
+      var rr = Math.ceil(n / c), cw = 100 / c, ch = (100 - top0 - reserve) / rr;
+      var f = n > 20 ? Math.max(0.8, Math.min(1.75, cw * 0.15)) : 0;
+      var room = mode === "none" ? 0 : (f ? f * (mode === "names" ? 2.9 : 2.2) : (mode === "names" ? 5.5 : 4));
+      var bs = Math.min(cw * 0.74, (ch * 1.333 - room) * 0.86);
+      if (!best || bs > best.base + 0.01) best = { cols: c, rows: rr, w: cw, h: ch, nfs: f, base: bs };
+    }
+    var cols = best.cols, rows = best.rows, w = best.w, h = best.h, nfs = best.nfs, base = Math.max(1.5, best.base);
+    var lay = state.layout, ringPts = null;
+    if (lay === "ring" && n > 2) {
+      var Hc = (100 - top0 - reserve) * 1.333, cx = 50, cyc = Hc / 2, rbest = null;
+      for (var R = 1; R <= 7; R++) {
+        var pad = 9, tryB = 0, counts = null, mid = 0;
+        for (var pass = 0; pass < 3; pass++) {
+          var rx = 50 - pad, ry = Hc / 2 - pad; if (rx < 4 || ry < 4) break;
+          mid = (n > 6 && R > 1) || n === 1 ? 0 : 0;
+          var fs = [], tot = 0; for (var k = 0; k < R; k++) { var fk = (R - k) / R - (R > 1 ? 0 : 0); if (R > 1) fk = 1 - k * (0.86 / R); fs.push(fk); tot += fk; }
+          counts = fs.map(function (fk) { return Math.floor(n * fk / tot); }); var left = n - counts.reduce(function (a, b) { return a + b; }, 0);
+          for (var q = 0; left > 0; q = (q + 1) % R) { counts[q]++; left--; }
+          var minSp = 1e9; for (k = 0; k < R; k++) { if (!counts[k]) continue; var a1 = rx * fs[k], b1 = ry * fs[k]; var per = 2 * Math.PI * Math.sqrt((a1 * a1 + b1 * b1) / 2); var cN = counts[k], spK = cN === 1 ? 2 * Math.min(a1, b1) : per / cN; if (cN > 1 && cN <= 6) spK = Math.min(spK, 2 * Math.min(a1, b1) * Math.sin(Math.PI / cN)); minSp = Math.min(minSp, spK); }
+          var radial = R > 1 ? Math.min(rx, ry) * 0.86 / R : 1e9;
+          var f2 = n > 20 ? Math.max(0.8, Math.min(1.75, minSp * 0.15)) : 0;
+          var room2 = mode === "none" ? 0 : (f2 ? f2 * (mode === "names" ? 2.9 : 2.2) : (mode === "names" ? 5.5 : 4));
+          tryB = Math.min(minSp * 0.72, (minSp - room2) * 0.9, (radial - room2) * 0.82);
+          pad = Math.max(4, tryB * 0.75 + room2 * 0.5 + 1.5);
+        }
+        if (tryB > 0 && (!rbest || tryB > rbest.base + 0.01)) rbest = { R: R, base: tryB, counts: counts, fs: fs, rx: 50 - pad, ry: Hc / 2 - pad, nfs: f2 };
+      }
+      if (rbest) {
+        base = Math.max(1.5, rbest.base); nfs = rbest.nfs; ringPts = [];
+        for (var k2 = 0; k2 < rbest.R; k2++) {
+          var cnt = rbest.counts[k2], a2 = rbest.rx * rbest.fs[k2], b2 = rbest.ry * rbest.fs[k2]; if (!cnt) continue;
+          var S = 240, cum = [0], px = [], py = [];
+          for (var s2 = 0; s2 <= S; s2++) { var th = -Math.PI / 2 + 2 * Math.PI * s2 / S; px.push(cx + a2 * Math.cos(th)); py.push(cyc + b2 * Math.sin(th)); if (s2) cum.push(cum[s2 - 1] + Math.hypot(px[s2] - px[s2 - 1], py[s2] - py[s2 - 1])); }
+          var off = (k2 % 2) * 0.5, ptr = 0;
+          for (var m2 = 0; m2 < cnt; m2++) { var target = ((m2 + off) / cnt) * cum[S]; while (ptr < S && cum[ptr + 1] < target) ptr++; ringPts.push({ x: px[ptr], y: top0 + py[ptr] / 1.333 }); }
+        }
+      }
+    }
+    if (nfs) { grid.style.setProperty("--nfs", nfs.toFixed(2) + "cqw"); grid.style.setProperty("--nofs", (nfs * 1.15).toFixed(2) + "cqw"); } else { grid.style.removeProperty("--nfs"); grid.style.removeProperty("--nofs"); }
+    var jit = lay === "scatter" ? 1 : 0, rsc = ringPts ? 0.55 : 1;
+    if (nfs) { grid.style.setProperty("--nfs", nfs.toFixed(2) + "cqw"); grid.style.setProperty("--nofs", (nfs * 1.15).toFixed(2) + "cqw"); }
+    else { grid.style.removeProperty("--nfs"); grid.style.removeProperty("--nofs"); }
+    state.order.forEach(function (id, i) {
+      var a = ALL[id], col = i % cols, row = Math.floor(i / cols), last = n - (rows - 1) * cols, inLast = row === rows - 1;
+      var shift = inLast ? (cols - last) * w / 2 : 0;
+      var jx = jit * ((rnd(id + "x" + state.seed + i) - 0.5) * w * 0.22 + (row % 2 ? w * 0.07 : -w * 0.07));
+      var jy = jit * (rnd(id + "y" + state.seed + i) - 0.5) * h * 0.16;
+      var x = (col + 0.5) * w + shift + jx, y = top0 + (row + 0.5) * h + jy;
+      if (ringPts) { x = ringPts[i].x; y = ringPts[i].y; }
+      var t = el("div", "animal" + (mirrored(id) ? " flip" : "")); t.id = "an-" + id; t.setAttribute("data-id", id);
+      t.style.left = x + "%"; t.style.top = y + "%"; t.style.setProperty("--w", (base * (ringPts ? 1 + (scale(id) - 1) * rsc : scale(id))).toFixed(2) + "cqw");
+      t.tabIndex = 0; t.setAttribute("role", "button"); t.setAttribute("aria-label", a.name + ". Enter mirrors it, arrow keys move it.");
+      var box = el("div", "box"), im = el("img"); im.src = src(id); im.alt = a.name; im.draggable = false; box.appendChild(im); t.appendChild(box);
+      if (mode === "names") t.appendChild(el("div", "nm", a.name));
+      if (mode === "legend") t.appendChild(el("div", "no", String(i + 1)));
+      bindAnimal(t, id); grid.appendChild(t);
+    });
+    if (mode === "legend") {
+      var lg = el("div", "plegend"); lg.style.gridTemplateColumns = "repeat(" + lcols + ", 1fr)"; if (lfs) lg.style.fontSize = lfs.toFixed(2) + "cqw";
+      state.order.forEach(function (id, i) { var d = el("div"); d.appendChild(el("b", null, String(i + 1))); d.appendChild(document.createTextNode(ALL[id].name)); lg.appendChild(d); });
+      grid.appendChild(lg);
+    }
+    fitInside(reserve);
+  }
+
+  function fitInside(reserve) {
+    var P = $("poster").getBoundingClientRect(); if (!P.width) return;
+    var pad = Math.max(5, P.width * 0.015), minX = P.left + pad, maxX = P.right - pad, minY = P.top + P.height * 0.12, maxY = P.bottom - P.height * reserve / 100 - 2;
+    Array.prototype.forEach.call($("grid").querySelectorAll(".animal"), function (t) {
+      var r = t.getBoundingClientRect(), dx = 0, dy = 0;
+      if (r.width > maxX - minX) dx = (minX + maxX) / 2 - (r.left + r.right) / 2; else if (r.left < minX) dx = minX - r.left; else if (r.right > maxX) dx = maxX - r.right;
+      if (r.top < minY) dy = minY - r.top; else if (r.bottom > maxY) dy = maxY - r.bottom;
+      if (dx) t.style.left = "calc(" + t.style.left + " + " + dx.toFixed(1) + "px)";
+      if (dy) t.style.top = "calc(" + t.style.top + " + " + dy.toFixed(1) + "px)";
+    });
+  }
+
+  function render() { $("title").value = state.title; autoTitle(); applyBg(); renderFams(); renderSeg("style", state.style); renderSeg("labels", state.labels); renderSeg("layout", state.layout); renderChips(); renderTray(); renderGrid(); renderCount(); save(); }
+
+  Array.prototype.forEach.call($("style").querySelectorAll("button"), function (b) { b.addEventListener("click", function () {
+    if (state.style === b.getAttribute("data-v")) return; commit();
+    state.style = b.getAttribute("data-v"); renderSeg("style", state.style);
+    Array.prototype.forEach.call(document.querySelectorAll("#grid .animal"), function (t) { var im = t.querySelector("img"), bid = t.getAttribute("data-id"); im.style.transition = "none"; im.src = src(bid); t.classList.toggle("flip", mirrored(bid)); void im.offsetWidth; im.style.transition = ""; });
+    renderChips(); renderTray(); save();
+  }); });
+  Array.prototype.forEach.call($("labels").querySelectorAll("button"), function (b) { b.addEventListener("click", function () { if (state.labels === b.getAttribute("data-v")) return; commit(); state.labels = b.getAttribute("data-v"); renderSeg("labels", state.labels); renderGrid(); save(); }); });
+  Array.prototype.forEach.call($("layout").querySelectorAll("button"), function (b) { b.addEventListener("click", function () { if (state.layout === b.getAttribute("data-v")) return; commit(); state.layout = b.getAttribute("data-v"); renderSeg("layout", state.layout); renderGrid(); save(); }); });
+  $("search").addEventListener("input", renderChips);
+  $("clear").addEventListener("click", function () { commit(); state.order = []; state.flip = {}; changed("surprise"); });
+  $("surprise").addEventListener("click", function () {
+    commit();
+    var pool = IDS.slice(), pick = [], n = 12 + Math.floor(Math.random() * 5);
+    while (pick.length < n && pool.length) pick.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+    state.order = pick; state.flip = {}; state.seed = Math.floor(Math.random() * 1000); changed("surprise");
+  });
+  var tsnap = null; $("title").addEventListener("focus", function () { tsnap = snap(); });
+  $("title").addEventListener("input", function () { if (tsnap) { hist.push(tsnap); fut = []; tsnap = null; updUndo(); } state.title = $("title").value; state.titleAuto = !state.title.trim(); save(); });
+  $("shuffle").addEventListener("click", function () {
+    if (state.order.length < 2) return; commit();
+    for (var i = state.order.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = state.order[i]; state.order[i] = state.order[j]; state.order[j] = t; }
+    state.seed = Math.floor(Math.random() * 1000); renderGrid(); renderTray(); save();
+  });
+  $("undo").addEventListener("click", undo); $("redo").addEventListener("click", redo);
+  document.addEventListener("keydown", function (e) {
+    if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "z") return;
+    var tg = e.target && e.target.tagName; if (tg === "INPUT" || tg === "TEXTAREA") return;
+    e.preventDefault(); if (e.shiftKey) redo(); else undo();
+  });
+  // phone sheet: tabs and three heights
+  var sheet = $("sheet"), mq = window.matchMedia("(max-width: 800px)"), HS = ["peek", "half", "full"];
+  function setTab(p) {
+    ["birds", "style"].forEach(function (k) { var on = k === p; $("tab-" + k).setAttribute("aria-selected", String(on)); $("pane-" + k).hidden = mq.matches ? !on : false; });
+    sheet.setAttribute("data-tab", p);
+  }
+  function setH(v) { sheet.setAttribute("data-h", v); }
+  ["birds", "style"].forEach(function (k) { $("tab-" + k).addEventListener("click", function () { setTab(k); if (sheet.getAttribute("data-h") === "peek") setH("half"); }); });
+  var gy = null;
+  $("grab").addEventListener("pointerdown", function (e) { gy = e.clientY; try { $("grab").setPointerCapture(e.pointerId); } catch (x) {} });
+  $("grab").addEventListener("pointerup", function (e) {
+    if (gy === null) return; var d = e.clientY - gy, i = HS.indexOf(sheet.getAttribute("data-h")); gy = null;
+    if (Math.abs(d) < 12) i = i === 1 ? 2 : 1; else i = Math.max(0, Math.min(2, i + (d < 0 ? 1 : -1)));
+    setH(HS[i]);
+  });
+  $("grab").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); var i = HS.indexOf(sheet.getAttribute("data-h")); setH(HS[(i + 1) % 3]); } });
+  $("search").addEventListener("focus", function () { if (mq.matches && sheet.getAttribute("data-h") === "peek") setH("half"); });
+  (mq.addEventListener ? mq.addEventListener.bind(mq, "change") : mq.addListener.bind(mq))(function () { setTab(sheet.getAttribute("data-tab") || "birds"); renderGrid(); });
+  buildBgs(); setTab("birds");
+  var rt = null; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(renderGrid, 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { renderGrid(); });
+  if (!load()) state.order = STARTER.slice(); render(); updUndo();
+})();
+</script>
+</body>
+</html>
