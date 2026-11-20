@@ -8,6 +8,8 @@ The repo holds only `README.md` and `prototype/animarka_prototype.html` (untrack
 
 **Context rule:** `docs/PRD.md`, `docs/PLAN.md` and `docs/DECISIONS.md` are the only context a task may rely on. Task M0.1 is done. Start at M0.2.
 
+**Already done ahead of order:** task M1.1 (fetch art). `web/public/art/{fg,wb}/` holds 236 WebP files and `web/src/catalog/static-m1.ts` holds the 118 species with art sizes and `faces`. Nothing was missing. All 29 `WB_FLIP` woodblock birds were checked by eye and face right. So `web/` is not empty: in M0.2 scaffold Next.js in a way that keeps these files (for example scaffold in a temp folder and move it in). Note for M3: several woodblock owls look straight ahead, so expect `front` for them.
+
 ## What the prototype tells us
 
 Read from `prototype/animarka_prototype.html` (471 lines, vanilla JS):
