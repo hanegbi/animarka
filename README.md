@@ -13,7 +13,29 @@ Pick birds, arrange them on a poster, switch the art style and export a print re
 
 ## Status
 
-Milestone M0 is in progress. Run instructions arrive with the Docker Compose task (M0.5).
+Milestone M0 is in progress.
+
+## Run it locally
+
+You need Docker, Node 24 with pnpm, and uv.
+
+```
+docker compose -f infra/compose/docker-compose.yml up --build
+```
+
+| Service | URL |
+|---|---|
+| Web | http://localhost:3000 |
+| API health | http://localhost:8000/healthz |
+| RabbitMQ console (animarka / animarka) | http://localhost:15672 |
+| Flower | http://localhost:5555 |
+
+## Checks
+
+```
+pnpm -C web lint typecheck test e2e
+uv run ruff check . && uv run mypy && uv run pytest
+```
 
 ## Art credits
 

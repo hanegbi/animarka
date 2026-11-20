@@ -1,0 +1,12 @@
+**/node_modules
+**/.next
+**/__pycache__
+**/.venv
+.git
+data
+storage
+docs
+prototype
+.env
+web/test-results
+web/playwright-report

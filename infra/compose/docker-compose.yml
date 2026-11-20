@@ -1,0 +1,142 @@
+name: animarka
+
+x-python-env: &python-env
+  ANIMARKA_DATABASE_URL: postgresql+asyncpg://animarka:animarka@db:5432/animarka
+  ANIMARKA_REDIS_URL: redis://redis:6379/0
+  ANIMARKA_BROKER_URL: amqp://animarka:animarka@rabbitmq:5672//
+  ANIMARKA_STORAGE_DIR: /data/storage
+  ANIMARKA_ADMIN_TOKEN: ${ANIMARKA_ADMIN_TOKEN:-dev-admin-token}
+
+x-python-build: &python-build
+  context: ../..
+  dockerfile: infra/compose/python.Dockerfile
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: animarka
+      POSTGRES_PASSWORD: animarka
+      POSTGRES_DB: animarka
+    ports: ["5432:5432"]
+    volumes: [db-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U animarka -d animarka"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: animarka
+      RABBITMQ_DEFAULT_PASS: animarka
+    ports: ["5672:5672", "15672:15672"]
+    volumes: [rabbitmq-data:/var/lib/rabbitmq]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  api:
+    build: *python-build
+    command: >
+      uvicorn animarka_api.main:app --host 0.0.0.0 --port 8000
+      --reload --reload-dir /app/api/src
+    environment: *python-env
+    ports: ["8000:8000"]
+    volumes:
+      - ../../api/src:/app/api/src
+      - storage:/data/storage
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request as u; u.urlopen('http://localhost:8000/healthz', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  worker:
+    build: *python-build
+    command: >
+      celery -A animarka_workers.app:app worker --loglevel=INFO
+      -Q ingest,vision,upscale,render,generate --concurrency=2
+    environment: *python-env
+    volumes:
+      - ../../api/src:/app/api/src
+      - ../../workers/src:/app/workers/src
+      - storage:/data/storage
+    depends_on:
+      redis: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A animarka_workers.app:app inspect ping -t 5 | grep -q pong"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  flower:
+    build: *python-build
+    command: celery -A animarka_workers.app:app flower --port=5555
+    environment: *python-env
+    ports: ["5555:5555"]
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request as u; u.urlopen('http://localhost:5555/', timeout=3)"
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infra/compose/web.Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      WATCHPACK_POLLING: "true"
+    ports: ["3000:3000"]
+    volumes:
+      - ../../web:/app/web
+      - web-node-modules:/app/web/node_modules
+      - web-next:/app/web/.next
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:3000').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+volumes:
+  db-data:
+  rabbitmq-data:
+  storage:
+  web-node-modules:
+  web-next:
