@@ -60,15 +60,22 @@ test("page weight before images is under 300 KB", async ({ page }, info) => {
     kb(catalog),
     LIVE ? "(live API, gzipped)" : "(mocked, not compressed)",
   );
-  for (const r of res
+  const lines = res
     .filter((x) => x.type !== "Image" && !isApi(x.url))
     .sort((a, b) => b.bytes - a.bytes)
-    .slice(0, 8)) {
-    console.log(
-      `   ${kb(r.bytes)} KB  ${r.type}  ${r.url.replace(/^https?:\/\/[^/]+/, "").slice(0, 90)}`,
+    .slice(0, 12)
+    .map(
+      (r) =>
+        `${kb(r.bytes)} KB ${r.type} ${r.url.replace(/^https?:\/\/[^/]+/, "").slice(0, 90)}`,
     );
-  }
-  expect(kb(beforeImages)).toBeLessThanOrEqual(300);
+  for (const l of lines) console.log(`   ${l}`);
+  // The breakdown goes in the message too, so a CI failure annotation shows it without the log.
+  expect(
+    kb(beforeImages),
+    `${JSON.stringify(report)}
+${lines.join("
+")}`,
+  ).toBeLessThanOrEqual(300);
   if (LIVE) expect(kb(catalog)).toBeLessThanOrEqual(CATALOG_KB);
 });
 
