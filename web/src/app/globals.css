@@ -67,3 +67,36 @@
     @apply font-heading;
   }
 }
+
+/* Poster. Motion is short and respects reduced motion. */
+.poster-animal,
+.poster-art,
+.poster-label,
+.poster-number {
+  transition:
+    left 0.2s ease,
+    top 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease,
+    font-size 0.2s ease;
+}
+.poster-img {
+  transition: transform 0.18s ease;
+}
+.poster-label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+@media (prefers-reduced-motion: reduce) {
+  .poster-animal,
+  .poster-art,
+  .poster-label,
+  .poster-number,
+  .poster-img {
+    transition: none;
+  }
+}

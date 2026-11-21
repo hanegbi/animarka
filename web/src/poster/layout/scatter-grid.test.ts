@@ -108,8 +108,14 @@ describe("scatter specifics", () => {
 });
 
 describe("rowCounts", () => {
-  it("grid rows hold the column count and the last row holds the rest", () => {
-    expect(rowCounts(10, 4, false)).toEqual([4, 4, 2]);
+  it("grid rows hold the column count and the last row is topped up", () => {
+    expect(rowCounts(10, 4, false)).toEqual([4, 3, 3]);
+    expect(rowCounts(8, 4, false)).toEqual([4, 4]);
+  });
+
+  it("never ends with a lone animal when earlier rows are full", () => {
+    expect(rowCounts(13, 4, false)).toEqual([4, 4, 3, 2]);
+    expect(rowCounts(12, 4, true)).toEqual([4, 3, 3, 2]);
   });
 
   it("brick rows alternate full and one short", () => {

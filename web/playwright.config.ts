@@ -30,6 +30,7 @@ export default defineConfig({
     command: `pnpm build && pnpm exec next start -p ${port}`,
     url: `http://localhost:${port}`,
     reuseExistingServer: !process.env.CI,
+    env: { NEXT_PUBLIC_SHOW_DESIGN: "1" },
     timeout: 240_000,
   },
 });

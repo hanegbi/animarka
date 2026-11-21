@@ -98,6 +98,28 @@ export function placeInCell(
   return placed;
 }
 
+/**
+ * Move items from the fullest earlier rows into a thin last row, so the poster never ends with one
+ * lonely animal. Rows only shrink, and the last row stays below the row above it.
+ */
+export function balanceLastRow(counts: number[]): number[] {
+  const out = counts.slice();
+  const last = out.length - 1;
+  while (last > 0 && out[last] < out[last - 1] - 1) {
+    let donor = -1;
+    for (let r = last - 1; r >= 0; r--) {
+      if (out[r] > out[last] + 1) {
+        donor = r;
+        break;
+      }
+    }
+    if (donor === -1) break;
+    out[donor]--;
+    out[last]++;
+  }
+  return out;
+}
+
 /** Rows of items. Grid rows all hold `cols`. Brick rows alternate `cols` and `cols - 1`. */
 export function rowCounts(
   n: number,
@@ -107,8 +129,10 @@ export function rowCounts(
   if (cols < 1) return null;
   if (!brick || cols < 2) {
     const rows = Math.ceil(n / cols);
-    return Array.from({ length: rows }, (_, r) =>
-      r < rows - 1 ? cols : n - (rows - 1) * cols,
+    return balanceLastRow(
+      Array.from({ length: rows }, (_, r) =>
+        r < rows - 1 ? cols : n - (rows - 1) * cols,
+      ),
     );
   }
   const counts: number[] = [];
@@ -119,7 +143,7 @@ export function rowCounts(
     counts.push(take);
     left -= take;
   }
-  return counts;
+  return balanceLastRow(counts);
 }
 
 /**
