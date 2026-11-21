@@ -74,9 +74,17 @@ function InteractiveShell({
     const action = keyToAction(e.key);
     if (!action) return;
     e.preventDefault();
-    if (action.type === "select") ctx.toggleSelect(id, true);
-    else if (action.type === "remove") ctx.onRemove(id);
+    // Select waits for the key to come back up. Otherwise focus jumps to the Mirror button while Space is still
+    // held, and the browser fires Space's click on key up, mirroring the bird by accident.
+    if (action.type === "select") return;
+    if (action.type === "remove") ctx.onRemove(id);
     else ctx.onMove(id, action.delta);
+  };
+
+  const onKeyUp = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (keyToAction(e.key)?.type !== "select") return;
+    e.preventDefault();
+    ctx.toggleSelect(id, true);
   };
 
   return (
@@ -106,6 +114,7 @@ function InteractiveShell({
         ctx.toggleSelect(id, false);
       }}
       onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
       data-animal={id}
       data-mirrored={mirrored ? "true" : "false"}
       data-selected={selected ? "true" : undefined}

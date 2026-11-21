@@ -211,6 +211,8 @@ test("a swap is one undo step", async ({ page }) => {
   const before = await order(page);
   await drag(page, ONE, TWO);
   await expect.poll(() => order(page)).not.toEqual(before);
+  // dnd-kit swallows the first click right after a drop. A person never clicks that fast, so pause like one.
+  await page.waitForTimeout(150);
   await page
     .getByRole("toolbar", { name: "Poster actions" })
     .getByRole("button", { name: "Undo" })
@@ -289,7 +291,11 @@ test("keyboard: Space on a bird also shows the buttons, and Remove works from th
   await animal(page, ONE).focus();
   await page.keyboard.press("Space");
   await expect(bar(page)).toBeVisible();
+  await expect(bar(page).getByRole("button", { name: "Mirror" })).toBeFocused();
+  // Space must not also press Mirror on its way up.
+  await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "false");
   await page.keyboard.press("Tab");
+  await expect(bar(page).getByRole("button", { name: "Remove" })).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(animal(page, ONE)).toHaveCount(0);
 });
