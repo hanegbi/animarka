@@ -35,6 +35,8 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 
 | Round | Date | Decision | Choice | Source link | Why |
 |---|---|---|---|---|---|
+| R1 | 2026-11-21 | Color theme | A. Field guide (light). B. Museum night is its dark mode | https://21st.dev/community/themes/vintage-paper (reference only) | Matches the prototype and passes AA. Adjusted accent shades are used only where a PRD accent fails (not needed for A) |
+| R1 | 2026-11-21 | Type pairing | 1. Fraunces (titles) and Inter (interface). Hebrew: Frank Ruhl Libre and Heebo | Google Fonts, OFL | Warm headings, clean small text. Subset Fraunces to keep the file small |
 
 ## Open questions
 
@@ -48,3 +50,7 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | 6 | Hosting for k3s | M6 | One VPS with 8 GB RAM |
 | 7 | Domain | M6 | |
 | 8 | Print sizes at launch beyond 18x24 in, 12x16 in, A2, A3 | M4 | |
+
+## Working preferences
+
+- Design rounds must be shown at desktop size first, then phone. Screenshots at 1280 px or wider, with options side by side where possible. (Owner, 2026-11-21)
