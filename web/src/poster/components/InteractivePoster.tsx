@@ -297,7 +297,7 @@ export function InteractivePoster(props: PosterProps & Handlers) {
         <DragOverlay dropAnimation={null}>
           {floating && sp && (
             <img
-              src={artSrc(state.style, sp.artId ?? floating.id)}
+              src={artSrc(sp, state.style)}
               alt=""
               draggable={false}
               className="pointer-events-none object-contain drop-shadow-lg"

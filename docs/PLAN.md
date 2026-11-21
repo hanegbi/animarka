@@ -80,7 +80,7 @@ workers/        Celery
 infra/
   compose/docker-compose.yml, compose/*.Dockerfile
   k8s/ (Helm chart or kustomize), keda/, grafana/, prometheus/
-scripts/        fetch_m1_art.py, loadtest/
+scripts/        make_web_fixture.py, make_backgrounds.py, loadtest/
 docs/           PRD.md, PLAN.md, DECISIONS.md, design/ (screenshots of option rounds)
 prototype/      animarka_prototype.html (kept as reference)
 .github/workflows/ci.yml

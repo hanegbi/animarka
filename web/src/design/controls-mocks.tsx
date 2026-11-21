@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
+import { FIXTURE } from "@/catalog/fixture";
+import { artSrc } from "@/catalog/species-view";
 import type { ReactNode } from "react";
 import { BACKGROUNDS } from "@/catalog/backgrounds";
 import { DOTS } from "./mock";
@@ -14,8 +16,9 @@ const FILLED = {
   borderColor: "var(--accent)",
 };
 const SOFT = "color-mix(in srgb, var(--accent) 12%, var(--surface))";
-const ART = "/art/fg/falco-peregrinus.webp";
-const ART_WB = "/art/wb/falco-peregrinus.webp";
+const FALCON = FIXTURE.species.get("falco-peregrinus")!;
+const ART = artSrc(FALCON, "fg", "thumb");
+const ART_WB = artSrc(FALCON, "wb", "thumb");
 
 const Label = ({ children }: { children: ReactNode }) => (
   <p

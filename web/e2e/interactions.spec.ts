@@ -1,4 +1,6 @@
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { openTab } from "./helpers";
+import { expect, test } from "./test";
 
 async function open(page: Page) {
   await page.goto("/");
@@ -390,12 +392,14 @@ test("adding and removing with the cards does not nag with messages", async ({
   page,
 }) => {
   await open(page);
-  await page
-    .getByRole("option", { name: "Western Barn Owl", exact: true })
-    .click();
-  await page
-    .getByRole("option", { name: "Western Barn Owl", exact: true })
-    .click();
+  await openTab(page, "Birds");
+  await page.getByRole("searchbox", { name: "Search birds" }).fill("barn owl");
+  const owl = page.getByRole("option", {
+    name: "Western Barn Owl",
+    exact: true,
+  });
+  await owl.click();
+  await owl.click();
   await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);
 });
 
@@ -415,6 +419,7 @@ test("a plain label shows the bird name when a tray picture gets keyboard focus"
 
 test("an empty poster says what to do and offers two ways to start", async ({
   page,
+  catalog,
 }) => {
   await open(page);
   await page.getByRole("button", { name: "Clear poster" }).click();
@@ -423,7 +428,7 @@ test("an empty poster says what to do and offers two ways to start", async ({
     empty.getByRole("heading", { name: "Your poster is empty" }),
   ).toBeVisible();
   await expect(
-    empty.getByRole("button", { name: "Owls of the world" }),
+    empty.getByRole("button", { name: catalog.presets[0].title }),
   ).toBeVisible();
   await empty.getByRole("button", { name: "Surprise mix" }).click();
   await expect(empty).toHaveCount(0);
@@ -434,6 +439,7 @@ test("an empty poster says what to do and offers two ways to start", async ({
 
 test("a search with no result explains and suggests words to try", async ({
   page,
+  catalog,
 }) => {
   await open(page);
   await page.getByRole("searchbox", { name: "Search birds" }).fill("zzzz");
@@ -443,7 +449,7 @@ test("a search with no result explains and suggests words to try", async ({
   await miss.getByRole("button", { name: "kestrel" }).click();
   await expect(
     page.locator("p[role=status]").filter({ hasText: "found" }),
-  ).toContainText("3 found");
+  ).toContainText(`${catalog.search("kestrel").length} found`);
   await expect(miss).toHaveCount(0);
 });
 

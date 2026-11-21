@@ -16,6 +16,7 @@ export const GROUP_TAB: Record<string, Tab> = {
   Design: "Style",
   Labels: "Style",
   Background: "Style",
+  "Bird names": "Style",
   Layout: "Layout",
   "Poster size": "Layout",
 };

@@ -1,4 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { expect, test } from "./test";
 import { GROUP_TAB, openTab, type Tab } from "./helpers";
 
 type Box = { x: number; y: number; w: number; h: number };

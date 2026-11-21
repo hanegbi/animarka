@@ -1,4 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { expect, test } from "./test";
 
 type Rect = { x: number; y: number; w: number; h: number };
 
@@ -122,6 +123,8 @@ test("Hebrew poster renders right to left with Hebrew names and stays inside", a
 
 test("Hebrew legend reads right to left", async ({ page }) => {
   await page.goto("/design/poster?n=12&layout=grid&labels=legend&lang=he");
+  await expect(page.locator("[data-legend] li")).toHaveCount(12);
+  await expect(page.locator("[data-legend] li").nth(1)).toBeVisible();
   const first = await page.locator("[data-legend] li").nth(0).boundingBox();
   const second = await page.locator("[data-legend] li").nth(1).boundingBox();
   expect(first!.x).toBeGreaterThan(second!.x);

@@ -147,7 +147,7 @@ export function Poster({
               data-art
             >
               <img
-                src={artSrc(state.style, sp.artId ?? item.id)}
+                src={artSrc(sp, state.style)}
                 alt={name}
                 draggable={false}
                 className="poster-img size-full object-contain"

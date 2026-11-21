@@ -70,6 +70,11 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | M2 | 2026-11-21 | Files path | Stored files are served at `/api/v1/files/{key}`, not `/art/{key}` | | Backgrounds and renders will live in the same store, so the path is not art only |
 | M2 | 2026-11-21 | Missing data | 47 species have no mass: they take their family median, flagged `massEstimated`. Unknown facing is `left`, flagged `facesKnown: false`, until the vision step in M3 | | The layout needs a size for every bird, and the flags let M3 find what to fix |
 | M2.5 | 2026-11-21 | Presets | 11 lists in api/data/presets.json: Birds of Israel (44), Owls of the world (26), Garden birds of North America (26), Garden birds of Europe (14), Birds of Australia (24), Raptors (19), Waterside (17), Parrots and cockatoos (43), Hummingbirds (8), Kingfishers (10), Woodpeckers (22). Region lists drafted by hand, family lists from taxonomy. A test keeps every slug inside the 1,161 matched species | | Many Israeli icons (bulbul, Palestine sunbird, Tristram's starling, smyrna kingfisher) are missing from one art set, so they cannot be in the list. Only one penguin is matched, so there is no penguin list. Waiting for the owner's review |
+| M2.6 | 2026-11-21 | Catalog budget (provisional) | The 300 KB budget now covers the app shell only (296 KB). The catalog JSON for 1,161 birds has its own budget of 120 KB gzipped (97 KB measured). It is preloaded from the page head, so the first poster still shows in 1.55 s on 4G | | The shell had 1 KB of room, and no catalog of this size fits in it. Owner to confirm, or ask for a smaller payload (about 56 KB is possible with a compact format) |
+| M2.6 | 2026-11-21 | Names switch | English or עברית, a segmented control built on the R4 radio group, in the toolbar and the phone Style tab. 595 of 1,161 birds have a Hebrew name, the rest keep their English one | | Reuses a chosen component, so no design round |
+| M2.6 | 2026-11-21 | Family chips | One row that scrolls sideways at every width. Families are the 134 taxonomic families in English, in taxonomic order | | Wrapping over a hundred chips on desktop would push the birds off the first screen. The M1 groups (Owls, Herons and egrets) were hand made for 118 birds and do not scale |
+| M2.6 | 2026-11-21 | Bird list | Virtualized against the panel that already scrolls, with a scroll margin, instead of a box of its own | | The old box grew to its full height, so all cards rendered: 246 ms to clear a search on 1,161 birds. Now under 50 ms |
+| M2.6 | 2026-11-21 | Tests without a backend | Playwright answers the API from a committed fixture (245 real birds, scripts/make_web_fixture.py) and one placeholder image. `E2E_LIVE_API=1` runs the same suite against docker compose | | CI stays fast and needs no ingest. The live run passed 218 of 218 |
 
 ## Open questions
 
@@ -84,6 +89,7 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | 7 | Domain | M6 | |
 | 8 | Print sizes at launch beyond 18x24 in, 12x16 in, A2, A3 | M4 | |
 | 10 | Review the preset lists in `api/data/presets.json`. Add, remove or rename freely | M2 | |
+| 11 | Confirm the split budget: app shell 300 KB, catalog data 120 KB gzipped | M2 | Accept. A compact payload could bring the catalog to about 56 KB later |
 
 ## Working preferences
 

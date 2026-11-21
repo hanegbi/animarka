@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { STYLE_IDS, BACKGROUND_IDS, staticLookup } from "@/catalog/lookup";
-import { staticSpeciesViews } from "@/catalog/species-view";
-import { STARTER_IDS } from "@/catalog/static-m1";
+import { FIXTURE } from "@/catalog/fixture";
+import { STYLE_IDS, BACKGROUND_IDS, viewLookup } from "@/catalog/lookup";
+import { STARTER_IDS } from "@/catalog/starter";
 import { initialState, reduce } from "@/poster/state/reducer";
 import { layoutForState, layoutInputFor } from "./for-state";
 import { problems } from "./harness";
 
-const catalog = staticLookup();
+const catalog = viewLookup(FIXTURE.species);
 const ctx = { catalog, styles: STYLE_IDS, backgrounds: BACKGROUND_IDS };
-const species = staticSpeciesViews();
+const species = FIXTURE.species;
 
 describe("layout for a saved poster", () => {
   it("builds one animal per bird in poster order", () => {

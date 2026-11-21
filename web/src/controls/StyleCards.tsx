@@ -2,12 +2,20 @@
 "use client";
 
 import { artSrc } from "@/catalog/species-view";
+import { useCatalog } from "@/poster/state/provider";
 import type { LabelMode } from "@/poster/state/types";
 import { RadioGroup, type RadioItem } from "./RadioGroup";
 
 /** G5. Cards with a preview. Adapted from Radio Card by mahmoudilyan. */
 
 const SAMPLE = "falco-peregrinus";
+
+/** The sample bird's art in a style, or the first bird's when the sample is not in the catalog. */
+function useSample(): (style: string) => string {
+  const { species, list } = useCatalog();
+  const bird = species.get(SAMPLE) ?? list[0];
+  return (style) => (bird ? artSrc(bird, style, "thumb") : "");
+}
 
 const card = (checked: boolean, compact?: boolean) =>
   `flex min-h-[44px] flex-1 flex-col items-center gap-1 rounded-lg border ${compact ? "min-w-[84px] px-2 py-1.5" : "p-2"} text-xs transition-colors ${
@@ -30,6 +38,7 @@ export function StyleCards({
   onChange: (v: string) => void;
   compact?: boolean;
 }) {
+  const sample = useSample();
   return (
     <RadioGroup
       label="Design"
@@ -41,7 +50,7 @@ export function StyleCards({
       renderItem={(item) => (
         <>
           <img
-            src={artSrc(item.value, SAMPLE)}
+            src={sample(item.value)}
             alt=""
             width={64}
             height={56}
@@ -79,6 +88,7 @@ export function LabelCards({
   onChange: (v: LabelMode) => void;
   compact?: boolean;
 }) {
+  const sample = useSample();
   return (
     <RadioGroup
       label="Labels"
@@ -90,7 +100,7 @@ export function LabelCards({
       renderItem={(item) => (
         <>
           <img
-            src={artSrc("fg", SAMPLE)}
+            src={sample("fg")}
             alt=""
             width={40}
             height={36}

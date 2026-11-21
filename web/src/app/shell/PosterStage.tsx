@@ -1,6 +1,5 @@
 "use client";
 
-import { PRESETS } from "@/catalog/presets";
 import { displayName } from "@/catalog/species-view";
 import { notifyUndoable } from "@/lib/notify";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,7 @@ import {
 /** E1. Shown on the poster while it has no birds: what to do, and two ways to start. */
 function EmptyPoster({ phone }: { phone?: boolean }) {
   const { dispatch } = usePosterActions();
-  const preset = PRESETS[0];
+  const preset = useCatalog().presets[0];
   return (
     <div
       className="absolute inset-0 grid place-items-center p-3"
@@ -42,12 +41,14 @@ function EmptyPoster({ phone }: { phone?: boolean }) {
           >
             Surprise mix
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => dispatch({ type: "replaceWith", ids: preset.ids })}
-          >
-            {preset.title}
-          </Button>
+          {preset && (
+            <Button
+              variant="outline"
+              onClick={() => dispatch({ type: "replaceWith", ids: preset.ids })}
+            >
+              {preset.title}
+            </Button>
+          )}
         </div>
       </div>
     </div>

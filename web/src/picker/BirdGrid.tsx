@@ -18,9 +18,21 @@ const MIN_CARD = 104;
 const GAP = 8;
 const ROW_HEIGHT = 132;
 
+/** The nearest ancestor that scrolls vertically: the picker panel on desktop, the sheet on a phone. */
+function scrollParent(el: HTMLElement): HTMLElement {
+  for (let p = el.parentElement; p; p = p.parentElement) {
+    const { overflowY } = getComputedStyle(p);
+    if (overflowY === "auto" || overflowY === "scroll") return p;
+  }
+  return document.scrollingElement as HTMLElement;
+}
+
 /**
  * C2. Picture cards in a virtualized multi select listbox. Only the visible rows are in the page, so
  * 1,161 birds stay fast. Arrow keys move, Space or Enter toggles, so a keyboard user does not tab through every card.
+ *
+ * The list does not scroll by itself. It is virtualized against the panel that already scrolls, with
+ * the space above the list as the scroll margin, so the panel keeps one scroll bar.
  */
 export function BirdGrid({
   items,
@@ -37,16 +49,33 @@ export function BirdGrid({
   lang: Lang;
   label?: string;
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const [scroller, setScroller] = useState<HTMLElement | null>(null);
+  const [margin, setMargin] = useState(0);
   const [width, setWidth] = useState(0);
   const [active, setActive] = useState(0);
 
   useLayoutEffect(() => {
-    const el = scrollRef.current;
+    const el = listRef.current;
     if (!el) return;
-    setWidth(el.clientWidth);
-    const ro = new ResizeObserver(() => setWidth(el.clientWidth));
+    const sc = scrollParent(el);
+    setScroller(sc);
+    const measure = () => {
+      setWidth(el.clientWidth);
+      setMargin(
+        Math.round(
+          el.getBoundingClientRect().top -
+            sc.getBoundingClientRect().top +
+            sc.scrollTop,
+        ),
+      );
+    };
+    measure();
+    // The space above the list changes with the chips, the status line and the buttons.
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
+    ro.observe(sc);
+    if (el.parentElement) ro.observe(el.parentElement);
     return () => ro.disconnect();
   }, []);
 
@@ -57,9 +86,10 @@ export function BirdGrid({
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtual = useVirtualizer({
     count: rows,
-    getScrollElement: () => scrollRef.current,
+    getScrollElement: () => scroller,
     estimateSize: () => ROW_HEIGHT,
     overscan: 4,
+    scrollMargin: margin,
   });
 
   // A new list starts at the top with the first card as the tab stop.
@@ -67,7 +97,11 @@ export function BirdGrid({
   const lastCount = items.length;
   useEffect(() => {
     setActive(0);
-    scrollRef.current?.scrollTo({ top: 0 });
+    // Bring the top of the new list into view, only when it was scrolled past.
+    if (scroller && scroller.scrollTop > margin)
+      scroller.scrollTo({ top: margin });
+    // Only a new list should scroll, not a change of margin.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstId, lastCount]);
 
   const focusIndex = useCallback(
@@ -76,7 +110,7 @@ export function BirdGrid({
       setActive(next);
       virtual.scrollToIndex(Math.floor(next / cols), { align: "auto" });
       requestAnimationFrame(() => {
-        scrollRef.current
+        listRef.current
           ?.querySelector<HTMLElement>(`[data-index="${next}"]`)
           ?.focus();
       });
@@ -93,9 +127,7 @@ export function BirdGrid({
     const page =
       Math.max(
         1,
-        Math.floor(
-          (scrollRef.current?.clientHeight ?? ROW_HEIGHT) / ROW_HEIGHT,
-        ),
+        Math.floor((scroller?.clientHeight ?? ROW_HEIGHT) / ROW_HEIGHT),
       ) * cols;
     const moves: Record<string, number> = {
       ArrowRight: i + 1,
@@ -118,8 +150,7 @@ export function BirdGrid({
 
   return (
     <div
-      ref={scrollRef}
-      className="min-h-[300px] flex-1 overflow-y-auto overscroll-contain"
+      ref={listRef}
       role="listbox"
       aria-multiselectable="true"
       aria-label={label}
@@ -134,7 +165,7 @@ export function BirdGrid({
             className="absolute start-0 grid w-full"
             style={{
               top: 0,
-              transform: `translateY(${row.start}px)`,
+              transform: `translateY(${row.start - virtual.options.scrollMargin}px)`,
               height: ROW_HEIGHT - GAP,
               gap: GAP,
               gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
@@ -166,7 +197,7 @@ export function BirdGrid({
                   }`}
                 >
                   <img
-                    src={artSrc(style, s.id)}
+                    src={artSrc(s, style, "thumb")}
                     alt=""
                     width={96}
                     height={72}

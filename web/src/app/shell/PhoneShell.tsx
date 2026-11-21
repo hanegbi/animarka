@@ -15,6 +15,7 @@ import {
 } from "@/controls/HistoryBar";
 import { LayoutPicker } from "@/controls/LayoutPicker";
 import { SizePicker } from "@/controls/SizePicker";
+import { LanguagePicker } from "@/controls/LanguagePicker";
 import { LabelCards, StyleCards } from "@/controls/StyleCards";
 import { Picker } from "@/picker/Picker";
 import { usePosterActions, usePosterState } from "@/poster/state/provider";
@@ -79,6 +80,12 @@ function StylePanel() {
         <LabelCards
           value={state.labels}
           onChange={(labels) => dispatch({ type: "setLabels", labels })}
+        />
+      </Section>
+      <Section title="Names">
+        <LanguagePicker
+          value={state.lang}
+          onChange={(lang) => dispatch({ type: "setLang", lang })}
         />
       </Section>
       <Section title="Background">

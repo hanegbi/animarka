@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
+// Where the FastAPI service listens. The browser only ever calls /api/v1 on this site.
+const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:8000";
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    return [{ source: "/api/v1/:path*", destination: `${API_ORIGIN}/api/v1/:path*` }];
+  },
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

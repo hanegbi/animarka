@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 import { openTab } from "./helpers";
 
 test("home opens the builder with a ready poster", async ({ page }) => {

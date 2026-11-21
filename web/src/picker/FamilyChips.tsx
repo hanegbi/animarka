@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Toggle } from "@/components/ui/toggle";
 import { ALL, type FamilyInfo } from "./filter";
@@ -8,7 +9,11 @@ import { ALL, type FamilyInfo } from "./filter";
  * F1. Wrapping pills. One family is shown at a time. A chip only filters the list and never resets the poster.
  * The badge counts birds of that family on the poster. Adapted from Role Filter Chips by cnippet-dev.
  */
-export function FamilyChips({
+/**
+ * Memoized: typing in the search re-renders the picker, and with over a hundred chips this row was
+ * most of the cost. It only changes when the counts, the view or the poster size change.
+ */
+export const FamilyChips = memo(function FamilyChips({
   families,
   view,
   onView,
@@ -37,8 +42,9 @@ export function FamilyChips({
     <div
       role="group"
       aria-label="Show a family"
-      // On a phone the chips scroll sideways in one row, so the birds stay on the first screen of the sheet.
-      className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 min-[1100px]:mx-0 min-[1100px]:flex-wrap min-[1100px]:overflow-visible min-[1100px]:px-0 min-[1100px]:pb-0"
+      // The chips scroll sideways in one row at every width. The full catalog has over a hundred
+      // families, so wrapping would push the birds off the first screen.
+      className="-mx-1 flex [scrollbar-width:thin] gap-1.5 overflow-x-auto px-1 pb-1.5"
     >
       {chips.map((c) => {
         const pressed = c.key === view;
@@ -69,4 +75,4 @@ export function FamilyChips({
       })}
     </div>
   );
-}
+});

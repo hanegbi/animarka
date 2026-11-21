@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import type { CSSProperties, ReactNode } from "react";
-import { SPECIES, STARTER_IDS } from "@/catalog/static-m1";
+import { FIXTURE } from "@/catalog/fixture";
+import { artSrc } from "@/catalog/species-view";
+import { STARTER_IDS } from "@/catalog/starter";
 import { THEMES } from "@/design/themes";
 
 /** Shared mock parts for design rounds. Theme A, Fraunces and Inter, as chosen in R1. */
 
-export const BY_ID = new Map(SPECIES.map((s) => [s.id, s]));
+export const BY_ID = FIXTURE.species;
 export const DISPLAY = "var(--f-fraunces), var(--f-frank), Georgia, serif";
 export const BODY = "var(--f-inter), var(--f-heebo), system-ui, sans-serif";
 const A = THEMES[0];
@@ -72,7 +74,7 @@ export function Poster({
         {STARTER_IDS.slice(0, n).map((id) => (
           <div key={id} className="text-center">
             <img
-              src={`/art/fg/${id}.webp`}
+              src={artSrc(BY_ID.get(id)!, "fg")}
               alt={BY_ID.get(id)!.name}
               className="mx-auto aspect-[3/4] w-full object-contain"
             />
@@ -125,7 +127,7 @@ export function Chip({
       }}
     >
       <img
-        src={`/art/fg/${id}.webp`}
+        src={artSrc(BY_ID.get(id)!, "fg")}
         alt=""
         className={`${small ? "size-5" : "size-7"} rounded-full bg-[#F8F4EA] object-contain`}
       />

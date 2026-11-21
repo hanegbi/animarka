@@ -1,6 +1,9 @@
 import type { SpeciesView } from "@/catalog/species-view";
 import type { Lang } from "@/poster/state/types";
 
+/** 1161 reads as "1,161". */
+export const num = (n: number) => n.toLocaleString("en-US");
+
 export const ALL = "All";
 
 /** Lowercase and drop accents, so "Kestrel", "kestrel" and "késtrel" all match. */
@@ -72,12 +75,12 @@ export function listActions(
   const searching = query.trim().length > 0;
   return {
     addAllLabel: allOn
-      ? `Remove these ${list.length}`
-      : `Add all ${list.length}`,
+      ? `Remove these ${num(list.length)}`
+      : `Add all ${num(list.length)}`,
     allOn,
     addAllDisabled: list.length === 0,
     onlyLabel: searching
-      ? `Only these ${list.length}`
+      ? `Only these ${num(list.length)}`
       : `Only ${view.toLowerCase()}`,
     onlyHidden: list.length === 0 || (view === ALL && !searching),
     onlyDisabled: allOn && order.length === list.length,
@@ -95,10 +98,10 @@ export function statusLine(
   const on = new Set(order);
   const onCount = list.filter((s) => on.has(s.id)).length;
   const base = query.trim()
-    ? `${list.length} found`
+    ? `${num(list.length)} found`
     : view === ALL
-      ? `All ${list.length} birds`
-      : `${view}, ${list.length} birds`;
+      ? `All ${num(list.length)} birds`
+      : `${view}, ${num(list.length)} birds`;
   return onCount ? `${base}, ${onCount} on poster` : base;
 }
 

@@ -31,3 +31,6 @@ __pycache__/
 Thumbs.db
 .idea/
 .vscode/
+
+# Browser tool output
+.playwright-mcp/

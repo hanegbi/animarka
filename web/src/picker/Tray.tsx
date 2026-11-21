@@ -51,7 +51,7 @@ export function Tray({
               className="group/thumb focus-visible:ring-ring/50 relative block size-11 rounded-full outline-none focus-visible:ring-3"
             >
               <img
-                src={artSrc(style, id)}
+                src={artSrc(s, style, "thumb")}
                 alt=""
                 width={44}
                 height={44}

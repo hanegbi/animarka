@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { usePosterActions, usePosterState } from "@/poster/state/provider";
 import { BackgroundPicker } from "./BackgroundPicker";
+import { LanguagePicker } from "./LanguagePicker";
 import { LayoutPicker } from "./LayoutPicker";
 import { SizePicker } from "./SizePicker";
 import { LabelCards, StyleCards } from "./StyleCards";
@@ -43,6 +44,12 @@ export function Toolbar() {
           compact
           value={state.labels}
           onChange={(labels) => dispatch({ type: "setLabels", labels })}
+        />
+      </Group>
+      <Group title="Names">
+        <LanguagePicker
+          value={state.lang}
+          onChange={(lang) => dispatch({ type: "setLang", lang })}
         />
       </Group>
       <Group title="Layout">

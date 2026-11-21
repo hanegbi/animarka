@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { LIVE, expect, test } from "./test";
 import { openTab, type Tab } from "./helpers";
 
 type Rect = { x: number; y: number; w: number; h: number };
@@ -211,6 +212,8 @@ test.describe("desktop shell (picker left, toolbar above the poster)", () => {
 });
 
 test.describe("accessibility", () => {
+  // On the full live catalog axe walks well over a hundred family chips, about a minute a scan.
+  test.slow(LIVE);
   test("the builder has no serious or critical axe violations in any state", async ({
     page,
   }) => {

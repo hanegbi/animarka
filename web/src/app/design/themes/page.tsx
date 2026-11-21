@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import type { CSSProperties } from "react";
-import { SPECIES, STARTER_IDS } from "@/catalog/static-m1";
+import { FIXTURE } from "@/catalog/fixture";
+import { artSrc } from "@/catalog/species-view";
+import { STARTER_IDS } from "@/catalog/starter";
 import { contrastRatio, grade, passesText } from "@/design/contrast";
 import { FONT_VARIABLE_CLASSES, PAIRINGS, type Pairing } from "@/design/fonts";
 import { THEMES, type Theme } from "@/design/themes";
 
-const BY_ID = new Map(SPECIES.map((s) => [s.id, s]));
+const BY_ID = FIXTURE.species;
 const FAMILIES = ["All", "Owls", "Raptors", "Ducks", "Herons", "Woodpeckers"];
 const PICKER = [
   "bubo-bubo",
@@ -135,7 +137,7 @@ function Chip({
       }}
     >
       <img
-        src={`/art/fg/${id}.webp`}
+        src={artSrc(BY_ID.get(id)!, "fg")}
         alt=""
         className="size-8 rounded-full object-contain"
         style={{ background: POSTER_PAPER }}
@@ -161,7 +163,7 @@ function MiniPoster({ pairing }: { pairing: Pairing }) {
         {STARTER_IDS.map((id) => (
           <div key={id} className="text-center">
             <img
-              src={`/art/fg/${id}.webp`}
+              src={artSrc(BY_ID.get(id)!, "fg")}
               alt={BY_ID.get(id)!.name}
               className="mx-auto h-[62px] object-contain"
             />

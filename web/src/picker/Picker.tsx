@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PRESETS } from "@/catalog/presets";
 import { notifyUndoable } from "@/lib/notify";
 import {
   useCatalog,
@@ -65,7 +64,7 @@ function SearchMiss({
 export function Picker() {
   const state = usePosterState();
   const { dispatch, undo } = usePosterActions();
-  const { species, list } = useCatalog();
+  const { species, list, presets } = useCatalog();
   const [view, setView] = useState(ALL);
   const [query, setQuery] = useState("");
 
@@ -87,10 +86,10 @@ export function Picker() {
     if (changed && message) notifyUndoable(message, undo);
   };
 
-  const changeView = (next: string) => {
+  const changeView = useCallback((next: string) => {
     setView(next);
     setQuery("");
-  };
+  }, []);
 
   return (
     <div className="flex min-h-full flex-col gap-3">
@@ -194,7 +193,7 @@ export function Picker() {
           className="flex flex-wrap items-center gap-1.5"
         >
           <span className="text-muted-foreground text-xs">Presets</span>
-          {PRESETS.map((p) => (
+          {presets.map((p) => (
             <Button
               key={p.id}
               variant="ghost"

@@ -1,4 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { LIVE, expect, test } from "./test";
+
+const isApi = (url: string) => new URL(url).pathname.startsWith("/api/v1/");
+/** The catalog JSON has its own budget, see docs/DECISIONS.md (M2.6). Gzipped, from the real API. */
+const CATALOG_KB = 120;
 
 type Resource = { url: string; type: string; bytes: number };
 
@@ -40,17 +44,24 @@ test("page weight before images is under 300 KB", async ({ page }, info) => {
     other: kb(sum(["Fetch", "XHR", "Other", "Manifest"])),
     images: kb(sum(["Image"])),
   };
+  // The app shell: everything but images and the catalog data from the API.
   const beforeImages = res
-    .filter((r) => r.type !== "Image")
+    .filter((r) => r.type !== "Image" && !isApi(r.url))
+    .reduce((a, r) => a + r.bytes, 0);
+  const catalog = res
+    .filter((r) => r.type !== "Image" && isApi(r.url))
     .reduce((a, r) => a + r.bytes, 0);
   console.log(
     `[${info.project.name}] KB`,
     JSON.stringify(report),
     "total before images:",
     kb(beforeImages),
+    "catalog data:",
+    kb(catalog),
+    LIVE ? "(live API, gzipped)" : "(mocked, not compressed)",
   );
   for (const r of res
-    .filter((x) => x.type !== "Image")
+    .filter((x) => x.type !== "Image" && !isApi(x.url))
     .sort((a, b) => b.bytes - a.bytes)
     .slice(0, 8)) {
     console.log(
@@ -58,6 +69,7 @@ test("page weight before images is under 300 KB", async ({ page }, info) => {
     );
   }
   expect(kb(beforeImages)).toBeLessThanOrEqual(300);
+  if (LIVE) expect(kb(catalog)).toBeLessThanOrEqual(CATALOG_KB);
 });
 
 test("the first poster is visible within 2 seconds on a 4G connection", async ({

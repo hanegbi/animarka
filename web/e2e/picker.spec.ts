@@ -1,4 +1,6 @@
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { STARTER_IDS } from "../src/catalog/starter";
+import { expect, test } from "./test";
 
 /** A fresh visitor: no saved poster, so the 12 bird starter poster shows. */
 async function open(page: Page) {
@@ -12,11 +14,29 @@ const trayText = (page: Page) => page.locator("#tray-title");
 const onPoster = (page: Page) => page.locator("[data-animal]");
 const card = (page: Page, name: string) =>
   page.getByRole("option", { name, exact: true });
+/** A family chip. Scoped, because a preset can share the family's name. */
+const chip = (page: Page, family: string) =>
+  page
+    .getByRole("group", { name: "Show a family" })
+    .getByRole("button", { name: new RegExp(`^${family}(,|$)`) });
+const preset = (page: Page, title: string) =>
+  page
+    .getByRole("group", { name: "Start from a preset" })
+    .getByRole("button", { name: title, exact: true });
+const status = (page: Page) => page.locator("p[role=status]");
+/** The list only renders the rows in view, so find a bird by searching, as a person would. */
+async function find(page: Page, query: string) {
+  await page.getByRole("searchbox", { name: "Search birds" }).fill(query);
+}
+const OWLS = "Owls";
 
-test("starts with the 12 bird starter poster", async ({ page }) => {
+test("starts with the 12 bird starter poster", async ({ page, catalog }) => {
   await open(page);
   await expect(onPoster(page)).toHaveCount(12);
-  await expect(trayText(page)).toContainText("12 birds from 10 families");
+  const families = catalog.familiesOf(STARTER_IDS).size;
+  await expect(trayText(page)).toContainText(
+    `12 birds from ${families} families`,
+  );
   await expect(page.locator("[data-poster-title]")).toHaveValue("Birds");
 });
 
@@ -26,6 +46,7 @@ test("tapping a card adds a bird to the poster and tapping again removes it", as
   await open(page);
   await page.getByRole("button", { name: /^Clear poster$/ }).click();
   await expect(onPoster(page)).toHaveCount(0);
+  await find(page, "barn owl");
   await card(page, "Western Barn Owl").click();
   await expect(onPoster(page)).toHaveCount(1);
   await expect(card(page, "Western Barn Owl")).toHaveAttribute(
@@ -50,40 +71,63 @@ test("the tray removes a bird", async ({ page }) => {
 
 test("a family chip only filters the list and never resets the poster", async ({
   page,
+  catalog,
 }) => {
   await open(page);
-  await page.getByRole("button", { name: /^Owls(,|$)/ }).click();
-  await expect(page.locator("p[role=status]")).toContainText("Owls, 12 birds");
+  await chip(page, OWLS).click();
+  await expect(status(page)).toContainText(
+    `${OWLS}, ${catalog.family(OWLS).length} birds`,
+  );
   await expect(onPoster(page)).toHaveCount(12);
   await expect(trayText(page)).toContainText("12 birds");
 });
 
-test("family chips show how many birds are on the poster", async ({ page }) => {
+test("family chips show how many birds are on the poster", async ({
+  page,
+  catalog,
+}) => {
   await open(page);
-  await expect(
-    page.getByRole("button", { name: "Ducks, swans and geese, 2 on poster" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Owls, 2 on poster" }),
-  ).toBeVisible();
+  const group = page.getByRole("group", { name: "Show a family" });
+  for (const family of catalog.familiesOf(STARTER_IDS)) {
+    const n = STARTER_IDS.filter(
+      (id) => catalog.get(id).family === family,
+    ).length;
+    await expect(
+      group.getByRole("button", {
+        name: `${family}, ${n} on poster`,
+        exact: true,
+      }),
+    ).toHaveCount(1);
+  }
 });
 
-test("add all, then remove these", async ({ page }) => {
+test("add all, then remove these", async ({ page, catalog }) => {
   await open(page);
-  await page.getByRole("button", { name: /^Owls(,|$)/ }).click();
-  await page.getByRole("button", { name: "Add all 12" }).click();
-  await expect(onPoster(page)).toHaveCount(22);
-  await page.getByRole("button", { name: "Remove these 12" }).click();
-  await expect(onPoster(page)).toHaveCount(10);
+  const owls = catalog.family(OWLS);
+  const already = owls.filter((s) => STARTER_IDS.includes(s.id)).length;
+  await chip(page, OWLS).click();
+  await page
+    .getByRole("button", {
+      name: `Add all ${owls.length.toLocaleString("en-US")}`,
+    })
+    .click();
+  await expect(onPoster(page)).toHaveCount(12 + owls.length - already);
+  await page
+    .getByRole("button", { name: `Remove these ${owls.length}` })
+    .click();
+  await expect(onPoster(page)).toHaveCount(12 - already);
 });
 
 test("only this family replaces the poster, and the title follows", async ({
   page,
+  catalog,
 }) => {
   await open(page);
-  await page.getByRole("button", { name: /^Woodpeckers(,|$)/ }).click();
+  await chip(page, "Woodpeckers").click();
   await page.getByRole("button", { name: "Only woodpeckers" }).click();
-  await expect(onPoster(page)).toHaveCount(12);
+  await expect(onPoster(page)).toHaveCount(
+    catalog.family("Woodpeckers").length,
+  );
   await expect(page.locator("[data-poster-title]")).toHaveValue("Woodpeckers");
   await expect(
     page.getByRole("button", { name: "Only woodpeckers" }),
@@ -92,15 +136,17 @@ test("only this family replaces the poster, and the title follows", async ({
 
 test("search finds by common name, scientific name and family", async ({
   page,
+  catalog,
 }) => {
   await open(page);
   const search = page.getByRole("searchbox", { name: "Search birds" });
-  await search.fill("kestrel");
-  await expect(page.locator("p[role=status]")).toContainText("3 found");
-  await search.fill("tyto alba");
-  await expect(page.locator("p[role=status]")).toContainText("1 found");
-  await search.fill("woodpeckers");
-  await expect(page.locator("p[role=status]")).toContainText("12 found");
+  for (const q of ["kestrel", "tyto alba", "woodpeckers"]) {
+    await search.fill(q);
+    await expect(status(page)).toContainText(
+      `${catalog.search(q).length.toLocaleString("en-US")} found`,
+    );
+  }
+  expect(catalog.search("tyto alba")).toHaveLength(1);
   await search.fill("zzzz");
   await expect(page.locator("p[role=status]")).toContainText(
     "No bird matches that search.",
@@ -109,18 +155,22 @@ test("search finds by common name, scientific name and family", async ({
 
 test("only these N after a search replaces the poster with the results", async ({
   page,
+  catalog,
 }) => {
   await open(page);
+  const n = catalog.search("kestrel").length;
   await page.getByRole("searchbox", { name: "Search birds" }).fill("kestrel");
-  await page.getByRole("button", { name: "Only these 3" }).click();
-  await expect(onPoster(page)).toHaveCount(3);
+  await page.getByRole("button", { name: `Only these ${n}` }).click();
+  await expect(onPoster(page)).toHaveCount(n);
 });
 
-test("clear search brings the whole list back", async ({ page }) => {
+test("clear search brings the whole list back", async ({ page, catalog }) => {
   await open(page);
   await page.getByRole("searchbox", { name: "Search birds" }).fill("kestrel");
   await page.getByRole("button", { name: "Clear search" }).click();
-  await expect(page.locator("p[role=status]")).toContainText("All 118 birds");
+  await expect(status(page)).toContainText(
+    `All ${catalog.list.length.toLocaleString("en-US")} birds`,
+  );
 });
 
 test("surprise mix builds 12 to 16 birds and clear empties the poster", async ({
@@ -138,28 +188,39 @@ test("surprise mix builds 12 to 16 birds and clear empties the poster", async ({
   ).toBeVisible();
 });
 
-test("presets replace the poster", async ({ page }) => {
+test("presets replace the poster, and a one family preset names it", async ({
+  page,
+  catalog,
+}) => {
   await open(page);
-  await page.getByRole("button", { name: "Owls of the world" }).click();
-  await expect(onPoster(page)).toHaveCount(12);
-  await expect(page.locator("[data-poster-title]")).toHaveValue("Owls");
+  const owls = catalog.preset("owls-of-the-world");
+  await preset(page, owls.title).click();
+  await expect(onPoster(page)).toHaveCount(owls.ids.length);
+  const hummingbirds = catalog.preset("hummingbirds");
+  await preset(page, hummingbirds.title).click();
+  await expect(onPoster(page)).toHaveCount(hummingbirds.ids.length);
+  await expect(page.locator("[data-poster-title]")).toHaveValue(
+    catalog.get(hummingbirds.ids[0]).family,
+  );
 });
 
 test("keyboard: arrow keys move through the cards and space toggles", async ({
   page,
+  catalog,
 }) => {
+  const owls = catalog.family(OWLS).map((s) => s.names.en!);
   await open(page);
-  await page.getByRole("button", { name: /^Owls(,|$)/ }).click();
+  await chip(page, OWLS).click();
   await page.getByRole("button", { name: /^Clear poster$/ }).click();
-  await card(page, "Western Barn Owl").focus();
+  await card(page, owls[0]).focus();
   await page.keyboard.press("Space");
   await expect(onPoster(page)).toHaveCount(1);
   await page.keyboard.press("ArrowRight");
-  await expect(card(page, "Short-eared Owl")).toBeFocused();
+  await expect(card(page, owls[1])).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(onPoster(page)).toHaveCount(2);
   await page.keyboard.press("End");
-  await expect(card(page, "Great Horned Owl")).toBeFocused();
+  await expect(card(page, owls[owls.length - 1])).toBeFocused();
 });
 
 test("only one card is a tab stop, so tabbing does not walk the whole list", async ({
@@ -172,6 +233,7 @@ test("only one card is a tab stop, so tabbing does not walk the whole list", asy
 test("the poster is saved and comes back after a reload", async ({ page }) => {
   await open(page);
   await page.getByRole("button", { name: /^Clear poster$/ }).click();
+  await find(page, "little owl");
   await card(page, "Little Owl").click();
   await page.reload();
   await expect(
