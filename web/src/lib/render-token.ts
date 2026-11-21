@@ -7,10 +7,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 function secret(): string {
   const s = process.env.RENDER_SECRET;
   if (s) return s;
-  if (
-    process.env.NODE_ENV === "production" &&
-    !process.env.NEXT_PUBLIC_SHOW_DESIGN
-  )
+  if (process.env.NODE_ENV === "production")
     throw new Error("RENDER_SECRET is not set");
   return "dev-only-render-secret";
 }

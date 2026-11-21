@@ -88,6 +88,16 @@ jobs:
           push: false
           cache-from: type=gha,scope=web
           cache-to: type=gha,scope=web,mode=max
+      - name: Build production web image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/compose/web.prod.Dockerfile
+          push: false
+          cache-from: type=gha,scope=web-prod
+          cache-to: type=gha,scope=web-prod,mode=max
+      - name: Check the production compose file
+        run: cp infra/compose/.env.example infra/compose/.env && docker compose -f infra/compose/docker-compose.prod.yml --env-file infra/compose/.env config -q
 
   gitleaks:
     runs-on: ubuntu-latest

@@ -1,0 +1,119 @@
+# Production on one server: docker compose -f infra/compose/docker-compose.prod.yml --env-file infra/compose/.env up -d
+# Only Caddy is reachable from outside (80 and 443). Everything else talks on the internal network.
+name: animarka-prod
+
+x-python-build: &python-build
+  context: ../..
+  dockerfile: infra/compose/python.Dockerfile
+
+x-python-env: &python-env
+  ANIMARKA_DATABASE_URL: postgresql+psycopg://animarka:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/animarka
+  ANIMARKA_REDIS_URL: redis://redis:6379/0
+  ANIMARKA_BROKER_URL: amqp://${RABBITMQ_USER:-animarka}:${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}@rabbitmq:5672//
+  ANIMARKA_STORAGE_DIR: /data/storage
+  ANIMARKA_RENDER_SECRET: ${RENDER_SECRET:?set RENDER_SECRET}
+  ANIMARKA_WEB_ORIGIN: http://web:3000
+  ANIMARKA_GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: animarka
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: animarka
+    volumes: [db-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U animarka"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-animarka}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD}
+    volumes: [rabbitmq-data:/var/lib/rabbitmq]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+
+  api:
+    build: *python-build
+    restart: unless-stopped
+    command: >
+      sh -c "cd /app/api && alembic upgrade head && python -m animarka_core.seed &&
+      uvicorn animarka_api.main:app --host 0.0.0.0 --port 8000 --workers 2 --proxy-headers"
+    environment: *python-env
+    volumes: [storage:/data/storage]
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/healthz', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  worker:
+    build: *python-build
+    restart: unless-stopped
+    command: celery -A animarka_workers.app:app worker --loglevel=INFO -Q ingest,render --concurrency=2
+    environment: *python-env
+    volumes: [storage:/data/storage]
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A animarka_workers.app:app inspect ping -t 5 | grep -q pong"]
+      interval: 60s
+      timeout: 15s
+      retries: 5
+      start_period: 30s
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infra/compose/web.prod.Dockerfile
+      args:
+        API_ORIGIN: http://api:8000
+    restart: unless-stopped
+    environment:
+      API_ORIGIN: http://api:8000
+      RENDER_SECRET: ${RENDER_SECRET:?set RENDER_SECRET}
+    depends_on:
+      api: { condition: service_healthy }
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      web: { condition: service_healthy }
+
+volumes:
+  db-data:
+  rabbitmq-data:
+  storage:
+  caddy-data:
+  caddy-config:
