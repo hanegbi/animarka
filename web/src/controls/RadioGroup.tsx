@@ -1,6 +1,11 @@
 "use client";
 
-import { useRef, type KeyboardEvent, type ReactNode } from "react";
+import {
+  useRef,
+  type CSSProperties,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
 
 export type RadioItem<T extends string> = { value: T; label: string };
 
@@ -14,6 +19,7 @@ export function RadioGroup<T extends string>({
   items,
   onChange,
   className = "",
+  style,
   itemClassName = "",
   renderItem,
   children,
@@ -23,6 +29,7 @@ export function RadioGroup<T extends string>({
   items: RadioItem<T>[];
   onChange: (value: T) => void;
   className?: string;
+  style?: CSSProperties;
   itemClassName?: string | ((checked: boolean) => string);
   renderItem: (
     item: RadioItem<T>,
@@ -72,6 +79,7 @@ export function RadioGroup<T extends string>({
       role="radiogroup"
       aria-label={label}
       className={className}
+      style={style}
       onKeyDown={onKeyDown}
     >
       {children}

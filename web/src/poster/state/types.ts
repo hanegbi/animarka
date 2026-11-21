@@ -5,7 +5,11 @@ export type Lang = "en" | "he";
 export type Orientation = "portrait" | "landscape";
 
 /** Poster shapes. Ratios are width over height in portrait. */
-export const SIZES = ["3:4", "2:3", "4:5", "a"] as const;
+// The A series shape was removed in R8. A saved poster with it falls back to 3:4.
+export const SIZES = ["3:4", "2:3", "4:5"] as const;
+/** The most birds one poster holds. Every layout is tested up to this count. */
+export const MAX_BIRDS = 150;
+
 export type SizeId = (typeof SIZES)[number];
 
 export const LABEL_MODES: LabelMode[] = ["names", "legend", "none"];

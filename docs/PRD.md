@@ -154,9 +154,9 @@ The prototype already shows 6.1 to 6.5. Keep what works and improve whatever you
 - The background is part of the print render at full resolution.
 
 #### 6.3 Interactions
-- Tap or click an animal to select it. A small bar shows a Mirror button and a Remove button. (Changed by the owner after M1. It used to mirror at once.)
+- Tap or click an animal to mirror it, with a short hop and turn (about 300 ms). Animals are removed in the picker: untick a card, or click a picture in the strip of chosen birds. (R8, 2026-11-22. Replaces the Mirror and Remove bar.)
 - Drag one animal onto another to swap places. Works with mouse and touch.
-- Keyboard: Enter or Space selects an animal and shows the Mirror and Remove buttons, Delete removes it, arrow keys move it through the order, Escape closes the bar.
+- Keyboard: Enter or Space mirrors an animal, Delete removes it, arrow keys move it through the order.
 - Shuffle button gives a new arrangement inside the chosen layout.
 - Undo and redo (new), at least 20 steps.
 

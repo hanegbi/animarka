@@ -26,7 +26,6 @@ const PORTRAIT_ASPECT: Record<SizeId, number> = {
   "3:4": 3 / 4,
   "2:3": 2 / 3,
   "4:5": 4 / 5,
-  a: 1 / Math.SQRT2,
 };
 
 /** Poster width over height. */

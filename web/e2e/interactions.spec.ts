@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { openTab } from "./helpers";
+import { openTab, pickPreset } from "./helpers";
 import { expect, test } from "./test";
 
 async function open(page: Page) {
@@ -36,7 +36,6 @@ async function drag(page: Page, from: string, to: string) {
 const ONE = "bubo-bubo";
 const TWO = "alcedo-atthis";
 
-const bar = (page: Page) => page.locator("[data-bird-bar]");
 const tap = (page: Page, id: string) =>
   animal(page, id).locator("[data-art]").click();
 const undoHeader = (page: Page) =>
@@ -44,90 +43,38 @@ const undoHeader = (page: Page) =>
     .getByRole("toolbar", { name: "Poster actions" })
     .getByRole("button", { name: "Undo" });
 
-test("tapping a bird shows a Mirror button and a Remove button, and mirrors nothing yet", async ({
+test("tapping a bird mirrors it, and tapping again turns it back", async ({
   page,
 }) => {
   await open(page);
-  await expect(bar(page)).toHaveCount(0);
   await tap(page, ONE);
-  await expect(bar(page)).toBeVisible();
-  await expect(bar(page)).toHaveAttribute(
-    "aria-label",
-    "Actions for Eurasian Eagle-Owl",
-  );
-  await expect(bar(page).getByRole("button", { name: "Mirror" })).toBeVisible();
-  await expect(bar(page).getByRole("button", { name: "Remove" })).toBeVisible();
-  await expect(animal(page, ONE)).toHaveAttribute("data-selected", "true");
+  await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "true");
+  await tap(page, ONE);
   await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "false");
+  // No bar and no Remove button any more.
+  await expect(page.locator("[data-bird-bar]")).toHaveCount(0);
+  await expect(page.locator("[data-animal]")).toHaveCount(12);
 });
 
-test("the Mirror button flips the bird, and again flips it back", async ({
-  page,
-}) => {
+test("the mirror plays a short hop and turn on the art", async ({ page }) => {
   await open(page);
   await tap(page, ONE);
-  await bar(page).getByRole("button", { name: "Mirror" }).click();
-  await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "true");
-  await bar(page).getByRole("button", { name: "Mirror" }).click();
-  await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "false");
-  await expect(bar(page)).toBeVisible();
+  const anim = await animal(page, ONE)
+    .locator("[data-art]")
+    .evaluate((el) =>
+      el
+        .getAnimations()
+        .map((a) => (a.effect as KeyframeEffect).getTiming().duration),
+    );
+  expect(anim).toEqual([300]);
 });
 
 test("a mirror is one undo step", async ({ page }) => {
   await open(page);
   await tap(page, ONE);
-  await bar(page).getByRole("button", { name: "Mirror" }).click();
   await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "true");
   await undoHeader(page).click();
   await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "false");
-});
-
-test("the Remove button takes the bird off the poster and offers Undo", async ({
-  page,
-}) => {
-  await open(page);
-  await tap(page, ONE);
-  await bar(page).getByRole("button", { name: "Remove" }).click();
-  await expect(animal(page, ONE)).toHaveCount(0);
-  await expect(bar(page)).toHaveCount(0);
-  await expect(page.locator("[data-animal]")).toHaveCount(11);
-  const toast = page.locator("[data-sonner-toast]");
-  await expect(toast).toContainText("Eurasian Eagle-Owl removed");
-  await toast.getByRole("button", { name: "Undo" }).click();
-  await expect(animal(page, ONE)).toHaveCount(1);
-  await expect(page.locator("[data-animal]")).toHaveCount(12);
-});
-
-test("tapping the same bird again, tapping elsewhere or pressing Escape puts the buttons away", async ({
-  page,
-}) => {
-  await open(page);
-  await tap(page, ONE);
-  await expect(bar(page)).toBeVisible();
-  await tap(page, ONE);
-  await expect(bar(page)).toHaveCount(0);
-  await tap(page, ONE);
-  await expect(bar(page)).toBeVisible();
-  const poster = (await page.locator("[data-poster]").boundingBox())!;
-  await page.mouse.click(poster.x + 3, poster.y + poster.height - 3);
-  await expect(bar(page)).toHaveCount(0);
-  await tap(page, ONE);
-  await expect(bar(page)).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(bar(page)).toHaveCount(0);
-});
-
-test("tapping another bird moves the buttons to that bird", async ({
-  page,
-}) => {
-  await open(page);
-  await tap(page, ONE);
-  await tap(page, TWO);
-  await expect(bar(page)).toHaveAttribute(
-    "aria-label",
-    "Actions for Common Kingfisher",
-  );
-  await expect(animal(page, ONE)).not.toHaveAttribute("data-selected", "true");
 });
 
 test("a tiny wobble while tapping is still a tap", async ({ page }) => {
@@ -137,59 +84,29 @@ test("a tiny wobble while tapping is still a tap", async ({ page }) => {
   await page.mouse.down();
   await page.mouse.move(c.x + 3, c.y + 2);
   await page.mouse.up();
-  await expect(bar(page)).toBeVisible();
+  await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "true");
 });
 
-test("the bar sits next to its bird, stays inside the window, and never covers the bird", async ({
+test("while dragging over a bird, that bird slides to the dragged bird's place", async ({
   page,
 }) => {
   await open(page);
-  const v = page.viewportSize()!;
-  for (const id of [ONE, "cygnus-olor", "hirundo-rustica"]) {
-    await tap(page, id);
-    await expect(bar(page)).toBeVisible();
-    await page.waitForTimeout(150);
-    const b = (await bar(page).boundingBox())!;
-    const art = (await animal(page, id).locator("[data-art]").boundingBox())!;
-    expect(b.x).toBeGreaterThanOrEqual(0);
-    expect(b.y).toBeGreaterThanOrEqual(0);
-    expect(b.x + b.width).toBeLessThanOrEqual(v.width);
-    expect(b.y + b.height).toBeLessThanOrEqual(v.height);
-    const overlap =
-      b.x < art.x + art.width &&
-      art.x < b.x + b.width &&
-      b.y < art.y + art.height &&
-      art.y < b.y + b.height;
-    expect(overlap, `${id} bar covers the bird`).toBe(false);
-    const title = (await page.locator("[data-poster-title]").boundingBox())!;
-    const coversTitle =
-      b.x < title.x + title.width &&
-      title.x < b.x + b.width &&
-      b.y < title.y + title.height &&
-      title.y < b.y + b.height;
-    expect(coversTitle, `${id} bar covers the poster title`).toBe(false);
-    await page.keyboard.press("Escape");
-  }
-});
-
-test("the Mirror and Remove buttons are big enough to touch", async ({
-  page,
-}) => {
-  await open(page);
-  await tap(page, ONE);
-  for (const name of ["Mirror", "Remove"]) {
-    const b = (await bar(page).getByRole("button", { name }).boundingBox())!;
-    expect(b.width, name).toBeGreaterThanOrEqual(43.5);
-    expect(b.height, name).toBeGreaterThanOrEqual(43.5);
-  }
-});
-
-test("starting a drag puts the buttons away", async ({ page }) => {
-  await open(page);
-  await tap(page, ONE);
-  await expect(bar(page)).toBeVisible();
-  await drag(page, ONE, TWO);
-  await expect(bar(page)).toHaveCount(0);
+  const a = await center(page, ONE);
+  const b = await center(page, TWO);
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  await page.mouse.move(a.x + 14, a.y + 4, { steps: 3 });
+  await page.mouse.move(b.x, b.y, { steps: 12 });
+  const target = animal(page, TWO);
+  await expect(target).toHaveAttribute("data-drop-target", "true");
+  await expect
+    .poll(async () => {
+      const t = (await target.boundingBox())!;
+      return Math.abs(t.x + t.width / 2 - a.x) < 40;
+    })
+    .toBe(true);
+  await page.mouse.up();
+  await expect(target).not.toHaveAttribute("data-drop-target", "true");
 });
 
 test("dragging a bird onto another swaps their places, and does not mirror either", async ({
@@ -268,38 +185,14 @@ test("touch: a finger can drag one bird onto another", async ({
   await expect.poll(() => order(page)).not.toEqual(before);
 });
 
-test("keyboard: Enter shows the buttons and puts focus on Mirror, and Escape returns to the bird", async ({
-  page,
-}) => {
+test("keyboard: Enter or Space mirrors the focused bird", async ({ page }) => {
   await open(page);
   await animal(page, ONE).focus();
-  await page.keyboard.press("Enter");
-  await expect(bar(page)).toBeVisible();
-  const mirror = bar(page).getByRole("button", { name: "Mirror" });
-  await expect(mirror).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "true");
-  await page.keyboard.press("Tab");
-  await expect(bar(page).getByRole("button", { name: "Remove" })).toBeFocused();
-  await page.keyboard.press("Escape");
-  await expect(bar(page)).toHaveCount(0);
-  await expect(animal(page, ONE)).toBeFocused();
-});
-
-test("keyboard: Space on a bird also shows the buttons, and Remove works from the keyboard", async ({
-  page,
-}) => {
-  await open(page);
-  await animal(page, ONE).focus();
   await page.keyboard.press("Space");
-  await expect(bar(page)).toBeVisible();
-  await expect(bar(page).getByRole("button", { name: "Mirror" })).toBeFocused();
-  // Space must not also press Mirror on its way up.
   await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "false");
-  await page.keyboard.press("Tab");
-  await expect(bar(page).getByRole("button", { name: "Remove" })).toBeFocused();
-  await page.keyboard.press("Enter");
-  await expect(animal(page, ONE)).toHaveCount(0);
+  await expect(animal(page, ONE)).toBeFocused();
 });
 
 test("keyboard: Delete removes the focused bird", async ({ page }) => {
@@ -339,7 +232,7 @@ test("each bird is a button with a name and instructions for screen readers", as
   await open(page);
   const label = await animal(page, ONE).getAttribute("aria-label");
   expect(label).toContain("Eurasian Eagle-Owl");
-  expect(label).toMatch(/Enter shows the Mirror and Remove buttons/);
+  expect(label).toMatch(/Press Enter to mirror it/);
   await expect(animal(page, ONE)).toHaveAttribute("role", "button");
 });
 
@@ -382,7 +275,7 @@ test("clearing the poster shows a message with Undo that brings everything back"
 
 test("replacing the poster with a preset says so", async ({ page }) => {
   await open(page);
-  await page.getByRole("button", { name: "Owls of the world" }).click();
+  await pickPreset(page, "Owls of the world");
   await expect(page.locator("[data-sonner-toast]")).toContainText(
     "Owls of the world added",
   );
@@ -451,25 +344,4 @@ test("a search with no result explains and suggests words to try", async ({
     page.locator("p[role=status]").filter({ hasText: "found" }),
   ).toContainText(`${catalog.search("kestrel").length} found`);
   await expect(miss).toHaveCount(0);
-});
-
-test("the bird buttons are icons only, and their name shows on keyboard focus", async ({
-  page,
-}) => {
-  await open(page);
-  await page.locator('[data-animal="bubo-bubo"]').focus();
-  await page.keyboard.press("Enter");
-  const bar = page.locator("[data-bird-bar]");
-  for (const name of ["Mirror", "Remove"]) {
-    const button = bar.getByRole("button", { name });
-    const label = button.locator("span[aria-hidden]");
-    await expect(button.locator("svg")).toHaveCount(1);
-    await expect(label).toHaveText(name);
-    if (name === "Remove") {
-      await expect(label).toHaveCSS("opacity", "0");
-      await page.keyboard.press("Tab");
-    }
-    await expect(button).toBeFocused();
-    await expect(label).toHaveCSS("opacity", "1");
-  }
 });

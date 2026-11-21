@@ -1,10 +1,11 @@
 "use client";
 
 import type { Lang } from "@/poster/state/types";
-import { RadioGroup, type RadioItem } from "./RadioGroup";
+import type { RadioItem } from "./RadioGroup";
+import { Segmented } from "./Segmented";
 
 /**
- * Which language the bird names use, on the poster and in the picker. Built on the R4 radio group, so
+ * Which language the bird names use, on the poster and in the picker. Built on the R8 segmented control, so
  * it needs no design round. Birds without a Hebrew name keep their English one.
  */
 const ITEMS: RadioItem<Lang>[] = [
@@ -20,20 +21,12 @@ export function LanguagePicker({
   onChange: (lang: Lang) => void;
 }) {
   return (
-    <RadioGroup
+    <Segmented
       label="Bird names"
       value={value}
       items={ITEMS}
       onChange={onChange}
-      className="bg-muted inline-flex gap-1 rounded-lg p-1"
-      itemClassName={(checked) =>
-        `min-h-11 min-w-20 rounded-md px-3 text-sm font-medium transition-colors ${
-          checked
-            ? "bg-card text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground"
-        }`
-      }
-      renderItem={(item) => (
+      render={(item) => (
         <span
           lang={item.value}
           dir={item.value === "he" ? "rtl" : "ltr"}

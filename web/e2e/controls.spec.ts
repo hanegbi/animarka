@@ -106,14 +106,36 @@ test("layout switch keeps the same birds, order and mirrors, but moves them", as
   ).toBe(true);
 });
 
-test("the layout highlight slides to the chosen layout", async ({ page }) => {
+test("every style control fills the width of its section", async ({ page }) => {
+  await open(page);
+  const off: string[] = [];
+  for (const tab of ["Layout", "Style"] as Tab[]) {
+    await openTab(page, tab);
+    const rows = await page
+      .locator("section:has(> h3) > [role=radiogroup]:visible")
+      .evaluateAll((els) =>
+        els.map((e) => ({
+          name: e.getAttribute("aria-label"),
+          w: e.getBoundingClientRect().width,
+          parent: e.parentElement!.getBoundingClientRect().width,
+          overflow: e.scrollWidth > e.clientWidth + 1,
+        })),
+      );
+    expect(rows.length).toBeGreaterThan(1);
+    for (const r of rows)
+      if (Math.abs(r.w - r.parent) > 1 || r.overflow)
+        off.push(`${r.name} ${Math.round(r.w)}/${Math.round(r.parent)}`);
+  }
+  expect([...new Set(off)]).toEqual([]);
+});
+
+test("layout choices keep their dot pictures", async ({ page }) => {
   await open(page);
   await openTab(page, "Layout");
-  const hl = page.locator("[data-layout-highlight]");
-  const x0 = (await hl.boundingBox())!.x;
-  await (await radio(page, "Layout", "Centerpiece")).click();
-  await page.waitForTimeout(400);
-  expect((await hl.boundingBox())!.x).toBeGreaterThan(x0 + 40);
+  for (const name of ["Scattered", "Grid", "Centerpiece"]) {
+    const r = await radio(page, "Layout", name);
+    await expect(r.locator("svg circle")).toHaveCount(9);
+  }
 });
 
 test("layout keys: arrow keys change the layout", async ({ page }) => {
@@ -130,7 +152,7 @@ test("label modes: names, numbers with a legend, and no text", async ({
 }) => {
   await open(page);
   await expect(page.locator("[data-label]")).toHaveCount(12);
-  await (await radio(page, "Labels", "Numbers and legend")).click();
+  await (await radio(page, "Labels", "Numbers")).click();
   await expect(page.locator("[data-legend]")).toBeVisible();
   await expect(page.locator("[data-number]")).toHaveCount(12);
   await expect(page.locator("[data-label]")).toHaveCount(0);
@@ -146,7 +168,11 @@ test("background: swatch changes the poster and dark backgrounds switch the ink"
   await open(page);
   const poster = page.locator("[data-poster]");
   await (await radio(page, "Background", "Forest")).click();
-  await expect(page.locator("[data-background-name]")).toHaveText("Forest");
+  await expect(
+    page.locator(
+      "section:has([aria-label=Background]) [data-section-value]:visible",
+    ),
+  ).toHaveText("Forest");
   await expect(poster).toHaveAttribute("data-dark", "true");
   const ink = await page
     .locator("[data-poster-title]")
@@ -171,8 +197,9 @@ test("size buttons change the poster shape, and there is no landscape control", 
   await expect.poll(ratio).toBeCloseTo(2 / 3, 2);
   await (await radio(page, "Poster size", "4:5")).click();
   await expect.poll(ratio).toBeCloseTo(0.8, 2);
-  await (await radio(page, "Poster size", "A series")).click();
-  await expect.poll(ratio).toBeCloseTo(1 / Math.SQRT2, 2);
+  await expect(
+    page.getByRole("radiogroup", { name: "Poster size" }).getByRole("radio"),
+  ).toHaveCount(3);
   await expect(page.getByText(/landscape/i)).toHaveCount(0);
 });
 
@@ -246,29 +273,42 @@ test("editing the title is one undo step and stops following the selection", asy
   await expect(title).toHaveValue("My garden");
 });
 
-test("controls are big enough to touch: at least 44 px", async ({ page }) => {
+test("every button uses the R8 sizes: 40 or 32 px on desktop, 44 or 40 px on a phone", async ({
+  page,
+}, info) => {
   await open(page);
+  const phone = info.project.name.startsWith("phone");
+  const allowed = phone ? [40, 44] : [32, 40];
   const tabs: Tab[] = ["Birds", "Layout", "Style"];
-  const small: string[] = [];
+  const odd: string[] = [];
   for (const tab of tabs) {
     await openTab(page, tab);
-    for (const sel of ["button:visible", "[role=radio]:visible"]) {
-      const boxes = await page.locator(sel).evaluateAll((els) =>
-        els.map((e) => {
-          const r = e.getBoundingClientRect();
-          return {
-            name: (e.getAttribute("aria-label") || e.textContent || "")
-              .trim()
-              .slice(0, 20),
-            w: r.width,
-            h: r.height,
-          };
-        }),
+    const boxes = await page
+      .locator(
+        "button:visible:not([role=radio]):not([data-animal] *):not(nav button):not([role=option])",
+      )
+      .evaluateAll((els) =>
+        els.map((e) => ({
+          name: (e.getAttribute("aria-label") || e.textContent || "")
+            .trim()
+            .slice(0, 24),
+          h: Math.round(e.getBoundingClientRect().height),
+        })),
       );
-      for (const b of boxes)
-        if (b.w < 43.5 || b.h < 43.5)
-          small.push(`${tab}: ${b.name} ${Math.round(b.w)}x${Math.round(b.h)}`);
-    }
+    for (const b of boxes)
+      if (!allowed.includes(b.h)) odd.push(`${tab}: ${b.name} ${b.h}`);
+    const groups = await page
+      .locator(
+        "[role=radiogroup]:visible:not([aria-label=Layout]):not([aria-label=Background])",
+      )
+      .evaluateAll((els) =>
+        els.map((e) => ({
+          name: e.getAttribute("aria-label"),
+          h: Math.round(e.getBoundingClientRect().height),
+        })),
+      );
+    for (const g of groups)
+      if (g.h !== (phone ? 44 : 40)) odd.push(`${tab}: ${g.name} group ${g.h}`);
   }
-  expect([...new Set(small)]).toEqual([]);
+  expect([...new Set(odd)]).toEqual([]);
 });

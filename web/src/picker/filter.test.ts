@@ -122,6 +122,14 @@ describe("list actions", () => {
       `Only these ${found.length}`,
     );
     expect(listActions(list, ALL, "", []).onlyHidden).toBe(true);
+    expect(listActions(list, ALL, "", []).addAllHidden).toBe(true);
+    const big = Array.from({ length: 151 }, (_, i) => ({
+      ...list[0],
+      id: `x${i}`,
+    }));
+    expect(listActions(big, "Big", "", []).addAllHidden).toBe(true);
+    expect(listActions(big, "Big", "", []).onlyHidden).toBe(true);
+    expect(listActions(owls, OWLS, "", []).addAllHidden).toBe(false);
     expect(listActions([], ALL, "zzz", []).onlyHidden).toBe(true);
     expect(listActions([], ALL, "zzz", []).addAllDisabled).toBe(true);
   });

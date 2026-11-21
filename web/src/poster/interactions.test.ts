@@ -3,8 +3,8 @@ import { keyToAction } from "./interactions";
 
 describe("keyToAction", () => {
   it("Enter and Space select the bird, which shows Mirror and Remove", () => {
-    expect(keyToAction("Enter")).toEqual({ type: "select" });
-    expect(keyToAction(" ")).toEqual({ type: "select" });
+    expect(keyToAction("Enter")).toEqual({ type: "mirror" });
+    expect(keyToAction(" ")).toEqual({ type: "mirror" });
   });
 
   it("Delete and Backspace remove it", () => {

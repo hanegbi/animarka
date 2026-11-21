@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 import { STARTER_IDS } from "../src/catalog/starter";
+import { pickPreset } from "./helpers";
 import { expect, test } from "./test";
 
 /** A fresh visitor: no saved poster, so the 12 bird starter poster shows. */
@@ -19,10 +20,6 @@ const chip = (page: Page, family: string) =>
   page
     .getByRole("group", { name: "Show a family" })
     .getByRole("button", { name: new RegExp(`^${family}(,|$)`) });
-const preset = (page: Page, title: string) =>
-  page
-    .getByRole("group", { name: "Start from a preset" })
-    .getByRole("button", { name: title, exact: true });
 const status = (page: Page) => page.locator("p[role=status]");
 /** The list only renders the rows in view, so find a bird by searching, as a person would. */
 async function find(page: Page, query: string) {
@@ -184,7 +181,7 @@ test("surprise mix builds 12 to 16 birds and clear empties the poster", async ({
   await page.getByRole("button", { name: "Clear poster" }).click();
   await expect(onPoster(page)).toHaveCount(0);
   await expect(
-    page.getByText("Empty. Pick birds above, or try Surprise mix."),
+    page.getByText("Nothing yet. Tap birds below, or try Surprise mix."),
   ).toBeVisible();
 });
 
@@ -194,10 +191,10 @@ test("presets replace the poster, and a one family preset names it", async ({
 }) => {
   await open(page);
   const owls = catalog.preset("owls-of-the-world");
-  await preset(page, owls.title).click();
+  await pickPreset(page, owls.title);
   await expect(onPoster(page)).toHaveCount(owls.ids.length);
   const hummingbirds = catalog.preset("hummingbirds");
-  await preset(page, hummingbirds.title).click();
+  await pickPreset(page, hummingbirds.title);
   await expect(onPoster(page)).toHaveCount(hummingbirds.ids.length);
   await expect(page.locator("[data-poster-title]")).toHaveValue(
     catalog.get(hummingbirds.ids[0]).family,

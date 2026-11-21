@@ -1,5 +1,10 @@
 import { seededShuffle } from "./random";
-import type { PosterAction, PosterContext, PosterState } from "./types";
+import {
+  MAX_BIRDS,
+  type PosterAction,
+  type PosterContext,
+  type PosterState,
+} from "./types";
 
 export const DEFAULT_TITLE = "Birds";
 
@@ -79,15 +84,19 @@ export function reduce(
   switch (action.type) {
     case "toggle": {
       if (!ctx.catalog.has(action.id)) return state;
-      const order = state.order.includes(action.id)
-        ? state.order.filter((x) => x !== action.id)
-        : [...state.order, action.id];
-      return setOrder(state, order, ctx);
+      if (state.order.includes(action.id))
+        return setOrder(
+          state,
+          state.order.filter((x) => x !== action.id),
+          ctx,
+        );
+      if (state.order.length >= MAX_BIRDS) return state;
+      return setOrder(state, [...state.order, action.id], ctx);
     }
     case "addMany": {
-      const add = unique(action.ids).filter(
-        (id) => ctx.catalog.has(id) && !state.order.includes(id),
-      );
+      const add = unique(action.ids)
+        .filter((id) => ctx.catalog.has(id) && !state.order.includes(id))
+        .slice(0, Math.max(0, MAX_BIRDS - state.order.length));
       return add.length
         ? setOrder(state, [...state.order, ...add], ctx)
         : state;
@@ -100,7 +109,9 @@ export function reduce(
         : setOrder(state, order, ctx);
     }
     case "replaceWith": {
-      const order = unique(action.ids).filter((id) => ctx.catalog.has(id));
+      const order = unique(action.ids)
+        .filter((id) => ctx.catalog.has(id))
+        .slice(0, MAX_BIRDS);
       // Replacing the poster resets mirrors, like the prototype's "Only this family".
       return setOrder({ ...state, flip: {}, center: undefined }, order, ctx);
     }

@@ -20,3 +20,14 @@ export const GROUP_TAB: Record<string, Tab> = {
   Layout: "Layout",
   "Poster size": "Layout",
 };
+
+/** Open the "Start from a set" list in the picker, then press a preset by its title. */
+export async function pickPreset(page: Page, title: string) {
+  await openTab(page, "Birds");
+  const sets = page.getByRole("button", { name: "Start from a set" });
+  if ((await sets.getAttribute("aria-expanded")) !== "true") await sets.click();
+  await page
+    .getByRole("group", { name: "Start from a preset" })
+    .getByRole("button", { name: title, exact: true })
+    .click();
+}

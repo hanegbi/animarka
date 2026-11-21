@@ -45,7 +45,6 @@ describe("frame aspect", () => {
     expect(frameAspect("3:4", "portrait")).toBeCloseTo(0.75, 6);
     expect(frameAspect("2:3", "portrait")).toBeCloseTo(2 / 3, 6);
     expect(frameAspect("4:5", "portrait")).toBeCloseTo(0.8, 6);
-    expect(frameAspect("a", "portrait")).toBeCloseTo(1 / Math.SQRT2, 6);
     expect(frameAspect("3:4", "landscape")).toBeCloseTo(4 / 3, 6);
   });
 });

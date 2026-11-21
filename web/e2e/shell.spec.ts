@@ -136,12 +136,12 @@ test.describe("phone shell (poster on top, tab bar, short sheet)", () => {
   });
 });
 
-test.describe("desktop shell (picker left, toolbar above the poster)", () => {
+test.describe("desktop shell (birds left, poster centre, style right)", () => {
   test.beforeEach(({}, info) =>
     test.skip(desktopOnly(info.project.name), "desktop only"),
   );
 
-  test("shows the picker, the toolbar with every style control, and the poster, with no tab bar", async ({
+  test("shows the picker, the style column with every control, names first, and no tab bar", async ({
     page,
   }) => {
     await open(page);
@@ -151,8 +151,13 @@ test.describe("desktop shell (picker left, toolbar above the poster)", () => {
     await expect(
       page.getByRole("searchbox", { name: "Search birds" }),
     ).toBeVisible();
-    const toolbar = page.getByRole("toolbar", { name: "Poster style" });
+    const inspector = page.getByRole("complementary", { name: "Poster style" });
+    const groups = await inspector
+      .getByRole("radiogroup")
+      .evaluateAll((els) => els.map((e) => e.getAttribute("aria-label")));
+    expect(groups[0]).toBe("Bird names");
     for (const group of [
+      "Bird names",
       "Design",
       "Labels",
       "Layout",
@@ -160,25 +165,23 @@ test.describe("desktop shell (picker left, toolbar above the poster)", () => {
       "Poster size",
     ]) {
       await expect(
-        toolbar.getByRole("radiogroup", { name: group }),
+        inspector.getByRole("radiogroup", { name: group }),
       ).toBeVisible();
     }
   });
 
-  test("the poster fits the window without scrolling, below the toolbar and beside the picker", async ({
+  test("the poster fits the window without scrolling, between the picker and the style column, and uses the full height", async ({
     page,
   }) => {
     await open(page);
     const poster = await rect(page, "[data-poster]");
-    const toolbar = await rect(
-      page,
-      "[role=toolbar][aria-label='Poster style']",
-    );
+    const inspector = await rect(page, "aside[aria-label='Poster style']");
     const picker = await rect(page, "aside[aria-label='Pick birds']");
     expect(insideViewport(page, poster)).toBe(true);
-    expect(poster.y).toBeGreaterThanOrEqual(toolbar.y + toolbar.h - 1);
     expect(poster.x).toBeGreaterThanOrEqual(picker.x + picker.w - 1);
-    expect(poster.h).toBeGreaterThan(380);
+    expect(poster.x + poster.w).toBeLessThanOrEqual(inspector.x + 1);
+    // With no toolbar above it, the poster takes most of the window height.
+    expect(poster.h).toBeGreaterThan(page.viewportSize()!.height * 0.75);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollHeight <= window.innerHeight + 1,
@@ -198,7 +201,7 @@ test.describe("desktop shell (picker left, toolbar above the poster)", () => {
     await page.setViewportSize({ width: 1100, height: 800 });
     await open(page);
     await expect(
-      page.getByRole("toolbar", { name: "Poster style" }),
+      page.getByRole("complementary", { name: "Poster style" }),
     ).toBeVisible();
     expect(insideViewport(page, await rect(page, "[data-poster]"))).toBe(true);
     await page.setViewportSize({ width: 1099, height: 800 });
@@ -206,7 +209,7 @@ test.describe("desktop shell (picker left, toolbar above the poster)", () => {
       page.getByRole("navigation", { name: "Poster tools" }),
     ).toBeVisible();
     await expect(
-      page.getByRole("toolbar", { name: "Poster style" }),
+      page.getByRole("complementary", { name: "Poster style" }),
     ).toHaveCount(0);
   });
 });
@@ -237,26 +240,5 @@ test.describe("accessibility", () => {
       }
     }
     expect([...new Set(found)]).toEqual([]);
-  });
-
-  test("with a bird selected, the Mirror and Remove bar has no serious or critical axe violations", async ({
-    page,
-  }) => {
-    await open(page);
-    await page.locator('[data-animal="bubo-bubo"] [data-art]').click();
-    await expect(page.locator("[data-bird-bar]")).toBeVisible();
-    const result = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
-      .analyze();
-    const bad = result.violations
-      .filter((v) => v.impact === "serious" || v.impact === "critical")
-      .map(
-        (v) =>
-          `${v.id}: ${v.nodes
-            .slice(0, 2)
-            .map((n) => n.target.join(" "))
-            .join(" | ")}`,
-      );
-    expect(bad).toEqual([]);
   });
 });

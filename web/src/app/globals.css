@@ -80,8 +80,14 @@
     height 0.2s ease,
     font-size 0.2s ease;
 }
-.poster-img {
-  transition: transform 0.18s ease;
+/* The drag preview (R8 E3): the bird under the pointer slides to the dragged bird's place. */
+.poster-animal {
+  transition:
+    left 0.2s ease,
+    top 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease,
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .poster-label {
   display: -webkit-box;

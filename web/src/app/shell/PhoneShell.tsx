@@ -6,8 +6,9 @@ import {
   SearchIcon,
   type LucideIcon,
 } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
-import { BackgroundPicker } from "@/controls/BackgroundPicker";
+import { useEffect, useState } from "react";
+import { BackgroundPicker, backgroundName } from "@/controls/BackgroundPicker";
+import { ControlSection } from "@/controls/Inspector";
 import {
   ShuffleButton,
   UndoRedo,
@@ -30,22 +31,13 @@ const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
   { id: "style", label: "Style", icon: PaletteIcon },
 ];
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="flex flex-col gap-1.5">
-      <h3 className="text-muted-foreground font-sans text-[11px] font-semibold tracking-wide uppercase">
-        {title}
-      </h3>
-      {children}
-    </section>
-  );
-}
+const Section = ControlSection;
 
 function LayoutPanel() {
   const state = usePosterState();
   const { dispatch } = usePosterActions();
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <Section title="Layout">
         <LayoutPicker
           value={state.layout}
@@ -69,7 +61,13 @@ function StylePanel() {
   const state = usePosterState();
   const { dispatch } = usePosterActions();
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
+      <Section title="Names">
+        <LanguagePicker
+          value={state.lang}
+          onChange={(lang) => dispatch({ type: "setLang", lang })}
+        />
+      </Section>
       <Section title="Design">
         <StyleCards
           value={state.style}
@@ -82,13 +80,7 @@ function StylePanel() {
           onChange={(labels) => dispatch({ type: "setLabels", labels })}
         />
       </Section>
-      <Section title="Names">
-        <LanguagePicker
-          value={state.lang}
-          onChange={(lang) => dispatch({ type: "setLang", lang })}
-        />
-      </Section>
-      <Section title="Background">
+      <Section title="Background" value={backgroundName(state.bg)}>
         <BackgroundPicker
           value={state.bg}
           onChange={(bg) => dispatch({ type: "setBg", bg })}

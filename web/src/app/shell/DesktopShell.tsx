@@ -5,17 +5,17 @@ import {
   UndoRedo,
   useUndoShortcuts,
 } from "@/controls/HistoryBar";
-import { Toolbar } from "@/controls/Toolbar";
+import { Inspector } from "@/controls/Inspector";
 import { Picker } from "@/picker/Picker";
 import { Credits } from "./Credits";
 import { PosterStage } from "./PosterStage";
 
-/** Desktop shell, R2 S2: picker on the left, every style control in a toolbar above the poster. */
+/** Desktop shell, R8 A2: birds on the left, the poster in the middle, style on the right. */
 export function DesktopShell() {
   useUndoShortcuts();
   return (
-    <div className="grid h-dvh grid-cols-[380px_1fr] grid-rows-[auto_1fr]">
-      <header className="bg-card col-span-2 flex items-center justify-between border-b px-4 py-2">
+    <div className="grid h-dvh grid-cols-[360px_minmax(0,1fr)_280px] grid-rows-[auto_minmax(0,1fr)]">
+      <header className="bg-card col-span-3 flex h-14 items-center justify-between border-b px-4">
         <span className="font-heading text-2xl font-bold">animarka</span>
         <div
           className="flex items-center gap-2"
@@ -35,12 +35,10 @@ export function DesktopShell() {
         </div>
         <Credits className="border-t p-3" />
       </aside>
-      <div className="flex min-h-0 flex-col">
-        <Toolbar />
-        <main className="min-h-0 flex-1 p-4">
-          <PosterStage />
-        </main>
-      </div>
+      <main className="min-h-0 p-6">
+        <PosterStage />
+      </main>
+      <Inspector />
     </div>
   );
 }

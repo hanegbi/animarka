@@ -11,13 +11,13 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
+  type DragOverEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
 import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -25,7 +25,7 @@ import {
 } from "react";
 import { artSrc, displayName } from "@/catalog/species-view";
 import { keyToAction } from "@/poster/interactions";
-import { BirdActionBar } from "./BirdActionBar";
+import { hopTurn } from "@/poster/motion";
 import { Poster, type AnimalShellProps, type PosterProps } from "./Poster";
 
 type Handlers = {
@@ -35,18 +35,25 @@ type Handlers = {
   onMove: (id: string, delta: 1 | -1) => void;
 };
 
+/** While a bird is dragged over another, that one slides to the dragged bird's place (R8 E3). */
+type Preview = { id: string; dx: number; dy: number } | null;
+
 type Ctx = Handlers & {
   activeId: string | null;
-  selectedId: string | null;
-  /** Select a bird, or deselect it if it already is. `keyboard` moves focus into the buttons. */
-  toggleSelect: (id: string, keyboard: boolean) => void;
+  preview: Preview;
+  /** Birds that jump to their new place with no transition, right after a drop. */
+  settling: Set<string>;
+  mirror: (id: string) => void;
   suppressClick: { current: boolean };
 };
 const ShellContext = createContext<Ctx | null>(null);
 
+const shellOf = (id: string) =>
+  document.querySelector<HTMLElement>(`[data-animal="${CSS.escape(id)}"]`);
+
 /**
- * One bird on the poster. Tap it to select it: a bar with Mirror and Remove buttons appears.
- * Drag it onto another bird to swap places. Enter or Space selects, Delete removes, arrow keys move it.
+ * One bird on the poster. Tap it to mirror it, with a short hop and turn. Drag it onto another bird to
+ * swap places. Enter or Space mirrors, Delete removes, arrow keys move it through the poster order.
  */
 function InteractiveShell({
   id,
@@ -67,24 +74,16 @@ function InteractiveShell({
   );
 
   const dragging = ctx.activeId === id;
-  const target = drop.isOver && ctx.activeId !== null && !dragging;
-  const selected = ctx.selectedId === id;
+  const preview = ctx.preview?.id === id ? ctx.preview : null;
+  const settling = ctx.settling.has(id);
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const action = keyToAction(e.key);
     if (!action) return;
     e.preventDefault();
-    // Select waits for the key to come back up. Otherwise focus jumps to the Mirror button while Space is still
-    // held, and the browser fires Space's click on key up, mirroring the bird by accident.
-    if (action.type === "select") return;
-    if (action.type === "remove") ctx.onRemove(id);
+    if (action.type === "mirror") ctx.mirror(id);
+    else if (action.type === "remove") ctx.onRemove(id);
     else ctx.onMove(id, action.delta);
-  };
-
-  const onKeyUp = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (keyToAction(e.key)?.type !== "select") return;
-    e.preventDefault();
-    ctx.toggleSelect(id, true);
   };
 
   return (
@@ -94,31 +93,27 @@ function InteractiveShell({
       {...drag.listeners}
       role="button"
       aria-roledescription="draggable bird"
-      aria-expanded={selected}
-      aria-label={`${name}. Enter shows the Mirror and Remove buttons. Arrow keys move it. Delete removes it. Drag it onto another bird to swap.`}
+      aria-label={`${name}. Press Enter to mirror it. Arrow keys move it. Delete removes it. Drag it onto another bird to swap.`}
       tabIndex={0}
       className="poster-animal focus-visible:ring-ring absolute cursor-grab rounded-[1cqw] outline-none focus-visible:ring-2 active:cursor-grabbing"
       style={{
         ...style,
         touchAction: "none",
-        opacity: dragging ? 0.3 : 1,
-        outline: target
-          ? "0.6cqw solid var(--primary)"
-          : selected
-            ? "0.35cqw solid var(--primary)"
-            : undefined,
-        outlineOffset: "0.4cqw",
+        opacity: dragging ? 0 : 1,
+        transform: preview
+          ? `translate(${preview.dx}px, ${preview.dy}px)`
+          : undefined,
+        transition: settling ? "none" : style.transition,
+        zIndex: preview ? 1 : undefined,
       }}
       onClick={() => {
         if (ctx.suppressClick.current) return;
-        ctx.toggleSelect(id, false);
+        ctx.mirror(id);
       }}
       onKeyDown={onKeyDown}
-      onKeyUp={onKeyUp}
       data-animal={id}
       data-mirrored={mirrored ? "true" : "false"}
-      data-selected={selected ? "true" : undefined}
-      data-drop-target={target ? "true" : undefined}
+      data-drop-target={preview ? "true" : undefined}
     >
       {children}
     </div>
@@ -136,17 +131,11 @@ export function InteractivePoster(props: PosterProps & Handlers) {
   const { onMirror, onRemove, onSwap, onMove, state, species, ...poster } =
     props;
   const [floating, setFloating] = useState<Floating>(null);
-  const [selection, setSelection] = useState<{
-    id: string;
-    keyboard: boolean;
-  } | null>(null);
+  const [preview, setPreview] = useState<Preview>(null);
+  const [settling, setSettling] = useState<Set<string>>(() => new Set());
   const suppressClick = useRef(false);
 
-  // A selection only counts while that bird is still on the poster.
-  const selectedId =
-    selection && state.order.includes(selection.id) ? selection.id : null;
-
-  // A small movement threshold keeps a plain tap a tap, so tap can select and drag can swap.
+  // A small movement threshold keeps a plain tap a tap, so tap can mirror and drag can swap.
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
@@ -159,54 +148,21 @@ export function InteractivePoster(props: PosterProps & Handlers) {
     [species, state.lang],
   );
 
-  const toggleSelect = useCallback((id: string, keyboard: boolean) => {
-    setSelection((cur) => (cur?.id === id ? null : { id, keyboard }));
-  }, []);
-
-  const closeSelection = useCallback(
-    (refocusBird: boolean) => {
-      const id = selectedId;
-      setSelection(null);
-      if (refocusBird && id) {
-        requestAnimationFrame(() =>
-          document
-            .querySelector<HTMLElement>(`[data-animal="${CSS.escape(id)}"]`)
-            ?.focus(),
-        );
-      }
+  const mirror = useCallback(
+    (id: string) => {
+      onMirror(id);
+      hopTurn(shellOf(id)?.querySelector("[data-art]"));
     },
-    [selectedId],
+    [onMirror],
   );
-
-  // Tap anywhere that is not a bird or the buttons, or press Escape, to put the buttons away.
-  useEffect(() => {
-    if (!selectedId) return;
-    const onPointerDown = (e: PointerEvent) => {
-      const t = e.target as Element | null;
-      if (t?.closest("[data-bird-bar], [data-animal]")) return;
-      setSelection(null);
-    };
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") closeSelection(true);
-    };
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [selectedId, closeSelection]);
 
   const onDragStart = (e: DragStartEvent) => {
     const id = String(e.active.id);
-    const shell = document.querySelector<HTMLElement>(
-      `[data-animal="${CSS.escape(id)}"]`,
-    );
+    const shell = shellOf(id);
     const art = shell
       ?.querySelector<HTMLElement>("[data-art]")
       ?.getBoundingClientRect();
     suppressClick.current = true;
-    setSelection(null);
     setFloating({
       id,
       width: art?.width ?? 80,
@@ -215,44 +171,60 @@ export function InteractivePoster(props: PosterProps & Handlers) {
     });
   };
 
-  const onDragEnd = (e: DragEndEvent) => {
+  const onDragOver = (e: DragOverEvent) => {
+    const active = String(e.active.id);
+    const over = e.over ? String(e.over.id) : null;
+    if (!over || over === active) {
+      setPreview(null);
+      return;
+    }
+    const a = shellOf(active)?.getBoundingClientRect();
+    const b = shellOf(over)?.getBoundingClientRect();
+    if (!a || !b) return;
+    // Centre on centre, so birds of different sizes trade places cleanly.
+    setPreview({
+      id: over,
+      dx: a.left + a.width / 2 - (b.left + b.width / 2),
+      dy: a.top + a.height / 2 - (b.top + b.height / 2),
+    });
+  };
+
+  const endDrag = () => {
     setFloating(null);
-    // The click that follows a drag must not select the bird.
+    setPreview(null);
+    // The click that follows a drag must not mirror the bird.
     window.setTimeout(() => {
       suppressClick.current = false;
     }, 60);
-    if (e.over && e.over.id !== e.active.id)
-      onSwap(String(e.active.id), String(e.over.id));
   };
 
-  const removeSelected = useCallback(
-    (id: string) => {
-      setSelection(null);
-      onRemove(id);
-    },
-    [onRemove],
-  );
+  const onDragEnd = (e: DragEndEvent) => {
+    const active = String(e.active.id);
+    const over = e.over ? String(e.over.id) : null;
+    endDrag();
+    if (!over || over === active) return;
+    // Both birds are already where they belong (the preview moved one, the drop the other), so
+    // they take their new places with no transition, then motion comes back on.
+    setSettling(new Set([active, over]));
+    onSwap(active, over);
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => setSettling(new Set())),
+    );
+  };
 
   const ctx = useMemo<Ctx>(
     () => ({
       onMirror,
-      onRemove: removeSelected,
+      onRemove,
       onSwap,
       onMove,
       activeId: floating?.id ?? null,
-      selectedId,
-      toggleSelect,
+      preview,
+      settling,
+      mirror,
       suppressClick,
     }),
-    [
-      onMirror,
-      removeSelected,
-      onSwap,
-      onMove,
-      floating,
-      selectedId,
-      toggleSelect,
-    ],
+    [onMirror, onRemove, onSwap, onMove, floating, preview, settling, mirror],
   );
 
   const sp = floating ? species.get(floating.id) : undefined;
@@ -263,15 +235,13 @@ export function InteractivePoster(props: PosterProps & Handlers) {
         sensors={sensors}
         collisionDetection={pointerWithin}
         onDragStart={onDragStart}
+        onDragOver={onDragOver}
         onDragEnd={onDragEnd}
-        onDragCancel={() => {
-          setFloating(null);
-          suppressClick.current = false;
-        }}
+        onDragCancel={endDrag}
         accessibility={{
           screenReaderInstructions: {
             draggable:
-              "Press Enter to show the Mirror and Remove buttons. Press an arrow key to move this bird through the poster order. Press Delete to remove it.",
+              "Press Enter to mirror this bird. Press an arrow key to move it through the poster order. Press Delete to remove it.",
           },
           announcements: {
             onDragStart: ({ active }) => `Picked up ${nameOf(active.id)}.`,
@@ -310,16 +280,6 @@ export function InteractivePoster(props: PosterProps & Handlers) {
           )}
         </DragOverlay>
       </DndContext>
-      {selectedId && !floating && (
-        <BirdActionBar
-          id={selectedId}
-          name={nameOf(selectedId)}
-          focusFirst={selection?.keyboard ?? false}
-          onMirror={() => onMirror(selectedId)}
-          onRemove={() => removeSelected(selectedId)}
-          onClose={closeSelection}
-        />
-      )}
     </ShellContext.Provider>
   );
 }

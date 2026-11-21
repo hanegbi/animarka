@@ -73,49 +73,37 @@ export function LayoutIcon({
   );
 }
 
+/**
+ * R8: three equal tiles that fill their section, each with the layout's dot picture and its name.
+ * The chosen tile is raised and outlined.
+ */
 export function LayoutPicker({
   value,
   onChange,
-  compact,
 }: {
   value: LayoutId;
   onChange: (v: LayoutId) => void;
-  compact?: boolean;
 }) {
-  const index = Math.max(
-    0,
-    ITEMS.findIndex((i) => i.value === value),
-  );
   return (
     <RadioGroup
       label="Layout"
       value={value}
       items={ITEMS}
       onChange={onChange}
-      className={`bg-muted relative grid grid-cols-3 rounded-xl p-1 ${compact ? "min-w-[216px]" : ""}`}
+      className="bg-muted grid w-full grid-cols-3 gap-0.5 rounded-[10px] border p-[3px]"
       itemClassName={(checked) =>
-        `relative z-10 flex ${compact ? "min-h-[52px] py-1" : "min-h-[64px] py-2"} flex-col items-center justify-center gap-1 rounded-lg text-xs transition-colors ${
+        `flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[7px] py-2.5 text-[12px] font-medium transition-colors ${
           checked
-            ? "text-primary font-semibold"
+            ? "bg-card text-primary shadow-sm"
             : "text-muted-foreground hover:text-foreground"
         }`
       }
       renderItem={(item) => (
         <>
-          <LayoutIcon layout={item.value} size={compact ? 24 : 32} />
-          {item.label}
+          <LayoutIcon layout={item.value} size={30} />
+          <span className="max-w-full truncate">{item.label}</span>
         </>
       )}
-    >
-      <span
-        aria-hidden
-        data-layout-highlight
-        className="border-primary bg-card absolute inset-y-1 start-1 rounded-lg border shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
-        style={{
-          width: "calc((100% - 0.5rem) / 3)",
-          transform: `translateX(${index * 100}%)`,
-        }}
-      />
-    </RadioGroup>
+    />
   );
 }

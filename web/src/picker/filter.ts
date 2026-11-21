@@ -1,5 +1,6 @@
 import type { SpeciesView } from "@/catalog/species-view";
 import type { Lang } from "@/poster/state/types";
+import { MAX_BIRDS } from "@/poster/state/types";
 
 /** 1161 reads as "1,161". */
 export const num = (n: number) => n.toLocaleString("en-US");
@@ -56,6 +57,8 @@ export type ListActions = {
   /** True when every bird in the list is already on the poster. */
   allOn: boolean;
   addAllDisabled: boolean;
+  /** Hidden for the whole catalog, and for any list longer than a poster holds. */
+  addAllHidden: boolean;
   /** "Only owls" or "Only these 5". Hidden when the list is the whole catalog. */
   onlyLabel: string;
   onlyHidden: boolean;
@@ -73,16 +76,18 @@ export function listActions(
   const onCount = list.filter((s) => on.has(s.id)).length;
   const allOn = list.length > 0 && onCount === list.length;
   const searching = query.trim().length > 0;
+  const tooMany = list.length > MAX_BIRDS;
   return {
     addAllLabel: allOn
       ? `Remove these ${num(list.length)}`
       : `Add all ${num(list.length)}`,
     allOn,
     addAllDisabled: list.length === 0,
+    addAllHidden: tooMany || (view === ALL && !searching),
     onlyLabel: searching
       ? `Only these ${num(list.length)}`
       : `Only ${view.toLowerCase()}`,
-    onlyHidden: list.length === 0 || (view === ALL && !searching),
+    onlyHidden: list.length === 0 || tooMany || (view === ALL && !searching),
     onlyDisabled: allOn && order.length === list.length,
   };
 }

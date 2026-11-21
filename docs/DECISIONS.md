@@ -76,6 +76,11 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | M2.6 | 2026-11-21 | Bird list | Virtualized against the panel that already scrolls, with a scroll margin, instead of a box of its own | | The old box grew to its full height, so all cards rendered: 246 ms to clear a search on 1,161 birds. Now under 50 ms |
 | M2.6 | 2026-11-21 | Tests without a backend | Playwright answers the API from a committed fixture (245 real birds, scripts/make_web_fixture.py) and one placeholder image. `E2E_LIVE_API=1` runs the same suite against docker compose | | CI stays fast and needs no ingest. The live run passed 218 of 218 |
 | M3 | 2026-11-21 | Cut M3 | No vision model, facing graph, admin review page, SSE or Prometheus metrics. Jobs move into M4 in their smallest form, polled. Upscaling only if the M4 proof prints look soft | | Owner: "I really don't need it." 236 directions are hand checked, the rest default to left, and Mirror fixes any bird |
+| R8 | 2026-11-21 | Desktop layout | A2 side inspector: birds left, poster centre, style column on the right. The names language switch sits at the top of the column. The A series size is removed | 5 options, `docs/design/r8/` | Owner pick. The poster is height bound, so the side column costs no poster size |
+| R8 | 2026-11-21 | Control system | B1: every control 40 px, small 32 px, 10 px corners, 14 px medium text, 44 px on phones. No sample pictures in Design and Labels | 5 options | Owner pick |
+| R8 | 2026-11-21 | Chosen birds | C1: round pictures of the birds on the poster in a strip under the search, x on hover, one click removes. The bird sits inside the circle with padding so it never touches the ring. Replaces the tray under the list | 5 options | Owner pick |
+| R8 | 2026-11-21 | Tap a bird | Tap only mirrors, no bar and no Remove button (reverses the M1 follow up). D3 hop and turn, sped up to about 300 ms. Delete still removes for keyboard users | 5 options | Owner pick: "make it a bit faster" |
+| R8 | 2026-11-21 | Swap | E3 live preview: while a bird is dragged over another, the other slides to the dragged bird's place; drop confirms | 5 options | Owner pick |
 
 ## Open questions
 

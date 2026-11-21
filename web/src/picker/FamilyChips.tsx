@@ -55,7 +55,7 @@ export const FamilyChips = memo(function FamilyChips({
             onPressedChange={() => onView(c.key)}
             variant="outline"
             aria-label={`${c.label}${c.onPoster ? `, ${c.onPoster} on poster` : ""}`}
-            className="data-[pressed]:border-primary data-[pressed]:bg-primary data-[pressed]:text-primary-foreground h-11 shrink-0 gap-1.5 rounded-full px-3.5"
+            className="data-[pressed]:border-primary data-[pressed]:bg-primary data-[pressed]:text-primary-foreground h-8 shrink-0 gap-1.5 rounded-full px-3 text-[13px] max-[1099px]:h-10"
           >
             {c.label}
             {c.onPoster > 0 && (

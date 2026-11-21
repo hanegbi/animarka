@@ -30,7 +30,7 @@ export function SearchField({
           placeholder="Search all birds, try kestrel or heron"
           aria-label={label}
           autoComplete="off"
-          className="h-11 ps-9 pe-9"
+          className="h-10 ps-9 pe-9 max-[1099px]:h-11"
         />
         {value && (
           <button

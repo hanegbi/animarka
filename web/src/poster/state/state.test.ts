@@ -5,7 +5,7 @@ import { effectiveMirror } from "./mirror";
 import { initialState, reduce, surprisePick } from "./reducer";
 import { loadState, sanitize, saveState, STORAGE_KEY } from "./storage";
 import { createPosterStore } from "./store";
-import type { PosterAction, PosterState } from "./types";
+import { MAX_BIRDS, type PosterAction, type PosterState } from "./types";
 
 const start = (order: string[] = []) => initialState(fakeCtx, order);
 const run = (s: PosterState, ...actions: PosterAction[]) =>
@@ -410,5 +410,28 @@ describe("store", () => {
     s.getState().replace(start(["c"]));
     expect(s.getState().history.past).toEqual([]);
     expect(s.getState().history.present.order).toEqual(["c"]);
+  });
+});
+
+describe("the 150 bird cap", () => {
+  const many = Array.from({ length: 200 }, (_, i) => `b${i}`);
+  const big = {
+    ...fakeCtx,
+    catalog: {
+      ...fakeCtx.catalog,
+      has: (id: string) => many.includes(id),
+      ids: () => many,
+    },
+  };
+  it("add all, replace and toggle never go past 150", () => {
+    let s = initialState(big, []);
+    s = reduce(s, { type: "addMany", ids: many }, big);
+    expect(s.order).toHaveLength(MAX_BIRDS);
+    expect(reduce(s, { type: "toggle", id: "b199" }, big).order).toHaveLength(
+      MAX_BIRDS,
+    );
+    expect(
+      reduce(s, { type: "replaceWith", ids: many }, big).order,
+    ).toHaveLength(MAX_BIRDS);
   });
 });

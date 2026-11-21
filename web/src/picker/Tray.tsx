@@ -2,15 +2,18 @@
 "use client";
 
 import { XIcon } from "lucide-react";
+import { useState } from "react";
 import { artSrc, displayName, type SpeciesView } from "@/catalog/species-view";
 import type { Lang } from "@/poster/state/types";
 
+/** How many pictures show before a "+N" button: two rows in the picker panel. */
+const COLLAPSED = 14;
+
 /**
- * T2. Thumbnail strip. Round pictures with a remove cross.
- * P1. A plain dark label shows the name on hover and on keyboard focus. It is drawn with CSS, because the
- * shadcn tooltip pulls in about 34 KB of floating-position code, more than the whole picker, for a one-word label.
- * The name is also the accessible name of the button, so the label is only a visual aid.
- * Adapted from Removable Badges by bundui.
+ * R8 C1. The birds on the poster, as round pictures pinned under the search. One click takes a bird
+ * off. The bird sits inside the circle with padding, so it never touches the ring.
+ * A plain dark label shows the name on hover and keyboard focus, drawn with CSS (no tooltip library).
+ * The name is also the button's accessible name, so the label is only a visual aid.
  */
 export function Tray({
   order,
@@ -25,20 +28,19 @@ export function Tray({
   lang: Lang;
   onRemove: (id: string, name: string) => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
   if (!order.length) {
     return (
       <p className="text-muted-foreground text-sm">
-        Empty. Pick birds above, or try Surprise mix.
+        Nothing yet. Tap birds below, or try Surprise mix.
       </p>
     );
   }
+  const visible = expanded ? order : order.slice(0, COLLAPSED);
+  const hidden = order.length - visible.length;
   return (
-    // The top padding is room for the label above the first row, since this box scrolls and would clip it.
-    <ul
-      aria-label="Birds on your poster"
-      className="flex max-h-48 flex-wrap gap-2 overflow-y-auto p-1 pt-9"
-    >
-      {order.map((id) => {
+    <ul aria-label="Birds on your poster" className="flex flex-wrap gap-1.5">
+      {visible.map((id) => {
         const s = species.get(id);
         if (!s) return null;
         const name = displayName(s, lang);
@@ -48,26 +50,27 @@ export function Tray({
               type="button"
               onClick={() => onRemove(id, name)}
               aria-label={`Remove ${name} from poster`}
-              className="group/thumb focus-visible:ring-ring/50 relative block size-11 rounded-full outline-none focus-visible:ring-3"
+              className="group/thumb bg-card hover:border-primary focus-visible:ring-ring/50 relative grid size-10 place-items-center rounded-full border outline-none focus-visible:ring-3 max-[1099px]:size-11"
             >
               <img
                 src={artSrc(s, style, "thumb")}
                 alt=""
-                width={44}
-                height={44}
+                width={26}
+                height={26}
                 loading="lazy"
-                className="bg-card size-11 rounded-full border object-contain"
+                // A 26 px box in a 40 px circle: even its corners stay inside the ring.
+                className="size-[26px] object-contain max-[1099px]:size-7"
               />
               <span
                 aria-hidden
-                className="bg-card text-foreground group-hover/thumb:bg-primary group-hover/thumb:text-primary-foreground absolute -end-1 -top-1 grid size-5 place-items-center rounded-full border shadow-sm"
+                className="bg-foreground text-background absolute -end-1 -top-1 grid size-4 place-items-center rounded-full opacity-0 transition-opacity group-hover/thumb:opacity-100 group-focus-visible/thumb:opacity-100 motion-reduce:transition-none"
               >
-                <XIcon className="size-3" />
+                <XIcon className="size-2.5" strokeWidth={3} />
               </span>
               <span
                 aria-hidden
                 data-tray-label
-                className="bg-foreground text-background pointer-events-none absolute start-1/2 bottom-full z-10 mb-1 max-w-48 -translate-x-1/2 truncate rounded-md px-3 py-1.5 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover/thumb:opacity-100 group-hover/thumb:delay-300 group-focus-visible/thumb:opacity-100 motion-reduce:transition-none"
+                className="bg-foreground text-background pointer-events-none absolute start-1/2 top-full z-10 mt-1.5 max-w-48 -translate-x-1/2 truncate rounded-md px-2.5 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover/thumb:opacity-100 group-hover/thumb:delay-300 group-focus-visible/thumb:opacity-100 motion-reduce:transition-none"
               >
                 {name}
               </span>
@@ -75,6 +78,18 @@ export function Tray({
           </li>
         );
       })}
+      {(hidden > 0 || expanded) && (
+        <li>
+          <button
+            type="button"
+            onClick={() => setExpanded((e) => !e)}
+            aria-expanded={expanded}
+            className="bg-muted text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 h-10 rounded-full px-3 text-[13px] font-medium outline-none focus-visible:ring-3 max-[1099px]:h-11"
+          >
+            {expanded ? "Show less" : `+${hidden}`}
+          </button>
+        </li>
+      )}
     </ul>
   );
 }
