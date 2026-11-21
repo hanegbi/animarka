@@ -446,3 +446,24 @@ test("a search with no result explains and suggests words to try", async ({
   ).toContainText("3 found");
   await expect(miss).toHaveCount(0);
 });
+
+test("the bird buttons are icons only, and their name shows on keyboard focus", async ({
+  page,
+}) => {
+  await open(page);
+  await page.locator('[data-animal="bubo-bubo"]').focus();
+  await page.keyboard.press("Enter");
+  const bar = page.locator("[data-bird-bar]");
+  for (const name of ["Mirror", "Remove"]) {
+    const button = bar.getByRole("button", { name });
+    const label = button.locator("span[aria-hidden]");
+    await expect(button.locator("svg")).toHaveCount(1);
+    await expect(label).toHaveText(name);
+    if (name === "Remove") {
+      await expect(label).toHaveCSS("opacity", "0");
+      await page.keyboard.press("Tab");
+    }
+    await expect(button).toBeFocused();
+    await expect(label).toHaveCSS("opacity", "1");
+  }
+});

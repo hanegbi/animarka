@@ -1,7 +1,8 @@
 "use client";
 
-import { FlipHorizontal2Icon, Trash2Icon } from "lucide-react";
+import { CircleMinusIcon, FlipHorizontal2Icon } from "lucide-react";
 import {
+  type ReactNode,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -12,6 +13,38 @@ import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 
 type Pos = { left: number; top: number };
+
+/**
+ * An icon button with no visible text. The name is its accessible name, and a plain dark label (P1) shows it on
+ * hover and keyboard focus, drawn with CSS like the tray labels.
+ */
+function IconAction({
+  label,
+  onClick,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="group/act relative size-11"
+      aria-label={label}
+      onClick={onClick}
+    >
+      {children}
+      <span
+        aria-hidden
+        className="bg-foreground text-background pointer-events-none absolute start-1/2 top-full z-10 mt-1.5 -translate-x-1/2 rounded-md px-2.5 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover/act:opacity-100 group-hover/act:delay-300 group-focus-visible/act:opacity-100 motion-reduce:transition-none"
+      >
+        {label}
+      </span>
+    </Button>
+  );
+}
 
 const GAP = 8;
 const MARGIN = 8;
@@ -118,12 +151,12 @@ export function BirdActionBar({
         visibility: pos ? "visible" : "hidden",
       }}
     >
-      <Button variant="ghost" onClick={onMirror}>
-        <FlipHorizontal2Icon aria-hidden /> Mirror
-      </Button>
-      <Button variant="ghost" onClick={onRemove}>
-        <Trash2Icon aria-hidden /> Remove
-      </Button>
+      <IconAction label="Mirror" onClick={onMirror}>
+        <FlipHorizontal2Icon aria-hidden className="size-5" />
+      </IconAction>
+      <IconAction label="Remove" onClick={onRemove}>
+        <CircleMinusIcon aria-hidden className="size-5" />
+      </IconAction>
     </div>,
     document.body,
   );
