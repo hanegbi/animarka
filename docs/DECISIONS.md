@@ -82,11 +82,10 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | 5 | Commercial permission for the woodblock set | Before M5 | Ask the authors. Fallback: paid export in field guide style only |
 | 6 | Hosting for k3s | M6 | One VPS with 8 GB RAM |
 | 7 | Domain | M6 | |
-| 9 | Contact address for the Report a wrong bird link, if a mail link is wanted before M2 | M2 | |
 | 8 | Print sizes at launch beyond 18x24 in, 12x16 in, A2, A3 | M4 | |
+| 10 | Review the preset lists in `api/data/presets.json`. Add, remove or rename freely | M2 | |
 
 ## Working preferences
 
 - The 21st.dev free tier allows 2 code retrievals a day. Spend them on components with real logic. Plain inputs and cards are built directly. The CLI install needs `API_KEY_21ST` in the environment, never in the repo. (2026-11-21)
 - Design rounds must be shown at desktop size first, then phone. Screenshots at 1280 px or wider, with options side by side where possible. (Owner, 2026-11-21)
-- Review the preset lists in `api/data/presets.json` (M2.5). Add, remove or rename freely.
