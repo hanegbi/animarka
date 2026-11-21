@@ -74,7 +74,7 @@ export function ShuffleButton() {
   return (
     <Button
       variant="outline"
-      size="lg"
+      className="w-full"
       disabled={state.order.length < 2}
       onClick={() =>
         dispatch({ type: "shuffle", seed: Math.floor(Math.random() * 1e6) })

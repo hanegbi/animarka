@@ -81,6 +81,11 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | R8 | 2026-11-21 | Chosen birds | C1: round pictures of the birds on the poster in a strip under the search, x on hover, one click removes. The bird sits inside the circle with padding so it never touches the ring. Replaces the tray under the list | 5 options | Owner pick |
 | R8 | 2026-11-21 | Tap a bird | Tap only mirrors, no bar and no Remove button (reverses the M1 follow up). D3 hop and turn, sped up to about 300 ms. Delete still removes for keyboard users | 5 options | Owner pick: "make it a bit faster" |
 | R8 | 2026-11-21 | Swap | E3 live preview: while a bird is dragged over another, the other slides to the dragged bird's place; drop confirms | 5 options | Owner pick |
+| Plan | 2026-11-22 | Cut k3s, KEDA, Grafana, load test, mammals and AI generation | Deploy with Docker Compose on one server, Caddy for TLS | | Owner: "yes cut them, use docker compose". The app needs one server, not a cluster |
+| R8.1 | 2026-11-22 | Family filter | One full-width Family button opens a vertical list with a find box, bird counts and on-poster counts. No sideways scrolling anywhere in the panels | | Owner: the sideways chip row was bad. 134 families do not fit a chip row |
+| R8.1 | 2026-11-22 | Layout section | Shuffle layout moves from the header into Layout. New Direction control: Face left / Face right turns every bird at once; after single taps it shows Mixed | | Owner asks. "Direction" with "Face left / Face right" reads plainer than mirror or flip |
+| R8.1 | 2026-11-22 | Centerpiece swap | Dropping a bird on the big centre bird (or the centre on another) hands over the big spot in the same undo step | | Before, the heaviest bird always stayed big, so the swap looked broken |
+| R8.1 | 2026-11-22 | Remove and credits | No pop-up when a bird is removed; header Undo brings it back. Art credits move behind a Credits button in the header | | Owner asks. Credit stays one click away because CC BY 4.0 requires it |
 
 ## Open questions
 
@@ -88,7 +93,7 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 |---|---|---|---|
 | 4 | Price for the print ready file, and whether it depends on size | M5 | |
 | 5 | Commercial permission for the woodblock set | Before M5 | Ask the authors. Fallback: paid export in field guide style only |
-| 6 | Hosting for k3s | M6 | One VPS with 8 GB RAM |
+| 6 | Hosting for Docker Compose | M6 | One VPS with 8 GB RAM |
 | 7 | Domain | M6 | |
 | 8 | Print sizes at launch beyond 18x24 in, 12x16 in, A2, A3 | M4 | |
 | 10 | Review the preset lists in `api/data/presets.json`. Add, remove or rename freely | M2 | |

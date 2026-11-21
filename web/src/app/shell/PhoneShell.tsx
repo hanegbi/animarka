@@ -14,7 +14,9 @@ import {
   UndoRedo,
   useUndoShortcuts,
 } from "@/controls/HistoryBar";
+import { DirectionPicker } from "@/controls/DirectionPicker";
 import { LayoutPicker } from "@/controls/LayoutPicker";
+import { facing } from "@/poster/state/mirror";
 import { SizePicker } from "@/controls/SizePicker";
 import { LanguagePicker } from "@/controls/LanguagePicker";
 import { LabelCards, StyleCards } from "@/controls/StyleCards";
@@ -36,12 +38,20 @@ const Section = ControlSection;
 function LayoutPanel() {
   const state = usePosterState();
   const { dispatch } = usePosterActions();
+  const dir = facing(state);
   return (
     <div className="flex flex-col gap-5">
       <Section title="Layout">
         <LayoutPicker
           value={state.layout}
           onChange={(layout) => dispatch({ type: "setLayout", layout })}
+        />
+        <ShuffleButton />
+      </Section>
+      <Section title="Direction" value={dir === "mixed" ? "Mixed" : undefined}>
+        <DirectionPicker
+          value={dir}
+          onChange={(d) => dispatch({ type: "faceAll", dir: d })}
         />
       </Section>
       <Section title="Size">
@@ -50,9 +60,6 @@ function LayoutPanel() {
           onChange={(size) => dispatch({ type: "setSize", size })}
         />
       </Section>
-      <div>
-        <ShuffleButton />
-      </div>
     </div>
   );
 }
@@ -117,6 +124,7 @@ export function PhoneShell() {
           role="toolbar"
           aria-label="Poster actions"
         >
+          <Credits />
           <UndoRedo iconOnly />
         </div>
       </header>
@@ -129,14 +137,13 @@ export function PhoneShell() {
         id="sheet"
         aria-label={open ? TABS.find((t) => t.id === open)!.label : "Tools"}
         hidden={!open}
-        className="bg-card shrink-0 overflow-y-auto overscroll-contain border-t p-3"
+        className="bg-card shrink-0 overflow-x-hidden overflow-y-auto overscroll-contain border-t p-3"
         style={{ height: open === "birds" ? "48dvh" : open ? "40dvh" : 0 }}
         data-sheet={open ?? "closed"}
       >
         {open === "birds" && (
           <>
             <Picker />
-            <Credits className="mt-4 border-t pt-3" />
           </>
         )}
         {open === "layout" && <LayoutPanel />}

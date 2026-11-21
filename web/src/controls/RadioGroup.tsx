@@ -84,7 +84,8 @@ export function RadioGroup<T extends string>({
     >
       {children}
       {items.map((item, i) => {
-        const checked = i === current;
+        // Nothing is checked when the value matches no item (a mix); the first item keeps the tab stop.
+        const checked = item.value === value;
         const cls =
           typeof itemClassName === "function"
             ? itemClassName(checked)
@@ -99,7 +100,7 @@ export function RadioGroup<T extends string>({
             role="radio"
             aria-checked={checked}
             aria-label={item.label}
-            tabIndex={checked ? 0 : -1}
+            tabIndex={i === current ? 0 : -1}
             onClick={() => onChange(item.value)}
             className={`focus-visible:ring-ring/50 outline-none focus-visible:ring-3 ${cls}`}
           >

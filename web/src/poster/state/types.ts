@@ -66,7 +66,10 @@ export type PosterAction =
   | { type: "replaceWith"; ids: string[] }
   | { type: "clear" }
   | { type: "surprise"; seed: number }
-  | { type: "swap"; a: string; b: string }
+  /** `center` hands the centerpiece spot to another bird in the same step. */
+  | { type: "swap"; a: string; b: string; center?: string }
+  /** Turn every bird to look the same way. */
+  | { type: "faceAll"; dir: "left" | "right" }
   | { type: "move"; id: string; delta: number }
   | { type: "mirror"; id: string }
   | { type: "shuffle"; seed: number }

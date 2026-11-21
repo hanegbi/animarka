@@ -200,7 +200,10 @@ test("keyboard: Delete removes the focused bird", async ({ page }) => {
   await animal(page, ONE).focus();
   await page.keyboard.press("Delete");
   await expect(animal(page, ONE)).toHaveCount(0);
-  await expect(page.locator("[data-sonner-toast]")).toContainText("removed");
+  // No pop-up on remove. Undo in the header brings the bird back.
+  await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);
+  await undoHeader(page).click();
+  await expect(animal(page, ONE)).toHaveCount(1);
 });
 
 test("keyboard: arrow keys move a bird through the order and keep focus on it", async ({
@@ -247,7 +250,7 @@ test("motion: birds glide in 200 ms, and reduced motion turns it off", async ({
   expect(await duration()).toMatch(/^0s(, 0s)*$/);
 });
 
-test("removing a bird from the tray shows a message with Undo", async ({
+test("removing a bird from the strip shows no pop-up, and header Undo brings it back", async ({
   page,
 }) => {
   await open(page);
@@ -255,10 +258,38 @@ test("removing a bird from the tray shows a message with Undo", async ({
     .getByRole("button", { name: "Remove Mute Swan from poster" })
     .click();
   await expect(animal(page, "cygnus-olor")).toHaveCount(0);
-  const toast = page.locator("[data-sonner-toast]");
-  await expect(toast).toContainText("Mute Swan removed");
-  await toast.getByRole("button", { name: "Undo" }).click();
+  await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);
+  await undoHeader(page).click();
   await expect(animal(page, "cygnus-olor")).toHaveCount(1);
+});
+
+test("Direction: face right turns every bird, face left turns them back, a single tap makes a mix", async ({
+  page,
+}) => {
+  await open(page);
+  await openTab(page, "Layout");
+  const group = page.getByRole("radiogroup", { name: "Direction" });
+  await group.getByRole("radio", { name: "Face right" }).click();
+  // The eagle-owl's art looks left, so facing right means it is now mirrored; so is every other left-drawn bird.
+  await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "true");
+  await expect(animal(page, TWO)).toHaveAttribute("data-mirrored", "true");
+  await expect(
+    group.getByRole("radio", { name: "Face right" }),
+  ).toHaveAttribute("aria-checked", "true");
+  await group.getByRole("radio", { name: "Face left" }).click();
+  await expect(group.getByRole("radio", { name: "Face left" })).toHaveAttribute(
+    "aria-checked",
+    "true",
+  );
+  await tap(page, ONE);
+  await expect(group.getByRole("radio", { name: "Face left" })).toHaveAttribute(
+    "aria-checked",
+    "false",
+  );
+  await expect(
+    group.getByRole("radio", { name: "Face right" }),
+  ).toHaveAttribute("aria-checked", "false");
+  await expect(page.getByText("Mixed")).toBeVisible();
 });
 
 test("clearing the poster shows a message with Undo that brings everything back", async ({
@@ -344,4 +375,45 @@ test("a search with no result explains and suggests words to try", async ({
     page.locator("p[role=status]").filter({ hasText: "found" }),
   ).toContainText(`${catalog.search("kestrel").length} found`);
   await expect(miss).toHaveCount(0);
+});
+
+test("centerpiece: dropping a bird on the big centre bird gives it the big spot", async ({
+  page,
+}) => {
+  await open(page);
+  await openTab(page, "Layout");
+  await page
+    .getByRole("radiogroup", { name: "Layout" })
+    .getByRole("radio", { name: "Centerpiece" })
+    .click();
+  const area = async (id: string) => {
+    const b = (await animal(page, id).locator("[data-art]").boundingBox())!;
+    return b.width * b.height;
+  };
+  const ids = await order(page);
+  const areas = await Promise.all(ids.map(area));
+  const big = ids[areas.indexOf(Math.max(...areas))];
+  const small = ids.find((id) => id !== big)!;
+  await drag(page, small, big);
+  const biggest = async () => {
+    const now = await Promise.all(ids.map(area));
+    return ids[now.indexOf(Math.max(...now))];
+  };
+  await expect.poll(biggest).toBe(small);
+});
+
+test("the picker panel never scrolls sideways", async ({ page }) => {
+  await open(page);
+  await openTab(page, "Birds");
+  const wide = await page.evaluate(() =>
+    [...document.querySelectorAll("aside, #sheet, aside *")]
+      .filter(
+        (e) =>
+          e.scrollWidth > e.clientWidth + 1 &&
+          getComputedStyle(e).overflowX !== "hidden" &&
+          getComputedStyle(e).overflowX !== "visible",
+      )
+      .map((e) => e.tagName + "." + String(e.className).slice(0, 40)),
+  );
+  expect(wide).toEqual([]);
 });

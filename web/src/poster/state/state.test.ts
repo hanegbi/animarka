@@ -435,3 +435,30 @@ describe("the 150 bird cap", () => {
     ).toHaveLength(MAX_BIRDS);
   });
 });
+
+describe("face all", () => {
+  it("turns every bird right, then all back left, and reports a mix in between", async () => {
+    const { facing } = await import("./mirror");
+    let s = start(["a", "b", "c"]);
+    expect(facing(s)).toBe("left");
+    s = run(s, { type: "mirror", id: "a" });
+    expect(facing(s)).toBe("mixed");
+    s = run(s, { type: "faceAll", dir: "right" });
+    expect(facing(s)).toBe("right");
+    expect(s.order.every((id) => s.flip[id])).toBe(true);
+    s = run(s, { type: "faceAll", dir: "left" });
+    expect(facing(s)).toBe("left");
+    expect(run(s, { type: "faceAll", dir: "left" })).toBe(s);
+  });
+
+  it("a swap can hand over the centerpiece in the same step", () => {
+    const s = run(start(["a", "b", "c"]), {
+      type: "swap",
+      a: "a",
+      b: "c",
+      center: "c",
+    });
+    expect(s.order).toEqual(["c", "b", "a"]);
+    expect(s.center).toBe("c");
+  });
+});

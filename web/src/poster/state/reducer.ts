@@ -1,3 +1,4 @@
+import { facing } from "./mirror";
 import { seededShuffle } from "./random";
 import {
   MAX_BIRDS,
@@ -132,7 +133,7 @@ export function reduce(
       const order = state.order.slice();
       order[i] = action.b;
       order[j] = action.a;
-      return { ...state, order };
+      return { ...state, order, center: action.center ?? state.center };
     }
     case "move": {
       const i = state.order.indexOf(action.id);
@@ -189,6 +190,14 @@ export function reduce(
       const titleAuto = !action.title.trim();
       const next = { ...state, title: action.title, titleAuto };
       return titleAuto ? withAutoTitle(next, ctx) : next;
+    }
+    case "faceAll": {
+      // Art is shown looking left unless flipped (see mirror.ts), so "left" clears every flip and
+      // "right" flips every bird. Birds drawn facing front look the same either way.
+      if (!state.order.length || facing(state) === action.dir) return state;
+      const flip: Record<string, true> = {};
+      if (action.dir === "right") for (const id of state.order) flip[id] = true;
+      return { ...state, flip };
     }
     case "setCenter":
       if (action.id !== undefined && !state.order.includes(action.id))

@@ -262,25 +262,16 @@ The owner cut M3. No vision model, no facing graph, no admin review page, no SSE
 
 Blocker before real charging: written permission for commercial use of the woodblock set (see open questions).
 
-### M6. Deploy and observe
+### M6. Deploy (Docker Compose on one server)
+
+Cut by the owner on 2026-11-22: k3s, KEDA, Grafana dashboards, the load test, mammals and AI generation (old M7). LangGraph is no longer used.
 
 | Task | Files | Behavior | Check |
 |---|---|---|---|
-| M6.1 k3s manifests | `infra/k8s/*` | Deployments for web, api, one worker deployment per queue, Postgres, Redis, RabbitMQ, ingress with TLS, secrets from the cluster. | Deployed and reachable. |
-| M6.2 KEDA | `infra/keda/*` | ScaledObject per worker on RabbitMQ queue length, render workers scale to zero. | `kubectl get hpa` shows scaling under load. |
-| M6.3 Observability | `infra/prometheus/*`, `infra/grafana/*` | Prometheus scrape, Grafana dashboards for queue depth, worker count, job duration, error rate. Structured JSON logs. Flower. | Dashboards show live data. |
-| M6.4 Load test | `scripts/loadtest/*`, `docs/LOADTEST.md` | Queue 200 render jobs, record workers scaling up and back down, write the report with Grafana screenshots. | Report committed. |
-| M6.5 Deploy in CI | `.github/workflows/deploy.yml` | Build and push images, roll out on push to `master`. | A commit reaches production. |
-
-### M7. Mammals and AI generation
-
-| Task | Files | Behavior | Check |
-|---|---|---|---|
-| M7.1 Mammal catalog | data, ingest | Second catalog with the same data shape. Catalog switch in the picker. | API and Playwright tests. |
-| M7.2 Generation graph | `workers/graphs/generation.py`, `tasks/generate.py` | LangGraph on the `generate` queue: validate species, gather reference, generate, remove background, quality check, human approve, publish. Never accepts free user text. | Graph tests with fakes. |
-| M7.3 Approval page | admin | Approve or reject generated art. | Playwright happy path. |
-
-M7 needs its own short planning pass once M6 is done, since it depends on model choices not yet made.
+| M6.1 Production compose | `infra/compose/docker-compose.prod.yml`, `infra/compose/Caddyfile` | Built images for web, api and worker, Postgres, Redis, RabbitMQ, Caddy in front with automatic TLS. Secrets from a `.env` on the server, never in the repo. Restart policies and volumes for data and storage. | `docker compose -f docker-compose.prod.yml up -d` on a clean machine serves the site over HTTPS. |
+| M6.2 Health and logs | api, worker | Health checks on every service, structured JSON logs, Flower behind basic auth for the queues. | Every container reports healthy. |
+| M6.3 Backups | `scripts/backup.sh` | Nightly Postgres dump and storage sync to an off server bucket, 14 days kept. | A restore test on a fresh machine. |
+| M6.4 Deploy from CI | `.github/workflows/deploy.yml` | Build and push images, then pull and restart on the server over SSH on push to `master`. | A commit reaches production. |
 
 ## Risks
 
@@ -288,7 +279,7 @@ M7 needs its own short planning pass once M6 is done, since it depends on model 
 |---|---|---|
 | Woodblock art began in a non commercial project | Selling files with it may not be allowed | Owner asks the authors before M5. Fallback: paid export only in field guide style. |
 | Source art is small | Soft prints | Upscale queue (decision 2), reviewed samples, proof prints at M4. |
-| Chromium renders are heavy | Slow jobs, large image, memory spikes at A2 | One render per worker process, memory limits, KEDA scaling, cache by hash. |
+| Chromium renders are heavy | Slow jobs, large image, memory spikes at A2 | One render per worker process, memory limits, cache by hash. |
 | The woodblock pose the prototype used is unknown | `WB_FLIP` may not match the downloaded files | Visual check in M1.1, stop and ask on mismatch. |
 | The 1,161 overlap is unverified | Catalog size differs | M2.3 reports the real count. |
 | Both art sets are AI made and may show wrong birds | Trust | Report link per species, `reports` table, status flag on artworks. |
@@ -301,7 +292,7 @@ Not needed to start. Each is needed by the milestone shown.
 
 4. Price for the print ready file, and whether price depends on size (M5).
 5. Commercial permission for the woodblock set (before M5).
-6. Hosting for k3s: single VPS or managed cluster (M6). Suggestion: one VPS with 8 GB RAM, since Chromium renders need memory.
+6. Hosting: one VPS for Docker Compose (M6). Suggestion: 8 GB RAM, since Chromium renders need memory.
 7. Domain (M6).
 8. Which print sizes to offer at launch beyond 18x24 in, 12x16 in, A2, A3 (M4).
 

@@ -31,3 +31,11 @@ export async function pickPreset(page: Page, title: string) {
     .getByRole("button", { name: title, exact: true })
     .click();
 }
+
+/** Open the family list in the picker. */
+export async function openFamilies(page: Page) {
+  await openTab(page, "Birds");
+  const button = page.getByRole("button", { name: /^Family/ });
+  if ((await button.getAttribute("aria-expanded")) !== "true")
+    await button.click();
+}

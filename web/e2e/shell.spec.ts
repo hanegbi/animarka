@@ -126,11 +126,10 @@ test.describe("phone shell (poster on top, tab bar, short sheet)", () => {
     ).toBeVisible();
   });
 
-  test("the art credits are in the Birds sheet", async ({ page }) => {
+  test("the art credits open from the header", async ({ page }) => {
     await open(page);
-    await page
-      .locator("#sheet")
-      .evaluate((el) => el.scrollTo({ top: el.scrollHeight }));
+    await expect(page.getByText("CC BY 4.0")).toHaveCount(0);
+    await page.getByRole("button", { name: "Credits" }).click();
     await expect(page.getByText("CC BY 4.0")).toBeVisible();
     await expect(page.getByText("Both sets are AI generated")).toBeVisible();
   });
@@ -189,8 +188,11 @@ test.describe("desktop shell (birds left, poster centre, style right)", () => {
     ).toBe(true);
   });
 
-  test("art credits for both sources are always visible", async ({ page }) => {
+  test("art credits for both sources open from the header", async ({
+    page,
+  }) => {
     await open(page);
+    await page.getByRole("button", { name: "Credits" }).click();
     await expect(page.getByText("CC BY 4.0")).toBeVisible();
     await expect(page.getByText("MIT. Both sets")).toBeVisible();
   });

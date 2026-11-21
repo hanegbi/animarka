@@ -2,7 +2,10 @@
 
 import type { ReactNode } from "react";
 import { usePosterActions, usePosterState } from "@/poster/state/provider";
+import { facing } from "@/poster/state/mirror";
 import { BackgroundPicker, backgroundName } from "./BackgroundPicker";
+import { DirectionPicker } from "./DirectionPicker";
+import { ShuffleButton } from "./HistoryBar";
 import { LanguagePicker } from "./LanguagePicker";
 import { LayoutPicker } from "./LayoutPicker";
 import { SizePicker } from "./SizePicker";
@@ -44,6 +47,7 @@ export function ControlSection({
 export function Inspector() {
   const state = usePosterState();
   const { dispatch } = usePosterActions();
+  const dir = facing(state);
   return (
     <aside
       aria-label="Poster style"
@@ -71,6 +75,16 @@ export function Inspector() {
         <LayoutPicker
           value={state.layout}
           onChange={(layout) => dispatch({ type: "setLayout", layout })}
+        />
+        <ShuffleButton />
+      </ControlSection>
+      <ControlSection
+        title="Direction"
+        value={dir === "mixed" ? "Mixed" : undefined}
+      >
+        <DirectionPicker
+          value={dir}
+          onChange={(d) => dispatch({ type: "faceAll", dir: d })}
         />
       </ControlSection>
       <ControlSection title="Background" value={backgroundName(state.bg)}>

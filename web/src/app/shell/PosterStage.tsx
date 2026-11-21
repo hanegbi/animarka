@@ -1,7 +1,6 @@
 "use client";
 
-import { displayName } from "@/catalog/species-view";
-import { notifyUndoable } from "@/lib/notify";
+import { pickCenter } from "@/poster/layout/centerpiece";
 import { Button } from "@/components/ui/button";
 import { InteractivePoster } from "@/poster/components/InteractivePoster";
 import { frameAspect } from "@/poster/layout/sizing";
@@ -61,9 +60,25 @@ function EmptyPoster({ phone }: { phone?: boolean }) {
  */
 export function PosterStage({ phone }: { phone?: boolean }) {
   const state = usePosterState();
-  const { dispatch, undo } = usePosterActions();
+  const { dispatch } = usePosterActions();
   const { species, ctx } = useCatalog();
   const aspect = frameAspect(state.size, state.orientation);
+
+  /**
+   * In the centerpiece layout the big bird is the chosen centre, or else the heaviest. A swap with
+   * that bird hands the centre to the other one, so the dropped bird really takes the big spot.
+   */
+  const centerAfterSwap = (a: string, b: string): string | undefined => {
+    if (state.layout !== "centerpiece") return undefined;
+    const animals = state.order.map((id) => ({
+      id,
+      massG: species.get(id)?.massG ?? 0,
+    }));
+    const current = animals[pickCenter(animals, state.center)]?.id;
+    if (current === a) return b;
+    if (current === b) return a;
+    return undefined;
+  };
 
   return (
     <div className="flex h-full min-h-0 w-full min-w-0 items-center justify-center">
@@ -78,13 +93,11 @@ export function PosterStage({ phone }: { phone?: boolean }) {
           className="shadow-md"
           onTitleChange={(title) => dispatch({ type: "setTitle", title })}
           onMirror={(id) => dispatch({ type: "mirror", id })}
-          onRemove={(id) => {
-            const sp = species.get(id);
-            const name = sp ? displayName(sp, state.lang) : "Bird";
-            if (dispatch({ type: "toggle", id }))
-              notifyUndoable(`${name} removed`, undo);
-          }}
-          onSwap={(a, b) => dispatch({ type: "swap", a, b })}
+          // No message on remove (owner call, R8). Undo in the header brings a bird back.
+          onRemove={(id) => dispatch({ type: "toggle", id })}
+          onSwap={(a, b) =>
+            dispatch({ type: "swap", a, b, center: centerAfterSwap(a, b) })
+          }
           onMove={(id, delta) => dispatch({ type: "move", id, delta })}
           overlay={
             state.order.length === 0 ? <EmptyPoster phone={phone} /> : undefined

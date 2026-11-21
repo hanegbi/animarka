@@ -188,9 +188,7 @@ export function Picker() {
           species={species}
           style={state.style}
           lang={state.lang}
-          onRemove={(id, name) =>
-            act({ type: "toggle", id }, `${name} removed`)
-          }
+          onRemove={(id) => dispatch({ type: "toggle", id })}
         />
       </section>
 
@@ -199,6 +197,7 @@ export function Picker() {
         view={view}
         onView={changeView}
         totalOnPoster={state.order.length}
+        totalBirds={list.length}
       />
 
       {(!actions.addAllHidden || !actions.onlyHidden) && (

@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  ShuffleButton,
-  UndoRedo,
-  useUndoShortcuts,
-} from "@/controls/HistoryBar";
+import { UndoRedo, useUndoShortcuts } from "@/controls/HistoryBar";
 import { Inspector } from "@/controls/Inspector";
 import { Picker } from "@/picker/Picker";
 import { Credits } from "./Credits";
@@ -22,18 +18,17 @@ export function DesktopShell() {
           role="toolbar"
           aria-label="Poster actions"
         >
+          <Credits />
           <UndoRedo />
-          <ShuffleButton />
         </div>
       </header>
       <aside
         className="bg-card flex min-h-0 flex-col border-e"
         aria-label="Pick birds"
       >
-        <div className="min-h-0 flex-1 overflow-y-auto p-3">
+        <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-3">
           <Picker />
         </div>
-        <Credits className="border-t p-3" />
       </aside>
       <main className="min-h-0 p-6">
         <PosterStage />

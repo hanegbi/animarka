@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 import { STARTER_IDS } from "../src/catalog/starter";
-import { pickPreset } from "./helpers";
+import { openFamilies, pickPreset } from "./helpers";
 import { expect, test } from "./test";
 
 /** A fresh visitor: no saved poster, so the 12 bird starter poster shows. */
@@ -16,10 +16,16 @@ const onPoster = (page: Page) => page.locator("[data-animal]");
 const card = (page: Page, name: string) =>
   page.getByRole("option", { name, exact: true });
 /** A family chip. Scoped, because a preset can share the family's name. */
-const chip = (page: Page, family: string) =>
-  page
-    .getByRole("group", { name: "Show a family" })
-    .getByRole("button", { name: new RegExp(`^${family}(,|$)`) });
+/** Open the family list (if closed) and return the row for a family. */
+const chip = (page: Page, family: string) => ({
+  async click() {
+    await openFamilies(page);
+    await page
+      .getByRole("group", { name: "Show a family" })
+      .getByRole("button", { name: new RegExp(`^${family}(,|$)`) })
+      .click();
+  },
+});
 const status = (page: Page) => page.locator("p[role=status]");
 /** The list only renders the rows in view, so find a bird by searching, as a person would. */
 async function find(page: Page, query: string) {
@@ -84,6 +90,7 @@ test("family chips show how many birds are on the poster", async ({
   catalog,
 }) => {
   await open(page);
+  await openFamilies(page);
   const group = page.getByRole("group", { name: "Show a family" });
   for (const family of catalog.familiesOf(STARTER_IDS)) {
     const n = STARTER_IDS.filter(
