@@ -395,6 +395,15 @@ describe("store", () => {
     expect(s.getState().history.present.order).toEqual(["a", "b"]);
   });
 
+  it("dispatch says whether anything changed", () => {
+    const s = createPosterStore(fakeCtx, { starter: ["a"] });
+    expect(s.getState().dispatch({ type: "toggle", id: "b" })).toBe(true);
+    expect(
+      s.getState().dispatch({ type: "setLayout", layout: "scatter" }),
+    ).toBe(false);
+    expect(s.getState().dispatch({ type: "toggle", id: "zzz" })).toBe(false);
+  });
+
   it("replace clears undo", () => {
     const s = createPosterStore(fakeCtx, { starter: ["a"] });
     s.getState().dispatch({ type: "toggle", id: "b" });

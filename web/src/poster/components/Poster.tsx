@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import type { CSSProperties } from "react";
+import type { ComponentType, CSSProperties, ReactNode } from "react";
 import { backgroundOf } from "@/catalog/backgrounds";
 import { artSrc, displayName, type SpeciesView } from "@/catalog/species-view";
 import { layoutForState } from "@/poster/layout/for-state";
@@ -21,6 +21,28 @@ function boxStyle(b: Box, origin?: Box): CSSProperties {
   };
 }
 
+export type AnimalShellProps = {
+  id: string;
+  name: string;
+  mirrored: boolean;
+  style: CSSProperties;
+  children: ReactNode;
+};
+
+/** The default shell is a plain box. The interactive poster swaps in one that can be dragged and focused. */
+function PlainShell({ id, mirrored, style, children }: AnimalShellProps) {
+  return (
+    <div
+      className="poster-animal absolute"
+      style={style}
+      data-animal={id}
+      data-mirrored={mirrored ? "true" : "false"}
+    >
+      {children}
+    </div>
+  );
+}
+
 export type PosterProps = {
   state: PosterState;
   species: Map<string, SpeciesView>;
@@ -32,6 +54,10 @@ export type PosterProps = {
   className?: string;
   /** Called with the new title when the user types. Without it the title is plain text. */
   onTitleChange?: (title: string) => void;
+  /** Replaces the box around each animal. Used to make animals draggable. */
+  AnimalShell?: ComponentType<AnimalShellProps>;
+  /** Drawn on top of the poster, for example the empty state. */
+  overlay?: ReactNode;
 };
 
 export function Poster({
@@ -42,6 +68,8 @@ export function Poster({
   print,
   className = "",
   onTitleChange,
+  AnimalShell = PlainShell,
+  overlay,
 }: PosterProps) {
   const result = layout ?? layoutForState(state, species);
   const { frame, items } = result;
@@ -85,13 +113,13 @@ export function Poster({
           maxLength={32}
           aria-label="Poster title"
           onChange={(e) => onTitleChange(e.target.value)}
-          data-title
+          data-poster-title
         />
       ) : (
         <h2
           className="poster-title font-heading absolute m-0 flex items-center justify-center text-center leading-none font-semibold"
           style={titleStyle}
-          data-title
+          data-poster-title
         >
           {state.title}
         </h2>
@@ -103,15 +131,15 @@ export function Poster({
         const block = unionBox(item.art, item.label, item.number);
         const mirrored = effectiveMirror(state, item.id, catalog);
         return (
-          <div
+          <AnimalShell
             key={item.id}
-            className="poster-animal absolute"
+            id={item.id}
+            name={name}
+            mirrored={mirrored}
             style={{
               ...boxStyle(block),
               transition: print ? "none" : undefined,
             }}
-            data-animal={item.id}
-            data-mirrored={mirrored ? "true" : "false"}
           >
             <div
               className="poster-art absolute"
@@ -152,7 +180,7 @@ export function Poster({
                 {item.index + 1}
               </p>
             )}
-          </div>
+          </AnimalShell>
         );
       })}
 
@@ -179,6 +207,7 @@ export function Poster({
           ))}
         </ol>
       )}
+      {overlay}
     </div>
   );
 }

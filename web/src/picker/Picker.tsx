@@ -3,11 +3,13 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PRESETS } from "@/catalog/presets";
+import { notifyUndoable } from "@/lib/notify";
 import {
   useCatalog,
   usePosterActions,
   usePosterState,
 } from "@/poster/state/provider";
+import type { PosterAction } from "@/poster/state/types";
 import { BirdGrid } from "./BirdGrid";
 import { FamilyChips } from "./FamilyChips";
 import {
@@ -21,10 +23,48 @@ import {
 import { SearchField } from "./SearchField";
 import { Tray } from "./Tray";
 
+const SUGGESTIONS = ["kestrel", "heron", "owl", "swan"];
+
+/** E1 pattern for a search with no result: what was typed, and words to try. */
+function SearchMiss({
+  query,
+  onTry,
+}: {
+  query: string;
+  onTry: (word: string) => void;
+}) {
+  return (
+    <div
+      className="flex min-h-[300px] flex-1 flex-col items-start gap-2 rounded-lg border border-dashed p-4"
+      data-search-miss
+    >
+      <p className="font-heading text-base font-semibold">
+        No bird matches &ldquo;{query}&rdquo;
+      </p>
+      <p className="text-muted-foreground text-sm">
+        Try a name, a family or a Latin name.
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {SUGGESTIONS.map((w) => (
+          <Button
+            key={w}
+            variant="outline"
+            size="default"
+            className="rounded-full"
+            onClick={() => onTry(w)}
+          >
+            {w}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** The bird picker: search, family chips, the card list, list actions, presets and the tray. */
 export function Picker() {
   const state = usePosterState();
-  const { dispatch } = usePosterActions();
+  const { dispatch, undo } = usePosterActions();
   const { species, list } = useCatalog();
   const [view, setView] = useState(ALL);
   const [query, setQuery] = useState("");
@@ -40,6 +80,12 @@ export function Picker() {
   );
   const actions = listActions(shown, view, query, state.order);
   const ids = shown.map((s) => s.id);
+
+  /** Run an action. If it changed the poster a lot, say so with an Undo button. */
+  const act = (action: PosterAction, message?: string) => {
+    const changed = dispatch(action);
+    if (changed && message) notifyUndoable(message, undo);
+  };
 
   const changeView = (next: string) => {
     setView(next);
@@ -66,11 +112,12 @@ export function Picker() {
           size="lg"
           disabled={actions.addAllDisabled}
           onClick={() =>
-            dispatch(
-              actions.allOn
-                ? { type: "removeMany", ids }
-                : { type: "addMany", ids },
-            )
+            actions.allOn
+              ? act(
+                  { type: "removeMany", ids },
+                  `Removed ${ids.length} ${ids.length === 1 ? "bird" : "birds"}`,
+                )
+              : dispatch({ type: "addMany", ids })
           }
         >
           {actions.addAllLabel}
@@ -81,20 +128,24 @@ export function Picker() {
             size="lg"
             disabled={actions.onlyDisabled}
             title="Replace the poster with just these birds"
-            onClick={() => dispatch({ type: "replaceWith", ids })}
+            onClick={() => act({ type: "replaceWith", ids }, "Poster replaced")}
           >
             {actions.onlyLabel}
           </Button>
         )}
       </div>
 
-      <BirdGrid
-        items={shown}
-        selected={selected}
-        onToggle={(id) => dispatch({ type: "toggle", id })}
-        style={state.style}
-        lang={state.lang}
-      />
+      {shown.length === 0 ? (
+        <SearchMiss query={query} onTry={setQuery} />
+      ) : (
+        <BirdGrid
+          items={shown}
+          selected={selected}
+          onToggle={(id) => dispatch({ type: "toggle", id })}
+          style={state.style}
+          lang={state.lang}
+        />
+      )}
 
       <section
         aria-labelledby="tray-title"
@@ -111,17 +162,19 @@ export function Picker() {
           species={species}
           style={state.style}
           lang={state.lang}
-          onRemove={(id) => dispatch({ type: "toggle", id })}
+          onRemove={(id, name) =>
+            act({ type: "toggle", id }, `${name} removed`)
+          }
         />
         <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
             size="lg"
             onClick={() =>
-              dispatch({
-                type: "surprise",
-                seed: Math.floor(Math.random() * 1e6),
-              })
+              act(
+                { type: "surprise", seed: Math.floor(Math.random() * 1e6) },
+                "New surprise mix",
+              )
             }
           >
             Surprise mix
@@ -130,7 +183,7 @@ export function Picker() {
             variant="outline"
             size="lg"
             disabled={!state.order.length}
-            onClick={() => dispatch({ type: "clear" })}
+            onClick={() => act({ type: "clear" }, "Poster cleared")}
           >
             Clear poster
           </Button>
@@ -147,7 +200,9 @@ export function Picker() {
               variant="ghost"
               size="default"
               title={p.description}
-              onClick={() => dispatch({ type: "replaceWith", ids: p.ids })}
+              onClick={() =>
+                act({ type: "replaceWith", ids: p.ids }, `${p.title} added`)
+              }
             >
               {p.title}
             </Button>

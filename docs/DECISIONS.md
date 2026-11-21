@@ -49,6 +49,12 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | R4 | 2026-11-21 | Layout buttons | L5. Three circle icons with a text label under each, and a raised highlight that slides to the chosen layout | https://21st.dev/@pmalay694/components/radio-group | The highlight must jump instantly under reduced motion |
 | R4 | 2026-11-21 | Background picker | B1. Eight round swatches in one row, the name of the chosen one below | https://21st.dev/@starc007/components/color-selector | Owner choice over the recommended B2. The three picture backgrounds show as small round crops |
 | R4 | 2026-11-21 | Poster size | Z3. Text buttons: 3:4, 2:3, 4:5, A series | https://21st.dev/@shadcnspace/components/aspect-ratio-05 | Owner choice. No landscape switch: landscape is not offered in the interface. The layout engine and state keep landscape support, tested, but nothing in the UI sets it. Physical print sizes are chosen at export (M4) |
+| R5 | 2026-11-21 | Motion | M1. Quick ease out, 200 ms, plain CSS. Mirror is a 180 ms flip. Reduced motion turns it off | https://21st.dev/@motiondotdev/components/motion-reorder-items (library route not taken) | Matches the PRD, no dependency |
+| R5 | 2026-11-21 | Drag and drop | D1. dnd-kit. Drag one bird onto another to swap. Tap mirrors. Enter or Space mirrors and arrow keys move a bird, on our own key handler, because dnd-kit's keyboard sensor lifts with Space | https://21st.dev/@ebnsina/components/sortable | Tested for touch and screen readers |
+| R5 | 2026-11-21 | Toasts | T1. Single toast with Undo, Sonner | https://21st.dev/@ghaerdi/components/toast | Used for destructive changes (clear, replace, remove) and later Link copied |
+| R5 | 2026-11-21 | Tooltips | P1. Plain label, shadcn tooltip | https://21st.dev/@shadcn/components/tooltip | Owner choice over the recommended P2, so no shortcut hints or Latin name in tooltips |
+| R5 | 2026-11-21 | Empty states | E1. Text and two buttons on the empty poster. The search miss uses the same pattern with suggestion chips | https://21st.dev/@serafimcloud/components/empty-state | |
+| R5 | 2026-11-21 | Loading state | L2. Poster-shaped skeleton | https://21st.dev/@hero_ui/components/skeleton | No layout shift for the first poster |
 
 ## Open questions
 

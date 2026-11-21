@@ -137,7 +137,7 @@ test("background: swatch changes the poster and dark backgrounds switch the ink"
   await expect(page.locator("[data-background-name]")).toHaveText("Forest");
   await expect(poster).toHaveAttribute("data-dark", "true");
   const ink = await page
-    .locator("[data-title]")
+    .locator("[data-poster-title]")
     .evaluate((el) => getComputedStyle(el).color);
   const [r, g, b] = ink.match(/\d+/g)!.map(Number);
   expect((r + g + b) / 3).toBeGreaterThan(180);
@@ -222,7 +222,7 @@ test("editing the title is one undo step and stops following the selection", asy
   page,
 }) => {
   await open(page);
-  const title = page.locator("[data-title]");
+  const title = page.locator("[data-poster-title]");
   await title.fill("My garden");
   await expect(title).toHaveValue("My garden");
   await page

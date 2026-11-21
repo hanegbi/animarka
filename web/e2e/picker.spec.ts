@@ -17,7 +17,7 @@ test("starts with the 12 bird starter poster", async ({ page }) => {
   await open(page);
   await expect(onPoster(page)).toHaveCount(12);
   await expect(trayText(page)).toContainText("12 birds from 10 families");
-  await expect(page.locator("[data-title]")).toHaveValue("Birds");
+  await expect(page.locator("[data-poster-title]")).toHaveValue("Birds");
 });
 
 test("tapping a card adds a bird to the poster and tapping again removes it", async ({
@@ -53,7 +53,7 @@ test("a family chip only filters the list and never resets the poster", async ({
 }) => {
   await open(page);
   await page.getByRole("button", { name: /^Owls(,|$)/ }).click();
-  await expect(page.getByRole("status")).toContainText("Owls, 12 birds");
+  await expect(page.locator("p[role=status]")).toContainText("Owls, 12 birds");
   await expect(onPoster(page)).toHaveCount(12);
   await expect(trayText(page)).toContainText("12 birds");
 });
@@ -84,7 +84,7 @@ test("only this family replaces the poster, and the title follows", async ({
   await page.getByRole("button", { name: /^Woodpeckers(,|$)/ }).click();
   await page.getByRole("button", { name: "Only woodpeckers" }).click();
   await expect(onPoster(page)).toHaveCount(12);
-  await expect(page.locator("[data-title]")).toHaveValue("Woodpeckers");
+  await expect(page.locator("[data-poster-title]")).toHaveValue("Woodpeckers");
   await expect(
     page.getByRole("button", { name: "Only woodpeckers" }),
   ).toBeDisabled();
@@ -96,13 +96,13 @@ test("search finds by common name, scientific name and family", async ({
   await open(page);
   const search = page.getByRole("searchbox", { name: "Search birds" });
   await search.fill("kestrel");
-  await expect(page.getByRole("status")).toContainText("3 found");
+  await expect(page.locator("p[role=status]")).toContainText("3 found");
   await search.fill("tyto alba");
-  await expect(page.getByRole("status")).toContainText("1 found");
+  await expect(page.locator("p[role=status]")).toContainText("1 found");
   await search.fill("woodpeckers");
-  await expect(page.getByRole("status")).toContainText("12 found");
+  await expect(page.locator("p[role=status]")).toContainText("12 found");
   await search.fill("zzzz");
-  await expect(page.getByRole("status")).toContainText(
+  await expect(page.locator("p[role=status]")).toContainText(
     "No bird matches that search.",
   );
 });
@@ -120,7 +120,7 @@ test("clear search brings the whole list back", async ({ page }) => {
   await open(page);
   await page.getByRole("searchbox", { name: "Search birds" }).fill("kestrel");
   await page.getByRole("button", { name: "Clear search" }).click();
-  await expect(page.getByRole("status")).toContainText("All 118 birds");
+  await expect(page.locator("p[role=status]")).toContainText("All 118 birds");
 });
 
 test("surprise mix builds 12 to 16 birds and clear empties the poster", async ({
@@ -142,7 +142,7 @@ test("presets replace the poster", async ({ page }) => {
   await open(page);
   await page.getByRole("button", { name: "Owls of the world" }).click();
   await expect(onPoster(page)).toHaveCount(12);
-  await expect(page.locator("[data-title]")).toHaveValue("Owls");
+  await expect(page.locator("[data-poster-title]")).toHaveValue("Owls");
 });
 
 test("keyboard: arrow keys move through the cards and space toggles", async ({

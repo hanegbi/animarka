@@ -6,7 +6,8 @@ import type { PosterAction, PosterContext, PosterState } from "./types";
 
 export type PosterStore = {
   history: History;
-  dispatch: (action: PosterAction) => void;
+  /** Returns true when the action changed the poster, so callers can offer Undo only when there is something to undo. */
+  dispatch: (action: PosterAction) => boolean;
   undo: () => void;
   redo: () => void;
   /** Replace the poster, for example from a share link. Clears undo. */
@@ -23,10 +24,15 @@ export function createPosterStore(
   const saved = loadState(options.storage, ctx);
   const start = saved ?? initialState(ctx, options.starter ?? []);
 
-  const store = createStore<PosterStore>((set) => ({
+  const store = createStore<PosterStore>((set, get) => ({
     history: createHistory(start),
-    dispatch: (action) =>
-      set((s) => ({ history: apply(s.history, action, ctx) })),
+    dispatch: (action) => {
+      const before = get().history;
+      const after = apply(before, action, ctx);
+      if (after === before) return false;
+      set({ history: after });
+      return true;
+    },
     undo: () => set((s) => ({ history: undo(s.history) })),
     redo: () => set((s) => ({ history: redo(s.history) })),
     replace: (state) => set(() => ({ history: createHistory(state) })),

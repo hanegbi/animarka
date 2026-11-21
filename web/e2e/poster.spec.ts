@@ -23,7 +23,7 @@ async function measure(page: Page) {
       id: el.closest("[data-animal]")!.getAttribute("data-animal")!,
       ...rect(el),
     }));
-    const title = rect(document.querySelector("[data-title]")!);
+    const title = rect(document.querySelector("[data-poster-title]")!);
     const legend = document.querySelector("[data-legend]");
     return {
       P,
@@ -130,13 +130,13 @@ test("Hebrew legend reads right to left", async ({ page }) => {
 test("dark backgrounds switch the ink to light", async ({ page }) => {
   await page.goto("/design/poster?n=6&bg=forest");
   const color = await page
-    .locator("[data-title]")
+    .locator("[data-poster-title]")
     .evaluate((el) => getComputedStyle(el).color);
   const [r, g, b] = color.match(/\d+/g)!.map(Number);
   expect((r + g + b) / 3).toBeGreaterThan(180);
   await page.goto("/design/poster?n=6&bg=cream");
   const dark = await page
-    .locator("[data-title]")
+    .locator("[data-poster-title]")
     .evaluate((el) => getComputedStyle(el).color);
   const [r2, g2, b2] = dark.match(/\d+/g)!.map(Number);
   expect((r2 + g2 + b2) / 3).toBeLessThan(80);
