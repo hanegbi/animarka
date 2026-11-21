@@ -1,3 +1,4 @@
+import { BACKGROUNDS } from "./backgrounds";
 import { SPECIES } from "./static-m1";
 import type { CatalogLookup } from "@/poster/state/types";
 
@@ -18,13 +19,4 @@ export function staticLookup(): CatalogLookup {
 }
 
 export const STYLE_IDS = ["fg", "wb"];
-export const BACKGROUND_IDS = [
-  "cream",
-  "white",
-  "sage",
-  "blush",
-  "night",
-  "aged",
-  "sky",
-  "forest",
-];
+export const BACKGROUND_IDS = BACKGROUNDS.map((b) => b.id);

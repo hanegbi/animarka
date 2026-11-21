@@ -54,13 +54,12 @@ describe("token contrast", () => {
 });
 
 describe("no raw colors outside the token file", () => {
-  // Design sample pages are dev only. Generated catalog data holds no colors.
+  // Design sample pages are dev only. Poster paper colors are data, not tokens.
   const ALLOWED = [
     "styles/tokens.css",
+    "catalog/backgrounds.ts",
     "design/",
     "app/design/",
-    "design\\",
-    "app\design\\",
   ];
   const HEX = /#[0-9a-fA-F]{3,8}\b/;
 
