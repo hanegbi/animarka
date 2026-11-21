@@ -55,6 +55,10 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | R5 | 2026-11-21 | Tooltips | P1. Plain label, shadcn tooltip | https://21st.dev/@shadcn/components/tooltip | Owner choice over the recommended P2, so no shortcut hints or Latin name in tooltips |
 | R5 | 2026-11-21 | Empty states | E1. Text and two buttons on the empty poster. The search miss uses the same pattern with suggestion chips | https://21st.dev/@serafimcloud/components/empty-state | |
 | R5 | 2026-11-21 | Loading state | L2. Poster-shaped skeleton | https://21st.dev/@hero_ui/components/skeleton | No layout shift for the first poster |
+| M1.12 | 2026-11-21 | Narrow desktop behavior (S2 weakness) | At 1100 px and wider: desktop shell, the toolbar wraps to a second row when needed. Below 1100 px, including tablets: the phone shell (P3) | | Decided by the planner, tested at 1100 and 1099 px. The toolbar never gets squeezed |
+| M1.12 | 2026-11-21 | Phone tabs | Three tabs for now: Birds, Layout, Style. The sheet starts on Birds. The Export tab and the header Export button come in M4 with the export dialog | | P3 names four tabs. Adding a dead Export tab now would be a button that does nothing |
+| M1.12 | 2026-11-21 | Art credits | Always visible under the picker on desktop. At the end of the Birds sheet on a phone | | Both sources named with links and licenses, and the AI generated note, as the PRD requires |
+| M1.12 | 2026-11-21 | Report a wrong bird | Not added yet. It needs the reports endpoint from M2 (or a contact address from the owner) | | The PRD's mail link would need an address. Open question for the owner |
 
 ## Open questions
 
@@ -67,6 +71,7 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | 5 | Commercial permission for the woodblock set | Before M5 | Ask the authors. Fallback: paid export in field guide style only |
 | 6 | Hosting for k3s | M6 | One VPS with 8 GB RAM |
 | 7 | Domain | M6 | |
+| 9 | Contact address for the Report a wrong bird link, if a mail link is wanted before M2 | M2 | |
 | 8 | Print sizes at launch beyond 18x24 in, 12x16 in, A2, A3 | M4 | |
 
 ## Working preferences

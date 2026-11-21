@@ -1,0 +1,21 @@
+import type { Page } from "@playwright/test";
+
+export type Tab = "Birds" | "Layout" | "Style";
+
+/** On a phone the tools live in tabs. Open one. On desktop everything is already visible, so this does nothing. */
+export async function openTab(page: Page, name: Tab) {
+  const nav = page.getByRole("navigation", { name: "Poster tools" });
+  if (!(await nav.isVisible())) return;
+  const button = nav.getByRole("button", { name });
+  if ((await button.getAttribute("aria-expanded")) !== "true")
+    await button.click();
+}
+
+/** Which phone tab holds each radio group. */
+export const GROUP_TAB: Record<string, Tab> = {
+  Design: "Style",
+  Labels: "Style",
+  Background: "Style",
+  Layout: "Layout",
+  "Poster size": "Layout",
+};

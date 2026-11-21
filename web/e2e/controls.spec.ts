@@ -1,62 +1,73 @@
 import { expect, test, type Page } from "@playwright/test";
+import { GROUP_TAB, openTab, type Tab } from "./helpers";
 
 type Box = { x: number; y: number; w: number; h: number };
 
 async function open(page: Page) {
   await page.goto("/");
-  await expect(
-    page.getByRole("heading", { name: /Your poster/ }),
-  ).toBeVisible();
+  await expect(page.locator("[data-poster]")).toBeVisible();
+  await expect(page.locator("[data-animal]")).toHaveCount(12);
 }
 
-/** Each bird's art box and whether its picture is flipped, keyed by id. */
+/** Each bird's art box, relative to the poster, and whether its picture is flipped, keyed by id. */
 async function snapshot(page: Page) {
   return page.evaluate(() => {
     const out: Record<
       string,
-      {
-        box: { x: number; y: number; w: number; h: number };
-        mirrored: string;
-        index: number;
-      }
+      { box: { x: number; y: number; w: number; h: number }; mirrored: string }
     > = {};
-    document.querySelectorAll("[data-animal]").forEach((el, index) => {
+    const poster = document
+      .querySelector("[data-poster]")!
+      .getBoundingClientRect();
+    document.querySelectorAll("[data-animal]").forEach((el) => {
       const art = el.querySelector("[data-art]")!.getBoundingClientRect();
-      const poster = document
-        .querySelector("[data-poster]")!
-        .getBoundingClientRect();
       out[el.getAttribute("data-animal")!] = {
         box: {
-          x: art.left - poster.left,
-          y: art.top - poster.top,
-          w: art.width,
-          h: art.height,
+          x: (art.left - poster.left) / poster.width,
+          y: (art.top - poster.top) / poster.width,
+          w: art.width / poster.width,
+          h: art.height / poster.width,
         },
         mirrored: el.getAttribute("data-mirrored")!,
-        index,
       };
     });
     return out;
   });
 }
 
-const near = (a: Box, b: Box, tol = 1) =>
+/** Boxes are in poster widths, so a poster that got a little smaller still compares equal. */
+const near = (a: Box, b: Box, tol = 0.012) =>
   Math.abs(a.x - b.x) <= tol &&
   Math.abs(a.y - b.y) <= tol &&
   Math.abs(a.w - b.w) <= tol &&
   Math.abs(a.h - b.h) <= tol;
 
-const radio = (page: Page, group: string, name: string) =>
-  page.getByRole("radiogroup", { name: group }).getByRole("radio", { name });
+/** Opens the phone tab that holds the group, then finds the radio. */
+const radio = async (page: Page, group: string, name: string) => {
+  await openTab(page, GROUP_TAB[group]);
+  return page
+    .getByRole("radiogroup", { name: group })
+    .getByRole("radio", { name });
+};
+
+const undoButton = (page: Page) =>
+  page
+    .getByRole("toolbar", { name: "Poster actions" })
+    .getByRole("button", { name: "Undo" });
+const redoButton = (page: Page) =>
+  page
+    .getByRole("toolbar", { name: "Poster actions" })
+    .getByRole("button", { name: "Redo" });
 
 test("style switch keeps every bird in the same place and size, and looking the same way", async ({
   page,
 }) => {
   await open(page);
+  await openTab(page, "Style");
   await page.waitForTimeout(400); // let the 200 ms reflow settle
   const before = await snapshot(page);
-  await radio(page, "Design", "Woodblock").click();
-  await expect(radio(page, "Design", "Woodblock")).toHaveAttribute(
+  await (await radio(page, "Design", "Woodblock")).click();
+  await expect(await radio(page, "Design", "Woodblock")).toHaveAttribute(
     "aria-checked",
     "true",
   );
@@ -79,38 +90,38 @@ test("layout switch keeps the same birds, order and mirrors, but moves them", as
   page,
 }) => {
   await open(page);
-  await radio(page, "Layout", "Grid").click();
+  await openTab(page, "Layout");
+  await (await radio(page, "Layout", "Grid")).click();
   await page.waitForTimeout(400);
   const grid = await snapshot(page);
-  await radio(page, "Layout", "Centerpiece").click();
+  await (await radio(page, "Layout", "Centerpiece")).click();
   await page.waitForTimeout(400);
   const center = await snapshot(page);
   expect(Object.keys(center)).toEqual(Object.keys(grid));
   for (const id of Object.keys(grid))
     expect(center[id].mirrored).toBe(grid[id].mirrored);
   expect(
-    Object.keys(grid).some((id) => !near(grid[id].box, center[id].box, 2)),
+    Object.keys(grid).some((id) => !near(grid[id].box, center[id].box, 0.02)),
   ).toBe(true);
 });
 
 test("the layout highlight slides to the chosen layout", async ({ page }) => {
   await open(page);
+  await openTab(page, "Layout");
   const hl = page.locator("[data-layout-highlight]");
   const x0 = (await hl.boundingBox())!.x;
-  await radio(page, "Layout", "Centerpiece").click();
+  await (await radio(page, "Layout", "Centerpiece")).click();
   await page.waitForTimeout(400);
-  expect((await hl.boundingBox())!.x).toBeGreaterThan(x0 + 50);
+  expect((await hl.boundingBox())!.x).toBeGreaterThan(x0 + 40);
 });
 
 test("layout keys: arrow keys change the layout", async ({ page }) => {
   await open(page);
-  await radio(page, "Layout", "Scattered").focus();
+  await (await radio(page, "Layout", "Scattered")).focus();
   await page.keyboard.press("ArrowRight");
-  await expect(radio(page, "Layout", "Grid")).toHaveAttribute(
-    "aria-checked",
-    "true",
-  );
-  await expect(radio(page, "Layout", "Grid")).toBeFocused();
+  const grid = await radio(page, "Layout", "Grid");
+  await expect(grid).toHaveAttribute("aria-checked", "true");
+  await expect(grid).toBeFocused();
 });
 
 test("label modes: names, numbers with a legend, and no text", async ({
@@ -118,11 +129,11 @@ test("label modes: names, numbers with a legend, and no text", async ({
 }) => {
   await open(page);
   await expect(page.locator("[data-label]")).toHaveCount(12);
-  await radio(page, "Labels", "Numbers and legend").click();
+  await (await radio(page, "Labels", "Numbers and legend")).click();
   await expect(page.locator("[data-legend]")).toBeVisible();
   await expect(page.locator("[data-number]")).toHaveCount(12);
   await expect(page.locator("[data-label]")).toHaveCount(0);
-  await radio(page, "Labels", "No text").click();
+  await (await radio(page, "Labels", "No text")).click();
   await expect(page.locator("[data-legend]")).toHaveCount(0);
   await expect(page.locator("[data-label]")).toHaveCount(0);
   await expect(page.locator("[data-number]")).toHaveCount(0);
@@ -133,7 +144,7 @@ test("background: swatch changes the poster and dark backgrounds switch the ink"
 }) => {
   await open(page);
   const poster = page.locator("[data-poster]");
-  await radio(page, "Background", "Forest").click();
+  await (await radio(page, "Background", "Forest")).click();
   await expect(page.locator("[data-background-name]")).toHaveText("Forest");
   await expect(poster).toHaveAttribute("data-dark", "true");
   const ink = await page
@@ -141,7 +152,7 @@ test("background: swatch changes the poster and dark backgrounds switch the ink"
     .evaluate((el) => getComputedStyle(el).color);
   const [r, g, b] = ink.match(/\d+/g)!.map(Number);
   expect((r + g + b) / 3).toBeGreaterThan(180);
-  await radio(page, "Background", "Sage").click();
+  await (await radio(page, "Background", "Sage")).click();
   await expect(poster).toHaveAttribute("data-dark", "false");
 });
 
@@ -153,12 +164,13 @@ test("size buttons change the poster shape, and there is no landscape control", 
     const b = (await page.locator("[data-poster]").boundingBox())!;
     return b.width / b.height;
   };
+  await openTab(page, "Layout");
   expect(await ratio()).toBeCloseTo(0.75, 2);
-  await radio(page, "Poster size", "2:3").click();
+  await (await radio(page, "Poster size", "2:3")).click();
   await expect.poll(ratio).toBeCloseTo(2 / 3, 2);
-  await radio(page, "Poster size", "4:5").click();
+  await (await radio(page, "Poster size", "4:5")).click();
   await expect.poll(ratio).toBeCloseTo(0.8, 2);
-  await radio(page, "Poster size", "A series").click();
+  await (await radio(page, "Poster size", "A series")).click();
   await expect.poll(ratio).toBeCloseTo(1 / Math.SQRT2, 2);
   await expect(page.getByText(/landscape/i)).toHaveCount(0);
 });
@@ -167,29 +179,29 @@ test("undo and redo step back through changes, with buttons and with Ctrl Z", as
   page,
 }) => {
   await open(page);
-  await radio(page, "Layout", "Grid").click();
-  await radio(page, "Poster size", "2:3").click();
-  await page.getByRole("button", { name: "Undo" }).click();
-  await expect(radio(page, "Poster size", "3:4")).toHaveAttribute(
+  await (await radio(page, "Layout", "Grid")).click();
+  await (await radio(page, "Poster size", "2:3")).click();
+  await undoButton(page).click();
+  await expect(await radio(page, "Poster size", "3:4")).toHaveAttribute(
     "aria-checked",
     "true",
   );
-  await expect(radio(page, "Layout", "Grid")).toHaveAttribute(
+  await expect(await radio(page, "Layout", "Grid")).toHaveAttribute(
     "aria-checked",
     "true",
   );
-  await page.getByRole("button", { name: "Redo" }).click();
-  await expect(radio(page, "Poster size", "2:3")).toHaveAttribute(
+  await redoButton(page).click();
+  await expect(await radio(page, "Poster size", "2:3")).toHaveAttribute(
     "aria-checked",
     "true",
   );
   await page.locator("body").press("Control+z");
-  await expect(radio(page, "Poster size", "3:4")).toHaveAttribute(
+  await expect(await radio(page, "Poster size", "3:4")).toHaveAttribute(
     "aria-checked",
     "true",
   );
   await page.locator("body").press("Control+Shift+z");
-  await expect(radio(page, "Poster size", "2:3")).toHaveAttribute(
+  await expect(await radio(page, "Poster size", "2:3")).toHaveAttribute(
     "aria-checked",
     "true",
   );
@@ -197,8 +209,8 @@ test("undo and redo step back through changes, with buttons and with Ctrl Z", as
 
 test("undo is disabled when there is nothing to undo", async ({ page }) => {
   await open(page);
-  await expect(page.getByRole("button", { name: "Undo" })).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Redo" })).toBeDisabled();
+  await expect(undoButton(page)).toBeDisabled();
+  await expect(redoButton(page)).toBeDisabled();
 });
 
 test("shuffle rearranges the birds and keeps the same ones", async ({
@@ -212,6 +224,7 @@ test("shuffle rearranges the birds and keeps the same ones", async ({
         els.map((e) => e.getAttribute("data-animal")),
       )) as string[];
   const before = await ids();
+  await openTab(page, "Layout");
   await page.getByRole("button", { name: "Shuffle layout" }).click();
   const after = await ids();
   expect([...after].sort()).toEqual([...before].sort());
@@ -225,6 +238,7 @@ test("editing the title is one undo step and stops following the selection", asy
   const title = page.locator("[data-poster-title]");
   await title.fill("My garden");
   await expect(title).toHaveValue("My garden");
+  await openTab(page, "Birds");
   await page
     .getByRole("button", { name: "Remove Mute Swan from poster" })
     .click();
@@ -233,26 +247,27 @@ test("editing the title is one undo step and stops following the selection", asy
 
 test("controls are big enough to touch: at least 44 px", async ({ page }) => {
   await open(page);
+  const tabs: Tab[] = ["Birds", "Layout", "Style"];
   const small: string[] = [];
-  for (const sel of [
-    "[role=radiogroup] [role=radio]",
-    "[role=toolbar] button",
-  ]) {
-    const boxes = await page.locator(sel).evaluateAll((els) =>
-      els.map((e) => {
-        const r = e.getBoundingClientRect();
-        return {
-          name: (e.getAttribute("aria-label") || e.textContent || "")
-            .trim()
-            .slice(0, 20),
-          w: r.width,
-          h: r.height,
-        };
-      }),
-    );
-    for (const b of boxes)
-      if (b.w < 43.5 || b.h < 43.5)
-        small.push(`${b.name} ${Math.round(b.w)}x${Math.round(b.h)}`);
+  for (const tab of tabs) {
+    await openTab(page, tab);
+    for (const sel of ["button:visible", "[role=radio]:visible"]) {
+      const boxes = await page.locator(sel).evaluateAll((els) =>
+        els.map((e) => {
+          const r = e.getBoundingClientRect();
+          return {
+            name: (e.getAttribute("aria-label") || e.textContent || "")
+              .trim()
+              .slice(0, 20),
+            w: r.width,
+            h: r.height,
+          };
+        }),
+      );
+      for (const b of boxes)
+        if (b.w < 43.5 || b.h < 43.5)
+          small.push(`${tab}: ${b.name} ${Math.round(b.w)}x${Math.round(b.h)}`);
+    }
   }
-  expect(small).toEqual([]);
+  expect([...new Set(small)]).toEqual([]);
 });

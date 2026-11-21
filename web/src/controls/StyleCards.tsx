@@ -9,8 +9,8 @@ import { RadioGroup, type RadioItem } from "./RadioGroup";
 
 const SAMPLE = "falco-peregrinus";
 
-const card = (checked: boolean) =>
-  `flex min-h-[44px] flex-1 flex-col items-center gap-1 rounded-lg border p-2 text-xs transition-colors ${
+const card = (checked: boolean, compact?: boolean) =>
+  `flex min-h-[44px] flex-1 flex-col items-center gap-1 rounded-lg border ${compact ? "min-w-[84px] px-2 py-1.5" : "p-2"} text-xs transition-colors ${
     checked
       ? "border-primary bg-accent ring-primary ring-1"
       : "bg-card hover:bg-muted"
@@ -24,9 +24,11 @@ const STYLES: RadioItem<string>[] = [
 export function StyleCards({
   value,
   onChange,
+  compact,
 }: {
   value: string;
   onChange: (v: string) => void;
+  compact?: boolean;
 }) {
   return (
     <RadioGroup
@@ -35,7 +37,7 @@ export function StyleCards({
       items={STYLES}
       onChange={onChange}
       className="flex gap-2"
-      itemClassName={card}
+      itemClassName={(checked) => card(checked, compact)}
       renderItem={(item) => (
         <>
           <img
@@ -43,7 +45,11 @@ export function StyleCards({
             alt=""
             width={64}
             height={56}
-            className="h-14 w-full object-contain"
+            className={
+              compact
+                ? "h-9 w-full object-contain"
+                : "h-14 w-full object-contain"
+            }
           />
           <span className="font-medium">{item.label}</span>
         </>
@@ -67,9 +73,11 @@ const SAMPLE_TEXT: Record<LabelMode, string> = {
 export function LabelCards({
   value,
   onChange,
+  compact,
 }: {
   value: LabelMode;
   onChange: (v: LabelMode) => void;
+  compact?: boolean;
 }) {
   return (
     <RadioGroup
@@ -78,7 +86,7 @@ export function LabelCards({
       items={LABELS}
       onChange={onChange}
       className="flex gap-2"
-      itemClassName={card}
+      itemClassName={(checked) => card(checked, compact)}
       renderItem={(item) => (
         <>
           <img

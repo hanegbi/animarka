@@ -76,9 +76,11 @@ export function LayoutIcon({
 export function LayoutPicker({
   value,
   onChange,
+  compact,
 }: {
   value: LayoutId;
   onChange: (v: LayoutId) => void;
+  compact?: boolean;
 }) {
   const index = Math.max(
     0,
@@ -90,9 +92,9 @@ export function LayoutPicker({
       value={value}
       items={ITEMS}
       onChange={onChange}
-      className="bg-muted relative grid grid-cols-3 rounded-xl p-1"
+      className={`bg-muted relative grid grid-cols-3 rounded-xl p-1 ${compact ? "min-w-[216px]" : ""}`}
       itemClassName={(checked) =>
-        `relative z-10 flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-lg py-2 text-xs transition-colors ${
+        `relative z-10 flex ${compact ? "min-h-[52px] py-1" : "min-h-[64px] py-2"} flex-col items-center justify-center gap-1 rounded-lg text-xs transition-colors ${
           checked
             ? "text-primary font-semibold"
             : "text-muted-foreground hover:text-foreground"
@@ -100,7 +102,7 @@ export function LayoutPicker({
       }
       renderItem={(item) => (
         <>
-          <LayoutIcon layout={item.value} />
+          <LayoutIcon layout={item.value} size={compact ? 24 : 32} />
           {item.label}
         </>
       )}

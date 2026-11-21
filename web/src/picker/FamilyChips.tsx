@@ -56,7 +56,7 @@ export function FamilyChips({
                 variant={pressed ? "default" : "outline"}
                 className={
                   pressed
-                    ? "bg-primary-foreground/25 text-current"
+                    ? "bg-primary-foreground text-primary"
                     : "text-foreground"
                 }
               >
