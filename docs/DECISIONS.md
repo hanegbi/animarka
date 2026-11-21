@@ -75,14 +75,12 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | M2.6 | 2026-11-21 | Family chips | One row that scrolls sideways at every width. Families are the 134 taxonomic families in English, in taxonomic order | | Wrapping over a hundred chips on desktop would push the birds off the first screen. The M1 groups (Owls, Herons and egrets) were hand made for 118 birds and do not scale |
 | M2.6 | 2026-11-21 | Bird list | Virtualized against the panel that already scrolls, with a scroll margin, instead of a box of its own | | The old box grew to its full height, so all cards rendered: 246 ms to clear a search on 1,161 birds. Now under 50 ms |
 | M2.6 | 2026-11-21 | Tests without a backend | Playwright answers the API from a committed fixture (245 real birds, scripts/make_web_fixture.py) and one placeholder image. `E2E_LIVE_API=1` runs the same suite against docker compose | | CI stays fast and needs no ingest. The live run passed 218 of 218 |
+| M3 | 2026-11-21 | Cut M3 | No vision model, facing graph, admin review page, SSE or Prometheus metrics. Jobs move into M4 in their smallest form, polled. Upscaling only if the M4 proof prints look soft | | Owner: "I really don't need it." 236 directions are hand checked, the rest default to left, and Mirror fixes any bird |
 
 ## Open questions
 
 | # | Question | Needed by | Suggestion |
 |---|---|---|---|
-| 1 | Vision model and monthly budget cap for facing detection | M3 | Claude Haiku 5.5 for both passes, cap of 20 USD |
-| 2 | Where the upscale model runs: CPU in the worker or a rented GPU for a one time batch | M3 | |
-| 3 | Is one shared admin token enough | M3 | Yes |
 | 4 | Price for the print ready file, and whether it depends on size | M5 | |
 | 5 | Commercial permission for the woodblock set | Before M5 | Ask the authors. Fallback: paid export in field guide style only |
 | 6 | Hosting for k3s | M6 | One VPS with 8 GB RAM |

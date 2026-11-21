@@ -151,12 +151,11 @@ One box size per species for both styles: the box aspect is the mean of the two 
 | GET `/styles`, GET `/backgrounds`, GET `/catalogs/{id}/presets` | Data driven options. |
 | POST `/posters` body `{state}` returns `{id, url}`. GET `/posters/{id}` returns `{state}` | Share links. Same state hash returns the same id. |
 | POST `/renders` body `{poster_id, kind: preview or print, size, bleed, formats}` returns `{job_id}` | Print requires a paid order token. Cache hit returns a finished job. |
-| GET `/jobs/{id}`, GET `/jobs/{id}/events` (SSE) | Status, progress, result URL. |
+| GET `/jobs/{id}` | Status, progress, result URL. Polled, no SSE. |
 | POST `/checkout` body `{poster_id, size, bleed}` returns `{checkout_url}` | Through the payment interface. |
 | POST `/webhooks/lemonsqueezy` | Signature check, mark order paid, queue the render. Idempotent. |
 | GET `/orders/{token}` | Download page data: status, job, file links. |
 | POST `/reports` | "Report a wrong bird". |
-| GET `/admin/review/facing`, POST `/admin/artworks/{id}/faces`, same for upscale review | Token protected. |
 | GET `/files/{key}` | Files from the storage interface (local disk now). Keys hold a content hash, so a year of cache. |
 | GET `/healthz`, GET `/metrics` | Ops. |
 
@@ -234,25 +233,24 @@ Milestone check: full parity with the prototype plus sheet, undo, three layouts,
 
 Until M3 fills `faces`, woodblock artworks outside the old `WB_FLIP` list default to `left`. Known and accepted for M2.
 
-### M3. Async pipeline
+### M3. Removed (2026-11-21)
 
-| Task | Files | Behavior | Check |
-|---|---|---|---|
-| M3.1 Job framework | `workers/progress.py`, `animarka_core/queues.py`, `routers/jobs.py` | Base task with idempotency key, retry with backoff, dead letter queue, progress in Redis, row in `jobs`. SSE endpoint. Prometheus metrics. | Tests: retry, dead letter, duplicate delivery does no double work. |
-| M3.2 Facing graph | `workers/graphs/facing.py`, `tasks/facing.py` | LangGraph: load image, ask the vision model "left, right or front" with confidence, ask again on the mirrored image and expect the opposite answer, accept if both agree and confidence is high, else send to review. Budget guard that stops at the monthly cap. | Graph tests with a fake model. Accuracy against the 118 hand labeled birds reported before the full run. |
-| M3.3 Review page | `web/src/app/admin/review/*`, `routers/admin.py` | Token protected. Shows queued artworks large, three buttons, keyboard shortcuts. | Playwright happy path. |
-| M3.4 Full facing run | none | Run on all artworks, clear the review queue. | Every artwork has `faces`. Playwright style switch test passes on a random sample of 100 species. |
-| M3.5 Upscale | `tasks/upscale.py` | On the `upscale` queue: 4x print master per artwork with an open upscale model, alpha preserved, stored as `print_key`. Automatic check (size, alpha edge, similarity to the source when scaled back down) and a sampled human review in the admin page. | Tests on fixtures. Owner approves 20 side by side samples before the full run. |
+The owner cut M3. No vision model, no facing graph, no admin review page, no SSE, no Prometheus metrics yet.
+
+- Facing: the 236 hand checked images keep their direction. All others default to `left`. A wrong bird is fixed by the user with Mirror, or reported with "Report a wrong bird".
+- The job framework moves into M4 as the smallest thing renders need: a `jobs` row, retry with backoff, dead letter queue, progress in Redis, and `GET /jobs/{id}` polled by the web. No SSE.
+- Upscaling waits for the proof prints in M4. Only if they look soft does an upscale task get planned.
 
 ### M4. Share and export
 
 | Task | Files | Behavior | Check |
 |---|---|---|---|
+| M4.0 Jobs | `routers/jobs.py`, `workers/progress.py` | `jobs` row, retry with backoff, dead letter queue, progress in Redis, `GET /jobs/{id}`. | Tests: retry, dead letter, a duplicate delivery does no double work. |
 | M4.1 Share | `routers/posters.py`, `web/src/app/p/[id]/page.tsx` | Save state under a short id, reopen by URL, copy link control. | API and Playwright tests. |
 | M4.2 Print route | `web/src/app/render/[id]/page.tsx` | Chrome free page that draws only the poster at a requested pixel size with print masters, bleed and optional watermark. Signals ready when fonts and images are loaded. Only reachable with a signed token. | Playwright: route matches the builder poster. |
 | M4.3 Render task | `tasks/render.py`, worker Dockerfile with Chromium | On the `render` queue: Playwright for Python opens the print route, writes PNG and PDF (fonts embedded) to storage, reports progress. Preview is watermarked at 1600 px long edge. Print is 300 DPI for 18x24 in, 12x16 in, A2, A3. Cached by state hash plus options. | Pixel comparison test: print render scaled down against the browser poster, within a small threshold. Worker tests for idempotency and retry. |
 | M4.4 Design rounds R6, R7 | `web/src/app/design/*` | Export dialog, share control, landing section. | Owner picks. |
-| M4.5 Export UI and landing | `web/src/export/*`, landing section | Dialog with size and bleed, live progress over SSE, download link. Attribution on the export page. Landing section above the tool. | Playwright end to end for the free preview. |
+| M4.5 Export UI and landing | `web/src/export/*`, landing section | Dialog with size and bleed, progress by polling the job, download link. Attribution on the export page. Landing section above the tool. | Playwright end to end for the free preview. |
 
 ### M5. Payments
 
@@ -295,16 +293,12 @@ M7 needs its own short planning pass once M6 is done, since it depends on model 
 | The 1,161 overlap is unverified | Catalog size differs | M2.3 reports the real count. |
 | Both art sets are AI made and may show wrong birds | Trust | Report link per species, `reports` table, status flag on artworks. |
 | Source repos change or vanish | Ingest breaks | Pin commits, keep originals in storage. |
-| Vision model cost | Budget | About 4,650 small image calls for the full facing run. Budget guard in M3.2. |
 | The handoff between models loses context | Wrong assumptions | Everything lives in `docs/PRD.md`, `docs/PLAN.md`, `docs/DECISIONS.md`. Tasks say "stop and ask" where a choice is open. |
 
 ## Open questions for the owner
 
 Not needed to start. Each is needed by the milestone shown.
 
-1. Vision model and monthly budget cap for facing detection (M3). Suggestion: Claude Haiku 5.5 for both passes, cap of 20 USD.
-2. Where the upscale model runs: CPU in the worker, or a rented GPU for a one time batch (M3).
-3. Admin access: is one shared token enough (M3).
 4. Price for the print ready file, and whether price depends on size (M5).
 5. Commercial permission for the woodblock set (before M5).
 6. Hosting for k3s: single VPS or managed cluster (M6). Suggestion: one VPS with 8 GB RAM, since Chromium renders need memory.
