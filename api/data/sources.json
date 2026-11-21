@@ -1,0 +1,19 @@
+{
+  "species_json": {
+    "repo": "alchaincyf/huashu-bird-sticker",
+    "ref": "fb4463b12e2d93c7dfc4335a1fc92203fb9173df",
+    "path": "data/species.json"
+  },
+  "styles": {
+    "fg": {
+      "repo": "alchaincyf/huashu-bird-sticker",
+      "ref": "fb4463b12e2d93c7dfc4335a1fc92203fb9173df",
+      "pattern": "^stickers/[^/]+/[^/]+/(?P<genus>[A-Z][a-z]+)_(?P<species>[a-z]+)\\.webp$"
+    },
+    "wb": {
+      "repo": "adamoberley/HABirdDashboard",
+      "ref": "3f3e2e78aa6537a58a51df05ac4b34dcdb118733",
+      "pattern": "^avian/assets/illustrations/(?P<genus>[a-z]+)-(?P<species>[a-z]+)\\.png$"
+    }
+  }
+}

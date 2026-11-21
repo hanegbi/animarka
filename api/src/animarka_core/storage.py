@@ -1,4 +1,6 @@
-"""File storage behind one small interface. Local disk now. S3 later is a second class, not a rewrite.
+"""File storage behind one small interface.
+
+Local disk now. S3 later is a second class, not a rewrite.
 
 Keys are relative paths such as art/fg/tyto-alba/1a2b3c4d-thumb.webp. Keys that hold derived images
 include a short content hash, so a changed image gets a new key and browsers can cache forever.
@@ -46,7 +48,7 @@ class LocalStorage:
     def put(self, key: str, data: bytes) -> None:
         path = self._path(key)
         path.parent.mkdir(parents=True, exist_ok=True)
-        # Write to a temporary file and rename, so a crash never leaves half a file under the real key.
+        # Write to a temporary file, then rename. A crash never leaves half a file under the key.
         fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".tmp-")
         try:
             with os.fdopen(fd, "wb") as f:

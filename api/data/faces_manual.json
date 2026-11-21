@@ -1,0 +1,474 @@
+{
+  "acanthis-flammea": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "accipiter-nisus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "aegolius-funereus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "aegypius-monachus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "agapornis-roseicollis": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "alcedo-atthis": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "amazona-aestiva": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "amazona-amazonica": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "amazona-oratrix": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "anas-acuta": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "anas-platyrhynchos": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "anser-anser": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "aquila-heliaca": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "ardea-alba": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "ardea-cinerea": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "ardea-herodias": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "ardea-purpurea": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "ardeola-ralloides": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "asio-flammeus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "asio-otus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "athene-noctua": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "aythya-ferina": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "aythya-fuligula": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "aythya-nyroca": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "botaurus-flavicollis": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "botaurus-stellaris": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "bubo-bubo": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "bubo-virginianus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "butorides-striata": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "cacatua-galerita": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "cacatua-sanguinea": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "carduelis-carduelis": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "carpodacus-erythrinus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "ceyx-azureus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "ceyx-pusillus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "chloris-chloris": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "circaetus-gallicus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "circus-aeruginosus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "circus-cyaneus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "circus-macrourus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "clanga-clanga": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "coccothraustes-coccothraustes": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "colaptes-auratus": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "cygnus-olor": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "dacelo-leachii": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "dacelo-novaeguineae": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "delichon-urbicum": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "dendrocopos-leucotos": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "dendrocopos-major": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "dendrocopos-syriacus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "dendrocoptes-medius": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "dryobates-minor": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "dryocopus-martius": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "dryocopus-pileatus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "egretta-caerulea": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "egretta-garzetta": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "egretta-thula": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "elanus-caeruleus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-berigora": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-columbarius": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-longipennis": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-mexicanus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-naumanni": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-peregrinus": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "falco-rusticolus": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "falco-sparverius": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-subbuteo": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-subniger": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-tinnunculus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "falco-vespertinus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "fringilla-coelebs": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "fringilla-montifringilla": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "glaucidium-passerinum": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "haliaeetus-albicilla": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "hieraaetus-pennatus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "hirundo-neoxena": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "hirundo-rustica": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "jynx-torquilla": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "linaria-cannabina": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "loxia-curvirostra": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "mareca-penelope": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "mareca-strepera": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "megaceryle-alcyon": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "melopsittacus-undulatus": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "milvus-migrans": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "myiopsitta-monachus": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "nycticorax-nycticorax": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "nymphicus-hollandicus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "otus-scops": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "petrochelidon-ariel": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "petrochelidon-nigricans": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "petrochelidon-pyrrhonota": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "picoides-tridactylus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "picus-viridis": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "progne-subis": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "psittacula-cyanocephala": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "psittacula-eupatria": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "psittacula-krameri": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "ptyonoprogne-rupestris": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "pyrrhula-pyrrhula": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "riparia-riparia": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "serinus-serinus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "spatula-clypeata": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "spatula-querquedula": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "sphyrapicus-varius": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "spinus-spinus": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "stelgidopteryx-serripennis": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "strix-uralensis": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "surnia-ulula": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "tachycineta-bicolor": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "tachycineta-thalassina": {
+    "fg": "left",
+    "wb": "right"
+  },
+  "tadorna-ferruginea": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "todiramphus-macleayii": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "todiramphus-pyrrhopygius": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "todiramphus-sanctus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "todiramphus-sordidus": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "tyto-alba": {
+    "fg": "left",
+    "wb": "left"
+  },
+  "tyto-longimembris": {
+    "fg": "left",
+    "wb": "left"
+  }
+}

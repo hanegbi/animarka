@@ -50,13 +50,16 @@ services:
 
   api:
     build: *python-build
+    # Migrate and seed on start. Both are safe to run again.
     command: >
-      uvicorn animarka_api.main:app --host 0.0.0.0 --port 8000
-      --reload --reload-dir /app/api/src
+      sh -c "cd /app/api && alembic upgrade head && python -m animarka_core.seed &&
+      uvicorn animarka_api.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app/api/src"
     environment: *python-env
     ports: ["8000:8000"]
     volumes:
       - ../../api/src:/app/api/src
+      - ../../api/data:/app/api/data
+      - ../../api/alembic:/app/api/alembic
       - storage:/data/storage
     depends_on:
       db: { condition: service_healthy }
@@ -81,6 +84,7 @@ services:
     volumes:
       - ../../api/src:/app/api/src
       - ../../workers/src:/app/workers/src
+      - ../../api/data:/app/api/data
       - storage:/data/storage
     depends_on:
       redis: { condition: service_healthy }

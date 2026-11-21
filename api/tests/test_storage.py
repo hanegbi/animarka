@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-
 from animarka_core.storage import LocalStorage, check_key, content_type
 
 

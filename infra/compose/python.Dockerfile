@@ -15,3 +15,4 @@ RUN uv sync --frozen --no-dev --all-packages
 
 COPY api/alembic.ini api/alembic.ini
 COPY api/alembic api/alembic
+COPY api/data api/data
