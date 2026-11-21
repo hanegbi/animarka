@@ -62,6 +62,7 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | M1.13 | 2026-11-21 | Tooltip implementation (P1) | The plain dark label is drawn with CSS and shows on hover and keyboard focus. The shadcn tooltip component is not used and was removed | https://21st.dev/@shadcn/components/tooltip (look only) | Planner call to meet the PRD budget. Base UI's tooltip costs about 34 KB gzipped, more than the whole picker. Same look as P1. The name stays in the button's accessible name |
 | M1.13 | 2026-11-21 | Toast loading (T1) | Sonner loads when the first message appears, not with the page | https://21st.dev/@ghaerdi/components/toast | About 10 KB gzipped saved. Behavior is unchanged |
 | M1.13 | 2026-11-21 | Page weight | 298 KB before images, budget 300 KB (scripts 199, fonts 84, styles 12, document 3). First poster visible after 1.3 s on a phone and 1.6 s on desktop at 4 Mbit/s and 100 ms | | Only 2 KB of room. M2 replaces the bundled catalog with an API call, so the budget is re-measured then. Images are 3 MB on first load because M1 uses 640 px art for thumbnails. M2 makes real thumbnails |
+| M1.13 | 2026-11-21 | Family chips on a phone | One row that scrolls sideways. On desktop they still wrap (F1) | | Planner call. Wrapping pills filled five rows and pushed every bird off the first screen of the Birds sheet. The owner can overrule |
 
 ## Open questions
 

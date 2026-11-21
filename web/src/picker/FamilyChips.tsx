@@ -37,7 +37,8 @@ export function FamilyChips({
     <div
       role="group"
       aria-label="Show a family"
-      className="flex flex-wrap gap-1.5"
+      // On a phone the chips scroll sideways in one row, so the birds stay on the first screen of the sheet.
+      className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 min-[1100px]:mx-0 min-[1100px]:flex-wrap min-[1100px]:overflow-visible min-[1100px]:px-0 min-[1100px]:pb-0"
     >
       {chips.map((c) => {
         const pressed = c.key === view;
@@ -48,7 +49,7 @@ export function FamilyChips({
             onPressedChange={() => onView(c.key)}
             variant="outline"
             aria-label={`${c.label}${c.onPoster ? `, ${c.onPoster} on poster` : ""}`}
-            className="data-[pressed]:border-primary data-[pressed]:bg-primary data-[pressed]:text-primary-foreground h-11 gap-1.5 rounded-full px-3.5"
+            className="data-[pressed]:border-primary data-[pressed]:bg-primary data-[pressed]:text-primary-foreground h-11 shrink-0 gap-1.5 rounded-full px-3.5"
           >
             {c.label}
             {c.onPoster > 0 && (
