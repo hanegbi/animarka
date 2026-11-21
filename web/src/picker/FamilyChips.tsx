@@ -48,7 +48,7 @@ export function FamilyChips({
             onPressedChange={() => onView(c.key)}
             variant="outline"
             aria-label={`${c.label}${c.onPoster ? `, ${c.onPoster} on poster` : ""}`}
-            className="data-[pressed]:border-primary data-[pressed]:bg-primary data-[pressed]:text-primary-foreground h-9 gap-1.5 rounded-full px-3"
+            className="data-[pressed]:border-primary data-[pressed]:bg-primary data-[pressed]:text-primary-foreground h-11 gap-1.5 rounded-full px-3.5"
           >
             {c.label}
             {c.onPoster > 0 && (

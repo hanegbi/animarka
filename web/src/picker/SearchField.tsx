@@ -37,7 +37,7 @@ export function SearchField({
             type="button"
             onClick={() => onChange("")}
             aria-label="Clear search"
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 absolute end-1 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-md outline-none focus-visible:ring-3"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 absolute end-0 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-md outline-none focus-visible:ring-3"
           >
             <XIcon aria-hidden className="size-4" />
           </button>

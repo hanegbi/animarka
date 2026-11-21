@@ -145,7 +145,7 @@ export function Picker() {
             <Button
               key={p.id}
               variant="ghost"
-              size="sm"
+              size="default"
               title={p.description}
               onClick={() => dispatch({ type: "replaceWith", ids: p.ids })}
             >
