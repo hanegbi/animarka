@@ -1,10 +1,14 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, type CSSProperties } from "react";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
+import { toasterMounted } from "@/lib/notify";
 
 /** T1. One toast at the bottom. Colors come from our tokens, and the theme follows the system. */
 export function Toaster(props: ToasterProps) {
+  useEffect(() => {
+    toasterMounted();
+  }, []);
   return (
     <Sonner
       theme="system"

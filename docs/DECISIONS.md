@@ -59,6 +59,9 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | M1.12 | 2026-11-21 | Phone tabs | Three tabs for now: Birds, Layout, Style. The sheet starts on Birds. The Export tab and the header Export button come in M4 with the export dialog | | P3 names four tabs. Adding a dead Export tab now would be a button that does nothing |
 | M1.12 | 2026-11-21 | Art credits | Always visible under the picker on desktop. At the end of the Birds sheet on a phone | | Both sources named with links and licenses, and the AI generated note, as the PRD requires |
 | M1.12 | 2026-11-21 | Report a wrong bird | Not added yet. It needs the reports endpoint from M2 (or a contact address from the owner) | | The PRD's mail link would need an address. Open question for the owner |
+| M1.13 | 2026-11-21 | Tooltip implementation (P1) | The plain dark label is drawn with CSS and shows on hover and keyboard focus. The shadcn tooltip component is not used and was removed | https://21st.dev/@shadcn/components/tooltip (look only) | Planner call to meet the PRD budget. Base UI's tooltip costs about 34 KB gzipped, more than the whole picker. Same look as P1. The name stays in the button's accessible name |
+| M1.13 | 2026-11-21 | Toast loading (T1) | Sonner loads when the first message appears, not with the page | https://21st.dev/@ghaerdi/components/toast | About 10 KB gzipped saved. Behavior is unchanged |
+| M1.13 | 2026-11-21 | Page weight | 298 KB before images, budget 300 KB (scripts 199, fonts 84, styles 12, document 3). First poster visible after 1.3 s on a phone and 1.6 s on desktop at 4 Mbit/s and 100 ms | | Only 2 KB of room. M2 replaces the bundled catalog with an API call, so the budget is re-measured then. Images are 3 MB on first load because M1 uses 640 px art for thumbnails. M2 makes real thumbnails |
 
 ## Open questions
 

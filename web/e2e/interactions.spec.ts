@@ -242,16 +242,18 @@ test("adding and removing with the cards does not nag with messages", async ({
   await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);
 });
 
-test("a tooltip shows the bird name when a tray picture gets keyboard focus", async ({
+test("a plain label shows the bird name when a tray picture gets keyboard focus", async ({
   page,
 }) => {
   await open(page);
-  await page
-    .getByRole("button", { name: "Remove Mute Swan from poster" })
-    .focus();
-  await expect(page.locator('[data-slot="tooltip-content"]')).toHaveText(
-    "Mute Swan",
-  );
+  const button = page.getByRole("button", {
+    name: "Remove Mute Swan from poster",
+  });
+  const label = button.locator("[data-tray-label]");
+  await expect(label).toHaveCSS("opacity", "0");
+  await button.focus();
+  await expect(label).toHaveText("Mute Swan");
+  await expect(label).toHaveCSS("opacity", "1");
 });
 
 test("an empty poster says what to do and offers two ways to start", async ({

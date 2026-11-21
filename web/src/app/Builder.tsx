@@ -1,20 +1,18 @@
 "use client";
 
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { DESKTOP_QUERY, useMediaQuery } from "@/lib/use-media-query";
 import { DesktopShell } from "./shell/DesktopShell";
 import { PhoneShell } from "./shell/PhoneShell";
+import { ToasterHost } from "./ToasterHost";
 
 /** Picks the shell for the window: desktop (R2 S2) at 1100 px and wider, phone (R2 P3) below that. */
 export function Builder() {
   const desktop = useMediaQuery(DESKTOP_QUERY);
   return (
-    <TooltipProvider delay={400}>
+    <>
       {desktop ? <DesktopShell /> : <PhoneShell />}
-      {/* On a phone the messages sit above the tab bar, not on top of it. */}
-      <Toaster mobileOffset={{ bottom: 72 }} />
-    </TooltipProvider>
+      <ToasterHost />
+    </>
   );
 }
 
