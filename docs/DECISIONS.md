@@ -69,6 +69,7 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | M2 | 2026-11-21 | Database driver | psycopg 3 for the async API and the sync workers, one driver instead of asyncpg plus a second one | | Fewer moving parts. On Windows, async mode needs the selector event loop, set in main.py and conftest.py |
 | M2 | 2026-11-21 | Files path | Stored files are served at `/api/v1/files/{key}`, not `/art/{key}` | | Backgrounds and renders will live in the same store, so the path is not art only |
 | M2 | 2026-11-21 | Missing data | 47 species have no mass: they take their family median, flagged `massEstimated`. Unknown facing is `left`, flagged `facesKnown: false`, until the vision step in M3 | | The layout needs a size for every bird, and the flags let M3 find what to fix |
+| M2.5 | 2026-11-21 | Presets | 11 lists in api/data/presets.json: Birds of Israel (44), Owls of the world (26), Garden birds of North America (26), Garden birds of Europe (14), Birds of Australia (24), Raptors (19), Waterside (17), Parrots and cockatoos (43), Hummingbirds (8), Kingfishers (10), Woodpeckers (22). Region lists drafted by hand, family lists from taxonomy. A test keeps every slug inside the 1,161 matched species | | Many Israeli icons (bulbul, Palestine sunbird, Tristram's starling, smyrna kingfisher) are missing from one art set, so they cannot be in the list. Only one penguin is matched, so there is no penguin list. Waiting for the owner's review |
 
 ## Open questions
 
@@ -88,3 +89,4 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 
 - The 21st.dev free tier allows 2 code retrievals a day. Spend them on components with real logic. Plain inputs and cards are built directly. The CLI install needs `API_KEY_21ST` in the environment, never in the repo. (2026-11-21)
 - Design rounds must be shown at desktop size first, then phone. Screenshots at 1280 px or wider, with options side by side where possible. (Owner, 2026-11-21)
+- Review the preset lists in `api/data/presets.json` (M2.5). Add, remove or rename freely.

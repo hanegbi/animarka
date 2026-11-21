@@ -7,11 +7,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
 from animarka_core.db import sync_session
 from animarka_core.models import Background, Catalog, Preset, Style
 
+PRUNE = (Preset, Background)
 DATA = Path(__file__).resolve().parents[2] / "data"
 
 
@@ -31,6 +33,9 @@ def seed(session: Session) -> dict[str, int]:
         rows = load(name)
         for row in rows:
             session.merge(model(**row))
+        if model in PRUNE:
+            # Rows removed from the file are removed from the table. Nothing refers to these.
+            session.execute(delete(model).where(model.id.not_in([r["id"] for r in rows])))
         counts[name] = len(rows)
     return counts
 

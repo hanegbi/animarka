@@ -33,3 +33,25 @@ def test_backgrounds_keep_the_dark_flag_and_ink(db: Session) -> None:
     assert forest is not None and forest.is_dark and forest.kind == "image"
     cream = db.get(Background, "cream")
     assert cream is not None and not cream.is_dark and cream.image is None
+
+
+def test_every_preset_species_is_in_the_matched_catalog() -> None:
+    import json
+    from pathlib import Path
+
+    matched = set(json.loads((Path(__file__).parents[1] / "data" / "matched.json").read_text()))
+    assert len(matched) == 1161
+    for preset in load("presets"):
+        ids = preset["species_ids"]
+        assert 2 <= len(ids) <= 150, preset["id"]
+        assert len(ids) == len(set(ids)), preset["id"]
+        assert set(ids) <= matched, (preset["id"], set(ids) - matched)
+
+
+def test_seed_removes_presets_dropped_from_the_file(db: Session) -> None:
+    seed(db)
+    db.add(Preset(id="old-list", catalog_id="birds", title="Old", species_ids=[]))
+    db.commit()
+    seed(db)
+    db.commit()
+    assert db.get(Preset, "old-list") is None
