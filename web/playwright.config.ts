@@ -12,6 +12,7 @@ export default defineConfig({
   projects: [
     {
       name: "phone-390",
+      testIgnore: /budget\.spec/,
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 390, height: 844 },
@@ -20,6 +21,20 @@ export default defineConfig({
     },
     {
       name: "desktop-1280",
+      testIgnore: /budget\.spec/,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1280, height: 800 },
+      },
+    },
+    {
+      // Speed and weight checks measure time, so they run alone, after everything else has finished.
+      // Parallel tests would fight them for the same server and make the numbers meaningless.
+      name: "budget",
+      testMatch: /budget\.spec/,
+      dependencies: ["phone-390", "desktop-1280"],
+      fullyParallel: false,
+      workers: 1,
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 800 },
