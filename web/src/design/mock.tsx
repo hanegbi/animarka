@@ -188,7 +188,7 @@ export function Seg({
   );
 }
 
-const DOTS: Record<string, [number, number, number][]> = {
+export const DOTS: Record<string, [number, number, number][]> = {
   scatter: [
     [9, 9, 4],
     [24, 6, 3],
