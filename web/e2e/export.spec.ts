@@ -1,4 +1,3 @@
-import { openTab } from "./helpers";
 import { LIVE, expect, test } from "./test";
 
 const poster = "[data-poster] [data-animal]";
