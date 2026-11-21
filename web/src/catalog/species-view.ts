@@ -7,6 +7,8 @@ export type SpeciesView = {
   name: string;
   /** Names by language. English is the fallback. */
   names: Partial<Record<Lang, string>>;
+  /** Scientific name. */
+  sci: string;
   family: string;
   /** Use another species' art file. Only for synthetic test posters. */
   artId?: string;
@@ -34,6 +36,7 @@ export function staticSpeciesViews(): Map<string, SpeciesView> {
         id: s.id,
         name: s.name,
         names: { en: s.name },
+        sci: s.sci,
         family: s.family,
         massG: s.massG,
         aspect: (s.art.fg.w / s.art.fg.h + s.art.wb.w / s.art.wb.h) / 2,
