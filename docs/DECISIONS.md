@@ -41,6 +41,10 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | R2 | 2026-11-21 | Phone pattern | P3. Bottom tab bar (Birds, Layout, Style, Export). A tab opens a short sheet above the bar | https://21st.dev/@coss.com/components/drawer | Thumb friendly. Known weakness: the sheet must stay short so the poster stays in view, and switching tabs takes one tap |
 | R2 | 2026-11-21 | Corner radius | R3. Soft. About 7, 10, 12 and 17 px (shadcn `--radius` 0.75rem) | https://ui.shadcn.com/docs/theming | Friendly, echoes the bird shapes |
 | R2 | 2026-11-21 | Shadow | D2. Whisper. `0 1px 2px` and `0 4px 14px` | https://ui.shadcn.com/docs/theming | Quiet, lets the art carry the page |
+| R3 | 2026-11-21 | Search input | S1. Inline field with search icon. The list below filters as you type, with a found count | https://21st.dev/@uiable/components/component-search | Simplest. The code is a plain shadcn input with an icon, built directly (not installed) |
+| R3 | 2026-11-21 | Family filter | F1. Wrapping pills with a badge counting birds on the poster | https://21st.dev/@cnippet-dev/components/v-toggle-10 | Code retrieved and adapted: shadcn Toggle and Badge from the shadcn registry (base-ui), our tokens, single select instead of multi select |
+| R3 | 2026-11-21 | Bird chip and list | C2. Picture cards, columns follow the width, check mark when on | https://21st.dev/@hero_ui/components/heroui-list-box | Owner choice over the recommended C1. Deviation: the 21st.dev component re-exports the whole HeroUI package, which breaks the bundle budget. Only the card look is built, in our code, with a virtualized listbox. Needs thumbnails from the M2 ingest, since the M1 art is 640 px |
+| R3 | 2026-11-21 | Poster tray | T2. Thumbnail strip with a remove cross on each, names on hover and in the accessible name | https://21st.dev/@bundui/components/badge10 | Code retrieved and adapted. Densest, fits 150 birds |
 
 ## Open questions
 
@@ -57,4 +61,5 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 
 ## Working preferences
 
+- The 21st.dev free tier allows 2 code retrievals a day. Spend them on components with real logic. Plain inputs and cards are built directly. The CLI install needs `API_KEY_21ST` in the environment, never in the repo. (2026-11-21)
 - Design rounds must be shown at desktop size first, then phone. Screenshots at 1280 px or wider, with options side by side where possible. (Owner, 2026-11-21)
