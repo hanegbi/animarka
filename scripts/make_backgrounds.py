@@ -31,7 +31,9 @@ def noise(rng: np.random.Generator, cells_x: int, cells_y: int) -> np.ndarray:
     return (a - 0.5) * 2
 
 
-def fractal(rng: np.random.Generator, base_cells: int, octaves: int, ratio: float = 0.5) -> np.ndarray:
+def fractal(
+    rng: np.random.Generator, base_cells: int, octaves: int, ratio: float = 0.5
+) -> np.ndarray:
     total = np.zeros((S, S), dtype=np.float32)
     amp, norm = 1.0, 0.0
     for o in range(octaves):
@@ -64,7 +66,11 @@ def aged_paper() -> np.ndarray:
     lum = np.ones((S, S), dtype=np.float32)
     lum += 0.035 * fractal(rng, 3, 4)  # soft blotches
     lum += 0.012 * noise(rng, S // 3, S // 3)  # grain
-    fibers = np.asarray(Image.fromarray(rng.random((S // 2, S // 90), dtype=np.float32), mode="F").resize((S, S), Image.BICUBIC))
+    fibers = np.asarray(
+        Image.fromarray(rng.random((S // 2, S // 90), dtype=np.float32), mode="F").resize(
+            (S, S), Image.BICUBIC
+        )
+    )
     lum += 0.018 * (fibers - 0.5)
     glow = np.exp(-(((x - 0.22) / 0.55) ** 2 + ((y - 0.14) / 0.45) ** 2))
     lum += 0.06 * glow
@@ -93,7 +99,7 @@ def morning_sky() -> np.ndarray:
         (1.00, (246, 220, 198)),
     ]
     rgb = np.zeros((S, S, 3), dtype=np.float32)
-    for (p0, c0), (p1, c1) in zip(stops, stops[1:]):
+    for (p0, c0), (p1, c1) in zip(stops, stops[1:], strict=False):
         m = (y >= p0) & (y <= p1)
         t = np.where(m, (y - p0) / (p1 - p0), 0)[:, :, None]
         seg = np.array(c0, dtype=np.float32) * (1 - t) + np.array(c1, dtype=np.float32) * t
@@ -113,7 +119,9 @@ def morning_sky() -> np.ndarray:
     return rgb
 
 
-def leaf_polygon(cx: float, cy: float, length: float, width: float, angle: float) -> list[tuple[float, float]]:
+def leaf_polygon(
+    cx: float, cy: float, length: float, width: float, angle: float
+) -> list[tuple[float, float]]:
     pts = []
     n = 24
     for i in range(n + 1):
@@ -141,14 +149,16 @@ def forest() -> np.ndarray:
     layer = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
     stroke = (150, 195, 160)
-    for i in range(210):
+    for _ in range(210):
         cx, cy = rng.uniform(-100, S + 100, 2)
         length = rng.uniform(260, 620)
         width = length * rng.uniform(0.32, 0.5)
         angle = rng.uniform(0, 2 * math.pi)
         alpha = int(rng.uniform(34, 70))
         poly = leaf_polygon(cx, cy, length, width, angle)
-        d.line(poly + [poly[0]], fill=stroke + (alpha,), width=int(rng.uniform(5, 8)), joint="curve")
+        d.line(
+            poly + [poly[0]], fill=stroke + (alpha,), width=int(rng.uniform(5, 8)), joint="curve"
+        )
         ca, sa = math.cos(angle), math.sin(angle)
         d.line([(cx, cy), (cx + length * ca, cy + length * sa)], fill=stroke + (alpha,), width=4)
         for k in range(1, 6):
@@ -157,7 +167,11 @@ def forest() -> np.ndarray:
             for sgn in (-1, 1):
                 a2 = angle + sgn * 0.9
                 ln = width * 0.4 * math.sin(math.pi * t)
-                d.line([(px, py), (px + ln * math.cos(a2), py + ln * math.sin(a2))], fill=stroke + (int(alpha * 0.7),), width=3)
+                d.line(
+                    [(px, py), (px + ln * math.cos(a2), py + ln * math.sin(a2))],
+                    fill=stroke + (int(alpha * 0.7),),
+                    width=3,
+                )
     layer = layer.filter(ImageFilter.GaussianBlur(1.6))
     la = np.asarray(layer, dtype=np.float32)
     a = la[:, :, 3:4] / 255.0
@@ -179,11 +193,15 @@ def contrast_report(name: str, img: Image.Image, ink: tuple[int, int, int]) -> N
     ink_l = float(rel_lum(np.array(ink, dtype=np.float32)))
     mean = tuple(int(v) for v in small.reshape(-1, 3).mean(axis=0))
     worst_dark, worst_light = np.percentile(lum, 2), np.percentile(lum, 98)
-    ratio = lambda a, b: (max(a, b) + 0.05) / (min(a, b) + 0.05)
+
+    def ratio(a: float, b: float) -> float:
+        return (max(a, b) + 0.05) / (min(a, b) + 0.05)
+
     print(
         f"{name}: mean rgb {mean} hex #{mean[0]:02x}{mean[1]:02x}{mean[2]:02x}, "
         f"ink contrast vs mean {ratio(ink_l, float(lum.mean())):.2f}, "
-        f"vs darkest 2% {ratio(ink_l, float(worst_dark)):.2f}, vs lightest 2% {ratio(ink_l, float(worst_light)):.2f}"
+        f"vs darkest 2% {ratio(ink_l, float(worst_dark)):.2f}, "
+        f"vs lightest 2% {ratio(ink_l, float(worst_light)):.2f}"
     )
 
 
