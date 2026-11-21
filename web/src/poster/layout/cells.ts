@@ -49,12 +49,14 @@ export function placeInCell(
     seed: number;
     cap: number;
     artPad?: number;
+    /** False draws the animal at full cell size whatever its weight. Used for the centerpiece. */
+    useMass?: boolean;
   },
 ): Placed {
   const { mode, font, fill, jitter, seed, cap } = opts;
   const reserve = labelReserve(mode, font);
   const pad = opts.artPad ?? ART_PAD;
-  const ff = fitFactor(animal.massG);
+  const ff = opts.useMass === false ? 1 : fitFactor(animal.massG);
   const maxW = cell.w * fill * ff * cap;
   const maxH = Math.max(0, cell.h - reserve - pad) * ff * cap;
   const art = fitBox(animal.aspect, maxW, maxH);
