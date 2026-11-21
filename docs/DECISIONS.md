@@ -37,6 +37,10 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 |---|---|---|---|---|---|
 | R1 | 2026-11-21 | Color theme | A. Field guide (light). B. Museum night is its dark mode | https://21st.dev/community/themes/vintage-paper (reference only) | Matches the prototype and passes AA. Adjusted accent shades are used only where a PRD accent fails (not needed for A) |
 | R1 | 2026-11-21 | Type pairing | 1. Fraunces (titles) and Inter (interface). Hebrew: Frank Ruhl Libre and Heebo | Google Fonts, OFL | Warm headings, clean small text. Subset Fraunces to keep the file small |
+| R2 | 2026-11-21 | Desktop shell | S2. Picker left, all style controls in one toolbar above the poster | https://21st.dev/@isaiahbjork/components/app-dashboard-shell | Largest poster. Known weakness: the toolbar crowds under about 1100 px, so below that width it must wrap or move into the picker column. Decide the narrow desktop behavior in M1.12 |
+| R2 | 2026-11-21 | Phone pattern | P3. Bottom tab bar (Birds, Layout, Style, Export). A tab opens a short sheet above the bar | https://21st.dev/@coss.com/components/drawer | Thumb friendly. Known weakness: the sheet must stay short so the poster stays in view, and switching tabs takes one tap |
+| R2 | 2026-11-21 | Corner radius | R3. Soft. About 7, 10, 12 and 17 px (shadcn `--radius` 0.75rem) | https://ui.shadcn.com/docs/theming | Friendly, echoes the bird shapes |
+| R2 | 2026-11-21 | Shadow | D2. Whisper. `0 1px 2px` and `0 4px 14px` | https://ui.shadcn.com/docs/theming | Quiet, lets the art carry the page |
 
 ## Open questions
 

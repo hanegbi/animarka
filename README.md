@@ -30,6 +30,8 @@ docker compose -f infra/compose/docker-compose.yml up --build
 | RabbitMQ console (animarka / animarka) | http://localhost:15672 |
 | Flower | http://localhost:5555 |
 
+Note: the web service in compose runs the Next.js dev server on a Windows bind mount. If a new file is not picked up, run `docker compose -f infra/compose/docker-compose.yml restart web`. If styles look stale, also remove the `web-next` volume.
+
 ## Checks
 
 ```

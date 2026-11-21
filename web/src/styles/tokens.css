@@ -1,0 +1,92 @@
+/*
+ * Design tokens. The only place raw color values live.
+ * Light mode is theme A, Field guide. Dark mode is theme B, Museum night. (R1, 2026-11-21)
+ * Radius is R3 soft. Shadow is D2 whisper. (R2)
+ * Poster paper colors are data in the backgrounds table, not tokens.
+ */
+
+:root {
+  /* palette */
+  --paper: #f8f4ea;
+  --card-paper: #ffffff;
+  --ink: #1e1b16;
+  --ink-muted: #5e574b;
+  --rule: #ddd5c2;
+  --forest: #2c6b4f;
+  --on-forest: #f8f4ea;
+  --ochre: #c58b2a; /* decoration only, fails AA as text */
+  --danger: #b3261e;
+
+  /* shadcn roles */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--card-paper);
+  --card-foreground: var(--ink);
+  --popover: var(--card-paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--forest);
+  --primary-foreground: var(--on-forest);
+  --secondary: color-mix(in srgb, var(--paper) 94%, var(--ink));
+  --secondary-foreground: var(--ink);
+  --muted: color-mix(in srgb, var(--paper) 94%, var(--ink));
+  --muted-foreground: var(--ink-muted);
+  --accent: color-mix(in srgb, var(--forest) 12%, var(--card-paper));
+  --accent-foreground: var(--ink);
+  --destructive: var(--danger);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--forest);
+  --chart-1: var(--forest);
+  --chart-2: var(--ochre);
+  --chart-3: var(--ink-muted);
+  --chart-4: color-mix(in srgb, var(--forest) 55%, var(--paper));
+  --chart-5: var(--rule);
+  --sidebar: var(--card-paper);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--forest);
+  --sidebar-primary-foreground: var(--on-forest);
+  --sidebar-accent: color-mix(in srgb, var(--forest) 12%, var(--card-paper));
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--rule);
+  --sidebar-ring: var(--forest);
+
+  /* radius R3, soft: sm 7, md 10, lg 12, xl 17 px */
+  --radius: 0.75rem;
+
+  /* shadow D2, whisper */
+  --shadow-whisper: 0 1px 2px rgb(30 27 22 / 0.06);
+  --shadow-whisper-hi: 0 4px 14px rgb(30 27 22 / 0.1);
+}
+
+/* Museum night. Applied by class, or by the system setting unless the page forces light. */
+.dark {
+  --paper: #14171a;
+  --card-paper: #1d2125;
+  --ink: #ede8dc;
+  --ink-muted: #a8a294;
+  --rule: #31373d;
+  --forest: #b8935a; /* brass, the accent in this mode */
+  --on-forest: #14171a;
+  --ochre: #b8935a;
+  --danger: #f2877e;
+  --shadow-whisper: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-whisper-hi: 0 4px 14px rgb(0 0 0 / 0.5);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --paper: #14171a;
+    --card-paper: #1d2125;
+    --ink: #ede8dc;
+    --ink-muted: #a8a294;
+    --rule: #31373d;
+    --forest: #b8935a;
+    --on-forest: #14171a;
+    --ochre: #b8935a;
+    --danger: #f2877e;
+    --shadow-whisper: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-whisper-hi: 0 4px 14px rgb(0 0 0 / 0.5);
+    color-scheme: dark;
+  }
+}
