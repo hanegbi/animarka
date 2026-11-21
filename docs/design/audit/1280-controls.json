@@ -1,0 +1,1822 @@
+{
+ "rows": [
+  {
+   "zone": "header",
+   "label": "Undo",
+   "h": 44,
+   "w": 88,
+   "font": "14px",
+   "weight": "500",
+   "radius": "12px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "header",
+   "label": "Redo",
+   "h": 44,
+   "w": 86,
+   "font": "14px",
+   "weight": "500",
+   "radius": "12px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "header",
+   "label": "Shuffle layout",
+   "h": 44,
+   "w": 144,
+   "font": "14px",
+   "weight": "500",
+   "radius": "12px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Search birds",
+   "h": 44,
+   "w": 355,
+   "font": "14px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "4px 36px"
+  },
+  {
+   "zone": "panel",
+   "label": "All, 12 on poster",
+   "h": 44,
+   "w": 83,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Emu and Cassowaries",
+   "h": 44,
+   "w": 178,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Rheas",
+   "h": 44,
+   "w": 71,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Magpie Goose",
+   "h": 44,
+   "w": 127,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Ducks, Swans, and Geese, 2 o",
+   "h": 44,
+   "w": 235,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Megapodes",
+   "h": 44,
+   "w": 109,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Guineafowl",
+   "h": 44,
+   "w": 105,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "New World Quail",
+   "h": 44,
+   "w": 141,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Partridges, Pheasants, Grous",
+   "h": 44,
+   "w": 304,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Flamingos",
+   "h": 44,
+   "w": 99,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Grebes",
+   "h": 44,
+   "w": 78,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Bustards",
+   "h": 44,
+   "w": 89,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Cuckoos",
+   "h": 44,
+   "w": 89,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Doves and Pigeons",
+   "h": 44,
+   "w": 158,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Cranes",
+   "h": 44,
+   "w": 78,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Rails, Gallinules, and Coots",
+   "h": 44,
+   "w": 210,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Thick-knees and Stone-curlew",
+   "h": 44,
+   "w": 244,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Stilts and Avocets",
+   "h": 44,
+   "w": 149,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Oystercatchers",
+   "h": 44,
+   "w": 133,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Plovers and Lapwings",
+   "h": 44,
+   "w": 176,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Painted-snipes",
+   "h": 44,
+   "w": 131,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Jacanas",
+   "h": 44,
+   "w": 86,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Sandpipers and allies",
+   "h": 44,
+   "w": 173,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Buttonquail",
+   "h": 44,
+   "w": 106,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Coursers and Pratincoles",
+   "h": 44,
+   "w": 199,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Jaegers and Skuas",
+   "h": 44,
+   "w": 157,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Auks, Puffins, and Murres",
+   "h": 44,
+   "w": 203,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Skimmers, Noddies, Terns, an",
+   "h": 44,
+   "w": 276,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Tropicbirds",
+   "h": 44,
+   "w": 106,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Loons",
+   "h": 44,
+   "w": 71,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Penguins",
+   "h": 44,
+   "w": 92,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Albatrosses",
+   "h": 44,
+   "w": 109,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Southern Storm Petrels",
+   "h": 44,
+   "w": 185,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Northern Storm Petrels",
+   "h": 44,
+   "w": 184,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Petrels, Shearwaters, and Di",
+   "h": 44,
+   "w": 298,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Storks",
+   "h": 44,
+   "w": 73,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Frigatebirds",
+   "h": 44,
+   "w": 110,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Boobies and Gannets",
+   "h": 44,
+   "w": 172,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Anhinga and Darters",
+   "h": 44,
+   "w": 167,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Cormorants and Shags",
+   "h": 44,
+   "w": 183,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Ibises and Spoonbills",
+   "h": 44,
+   "w": 172,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Pelicans",
+   "h": 44,
+   "w": 86,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Herons, Egrets, and Bitterns",
+   "h": 44,
+   "w": 246,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Nightjars and Nighthawks",
+   "h": 44,
+   "w": 202,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Frogmouths",
+   "h": 44,
+   "w": 110,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Owlet-nightjars",
+   "h": 44,
+   "w": 133,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Swifts",
+   "h": 44,
+   "w": 71,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Hummingbirds",
+   "h": 44,
+   "w": 128,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Bay Owls and Barn Owls, 1 on",
+   "h": 44,
+   "w": 222,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Owls, 1 on poster",
+   "h": 44,
+   "w": 92,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "New World Vultures",
+   "h": 44,
+   "w": 163,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Osprey",
+   "h": 44,
+   "w": 78,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Kites, Old World Vultures, E",
+   "h": 44,
+   "w": 361,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Hoopoes",
+   "h": 44,
+   "w": 90,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Rollers",
+   "h": 44,
+   "w": 76,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Bee-eaters",
+   "h": 44,
+   "w": 104,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Kingfishers, 1 on poster",
+   "h": 44,
+   "w": 135,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Woodpeckers, 1 on poster",
+   "h": 44,
+   "w": 152,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Falcons and Caracaras, 1 on ",
+   "h": 44,
+   "w": 212,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Cockatoos",
+   "h": 44,
+   "w": 102,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "African and New World Parrot",
+   "h": 44,
+   "w": 237,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Old World Parrots, 1 on post",
+   "h": 44,
+   "w": 177,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Pittas",
+   "h": 44,
+   "w": 68,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Cotingas",
+   "h": 44,
+   "w": 90,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Tyrant Flycatchers and allie",
+   "h": 44,
+   "w": 221,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Lyrebirds",
+   "h": 44,
+   "w": 92,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Scrubbirds",
+   "h": 44,
+   "w": 103,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Australasian Treecreepers",
+   "h": 44,
+   "w": 206,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Bowerbirds",
+   "h": 44,
+   "w": 106,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Grasswrens, Fairywrens, and ",
+   "h": 44,
+   "w": 304,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Pardalotes",
+   "h": 44,
+   "w": 101,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Gerygones, Thornbills, Scrub",
+   "h": 44,
+   "w": 337,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Honeyeaters",
+   "h": 44,
+   "w": 115,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Logrunners and Chowchilla",
+   "h": 44,
+   "w": 213,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Australasian Babblers",
+   "h": 44,
+   "w": 176,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Jewel-babblers and Quail-thr",
+   "h": 44,
+   "w": 266,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Cuckooshrikes",
+   "h": 44,
+   "w": 130,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Woodswallows, Bellmagpies, a",
+   "h": 44,
+   "w": 291,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Sittellas",
+   "h": 44,
+   "w": 83,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Whipbirds and Wedgebills",
+   "h": 44,
+   "w": 205,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Australasian Bellbirds",
+   "h": 44,
+   "w": 175,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Shriketits",
+   "h": 44,
+   "w": 93,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Shrike-babblers, Erpornis, a",
+   "h": 44,
+   "w": 281,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Old World Orioles",
+   "h": 44,
+   "w": 148,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Whistlers and allies",
+   "h": 44,
+   "w": 160,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Fantails and Silktails",
+   "h": 44,
+   "w": 166,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Drongos",
+   "h": 44,
+   "w": 87,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Monarch Flycatchers, Paradis",
+   "h": 44,
+   "w": 425,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "White-winged Chough and Apos",
+   "h": 44,
+   "w": 290,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Birds-of-paradise",
+   "h": 44,
+   "w": 148,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Shrikes",
+   "h": 44,
+   "w": 80,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Crows, Jays, and Magpies",
+   "h": 44,
+   "w": 206,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Australasian Robins",
+   "h": 44,
+   "w": 162,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Penduline Tits",
+   "h": 44,
+   "w": 125,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Tits, Chickadees, and Titmic",
+   "h": 44,
+   "w": 228,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Reedling",
+   "h": 44,
+   "w": 88,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Larks",
+   "h": 44,
+   "w": 67,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Cisticolas and allies",
+   "h": 44,
+   "w": 162,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Reed Warblers and allies",
+   "h": 44,
+   "w": 195,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Grasshopper Warblers, Grassb",
+   "h": 44,
+   "w": 332,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Swallows, 1 on poster",
+   "h": 44,
+   "w": 122,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Tit-warblers, Bushtits, and ",
+   "h": 44,
+   "w": 308,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Bush Warblers and allies",
+   "h": 44,
+   "w": 194,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Leaf Warblers",
+   "h": 44,
+   "w": 124,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Bulbuls",
+   "h": 44,
+   "w": 79,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Sylviid Warblers and allies",
+   "h": 44,
+   "w": 205,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "White-eyes, Yuhinas, and all",
+   "h": 44,
+   "w": 239,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Laughingthrushes and allies",
+   "h": 44,
+   "w": 218,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Waxwings",
+   "h": 44,
+   "w": 99,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Silky-flycatchers",
+   "h": 44,
+   "w": 143,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Kinglets",
+   "h": 44,
+   "w": 84,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Wallcreeper",
+   "h": 44,
+   "w": 110,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Nuthatches",
+   "h": 44,
+   "w": 107,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Treecreepers",
+   "h": 44,
+   "w": 119,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Gnatwrens and Gnatcatchers",
+   "h": 44,
+   "w": 225,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Wrens",
+   "h": 44,
+   "w": 73,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Mockingbirds and Thrashers",
+   "h": 44,
+   "w": 222,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Rhabdornises, Starlings, and",
+   "h": 44,
+   "w": 270,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Dippers",
+   "h": 44,
+   "w": 82,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Thrushes and allies",
+   "h": 44,
+   "w": 160,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Chats, Old World Flycatchers",
+   "h": 44,
+   "w": 296,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Flowerpeckers",
+   "h": 44,
+   "w": 129,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Spiderhunters and Sunbirds",
+   "h": 44,
+   "w": 217,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Weavers and allies",
+   "h": 44,
+   "w": 155,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Munias, Parrotfinches, Waxbi",
+   "h": 44,
+   "w": 311,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Accentors",
+   "h": 44,
+   "w": 99,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Snowfinches and Old World Sp",
+   "h": 44,
+   "w": 283,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Wagtails and Pipits",
+   "h": 44,
+   "w": 157,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Finches, Euphonias, and alli",
+   "h": 44,
+   "w": 260,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Longspurs and Snow Buntings",
+   "h": 44,
+   "w": 234,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Old World Buntings",
+   "h": 44,
+   "w": 159,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "New World Sparrows",
+   "h": 44,
+   "w": 171,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "New World Blackbirds, Troupi",
+   "h": 44,
+   "w": 318,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "New World Warblers",
+   "h": 44,
+   "w": 168,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Cardinals and allies",
+   "h": 44,
+   "w": 160,
+   "font": "14px",
+   "weight": "500",
+   "radius": "3.35544e+07px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Add all 1,161",
+   "h": 44,
+   "w": 109,
+   "font": "14px",
+   "weight": "500",
+   "radius": "12px",
+   "pad": "0px 14px"
+  },
+  {
+   "zone": "panel",
+   "label": "Emu",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Greater Rhea",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Magpie Goose",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Black-bellied Whistling Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Plumed Whistling Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Fulvous Whistling Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "White-faced Whistling Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Wandering Whistling Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Musk Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Green Pygmy Goose",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Cotton Pygmy Goose",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Freckled Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Blue-billed Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Ruddy Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "Pink-eared Duck",
+   "h": 124,
+   "w": 113,
+   "font": "16px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px"
+  },
+  {
+   "zone": "panel",
+   "label": "huashu-bird-sticker",
+   "h": 14,
+   "w": 102,
+   "font": "11px",
+   "weight": "400",
+   "radius": "0px",
+   "pad": "0px"
+  },
+  {
+   "zone": "panel",
+   "label": "HABirdDashboard",
+   "h": 14,
+   "w": 93,
+   "font": "11px",
+   "weight": "400",
+   "radius": "0px",
+   "pad": "0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Field guide",
+   "h": 70,
+   "w": 84,
+   "font": "12px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px 8px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Woodblock",
+   "h": 70,
+   "w": 84,
+   "font": "12px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px 8px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Names",
+   "h": 100,
+   "w": 102,
+   "font": "12px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px 8px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Numbers and legend",
+   "h": 100,
+   "w": 102,
+   "font": "12px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px 8px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "No text",
+   "h": 100,
+   "w": 102,
+   "font": "12px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "6px 8px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "English",
+   "h": 44,
+   "w": 80,
+   "font": "14px",
+   "weight": "500",
+   "radius": "9.6px",
+   "pad": "0px 12px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "עברית",
+   "h": 44,
+   "w": 80,
+   "font": "14px",
+   "weight": "500",
+   "radius": "9.6px",
+   "pad": "0px 12px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Scattered",
+   "h": 52,
+   "w": 69,
+   "font": "12px",
+   "weight": "600",
+   "radius": "12px",
+   "pad": "4px 0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Grid",
+   "h": 52,
+   "w": 69,
+   "font": "12px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "4px 0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Centerpiece",
+   "h": 52,
+   "w": 69,
+   "font": "12px",
+   "weight": "400",
+   "radius": "12px",
+   "pad": "4px 0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Cream",
+   "h": 44,
+   "w": 44,
+   "font": "16px",
+   "weight": "400",
+   "radius": "3.35544e+07px",
+   "pad": "0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "White",
+   "h": 44,
+   "w": 44,
+   "font": "16px",
+   "weight": "400",
+   "radius": "3.35544e+07px",
+   "pad": "0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Sage",
+   "h": 44,
+   "w": 44,
+   "font": "16px",
+   "weight": "400",
+   "radius": "3.35544e+07px",
+   "pad": "0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Blush",
+   "h": 44,
+   "w": 44,
+   "font": "16px",
+   "weight": "400",
+   "radius": "3.35544e+07px",
+   "pad": "0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Night",
+   "h": 44,
+   "w": 44,
+   "font": "16px",
+   "weight": "400",
+   "radius": "3.35544e+07px",
+   "pad": "0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Aged paper",
+   "h": 44,
+   "w": 44,
+   "font": "16px",
+   "weight": "400",
+   "radius": "3.35544e+07px",
+   "pad": "0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Morning sky",
+   "h": 44,
+   "w": 44,
+   "font": "16px",
+   "weight": "400",
+   "radius": "3.35544e+07px",
+   "pad": "0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "Forest",
+   "h": 44,
+   "w": 44,
+   "font": "16px",
+   "weight": "400",
+   "radius": "3.35544e+07px",
+   "pad": "0px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "3:4",
+   "h": 44,
+   "w": 48,
+   "font": "14px",
+   "weight": "500",
+   "radius": "0px",
+   "pad": "0px 12px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "2:3",
+   "h": 44,
+   "w": 48,
+   "font": "14px",
+   "weight": "400",
+   "radius": "0px",
+   "pad": "0px 12px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "4:5",
+   "h": 44,
+   "w": 48,
+   "font": "14px",
+   "weight": "400",
+   "radius": "0px",
+   "pad": "0px 12px"
+  },
+  {
+   "zone": "toolbar",
+   "label": "A series",
+   "h": 44,
+   "w": 79,
+   "font": "14px",
+   "weight": "400",
+   "radius": "0px",
+   "pad": "0px 12px"
+  },
+  {
+   "zone": "poster",
+   "label": "Poster title",
+   "h": 23,
+   "w": 267,
+   "font": "15.7896px",
+   "weight": "600",
+   "radius": "0px",
+   "pad": "0px"
+  }
+ ],
+ "gaps": [
+  "6px/0px 14px",
+  "6px/0px 14px",
+  "6px/0px 14px",
+  "normal/0px",
+  "6px/0px 4px 6px",
+  "8px/0px",
+  "normal/0px",
+  "8px/12px 0px 0px",
+  "normal/0px",
+  "normal/0px",
+  "4px/0px",
+  "4px/0px",
+  "4px/0px",
+  "4px/0px",
+  "4px/0px",
+  "4px/0px"
+ ]
+}

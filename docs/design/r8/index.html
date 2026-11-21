@@ -1,0 +1,538 @@
+<title>animarka UI Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: a long review document; each decision is a band of five live option cards, desktop frames first. */
+:root {
+  --paper: #f8f4ea; --card: #ffffff; --ink: #1e1b16; --muted: #5e574b; --rule: #ddd5c2;
+  --forest: #2c6b4f; --on-forest: #f8f4ea; --tint: #e6eee9; --soft: #efeadf; --warn: #9a3412; --warn-bg: #fdf0e6;
+  --poster: #f8f4ea; --poster-ink: #1e1b16;
+  --display: "Fraunces", Georgia, serif; --body: "Inter", system-ui, sans-serif;
+  --r: 10px; --shadow: 0 1px 2px rgb(30 27 22 / .06); --shadow-hi: 0 8px 28px rgb(30 27 22 / .14);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #14171a; --card: #1d2125; --ink: #ede8dc; --muted: #a8a294; --rule: #31373d;
+  --forest: #b8935a; --on-forest: #14171a; --tint: #2a2a24; --soft: #23272b; --warn: #f2a46b; --warn-bg: #2d2219;
+  --shadow: 0 1px 2px rgb(0 0 0 / .4); --shadow-hi: 0 8px 28px rgb(0 0 0 / .5); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #14171a; --card: #1d2125; --ink: #ede8dc; --muted: #a8a294; --rule: #31373d;
+  --forest: #b8935a; --on-forest: #14171a; --tint: #2a2a24; --soft: #23272b; --warn: #f2a46b; --warn-bg: #2d2219;
+  --shadow: 0 1px 2px rgb(0 0 0 / .4); --shadow-hi: 0 8px 28px rgb(0 0 0 / .5); color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1480px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 96px; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: 40px; line-height: 1.1 }
+h2 { font-size: 28px; line-height: 1.2 }
+h3 { font-size: 19px; line-height: 1.3 }
+p { margin: 0 }
+.lede { max-width: 72ch; color: var(--muted); font-size: 17px }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600 }
+section { display: flex; flex-direction: column; gap: 20px }
+.head { display: flex; flex-direction: column; gap: 8px; max-width: 80ch }
+.answer { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 20px; box-shadow: var(--shadow) }
+.answer code { font: 600 15px/1 ui-monospace, Menlo, monospace; background: var(--tint); padding: 6px 10px; border-radius: 8px }
+.answer b { font-weight: 600 }
+
+/* audit */
+.audit { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start }
+.shots { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); gap: 12px }
+.shots figure { margin: 0; display: flex; flex-direction: column; gap: 6px }
+.shots img { width: 100%; border-radius: 10px; border: 1px solid var(--rule); display: block }
+.shots figcaption { font-size: 12px; color: var(--muted) }
+.findings { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: f }
+.findings li { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 12px 14px; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px }
+.sev { grid-row: span 2; align-self: start; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: var(--warn-bg); color: var(--warn); white-space: nowrap }
+.sev.mid { background: var(--soft); color: var(--muted) }
+.findings b { font-weight: 600 }
+.findings span { color: var(--muted); font-size: 14px }
+.measure { font-variant-numeric: tabular-nums; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px }
+.measure i { font-style: normal; font-size: 12px; border: 1px solid var(--rule); padding: 1px 7px; border-radius: 6px; background: var(--paper) }
+
+.fixes { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none }
+.fixes li { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px }
+.fixes b { font-weight: 600 }
+.fixes span { color: var(--muted); font-size: 14px }
+
+/* option cards */
+.opts { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)) }
+.opts.wide { grid-template-columns: repeat(auto-fill, minmax(620px, 1fr)) }
+.opt { background: var(--card); border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow) }
+.opt.rec { border-color: var(--forest); box-shadow: 0 0 0 1px var(--forest), var(--shadow) }
+.stage { background: var(--soft); border-bottom: 1px solid var(--rule); position: relative; min-height: 220px; display: grid; place-items: center; overflow: hidden }
+.meta { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px }
+.title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap }
+.code { font: 600 13px/1 ui-monospace, Menlo, monospace; background: var(--ink); color: var(--paper); padding: 5px 8px; border-radius: 7px }
+.badge { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--on-forest); background: var(--forest); padding: 4px 8px; border-radius: 99px }
+.desc { color: var(--ink); font-size: 14px }
+.pros { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 13.5px; color: var(--muted) }
+.pros dt { font-weight: 600; color: var(--ink) }
+.pros dd { margin: 0 }
+.src { font-size: 13px; color: var(--muted) }
+.src a { color: var(--forest); text-underline-offset: 2px }
+.why { font-size: 13.5px; background: var(--tint); border-radius: 8px; padding: 8px 10px }
+.play { position: absolute; right: 12px; bottom: 12px; z-index: 5; font: 600 13px var(--body); height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 6px }
+.play:hover { background: var(--paper) }
+.play:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px }
+.hint { position: absolute; left: 12px; bottom: 14px; font-size: 12px; color: var(--muted); z-index: 5 }
+
+/* ----- the app mock, drawn at true 1280 x 720 and scaled to fit ----- */
+.frame { width: 100%; aspect-ratio: 16 / 9; position: relative }
+.app { position: absolute; left: 0; top: 0; width: 1280px; height: 720px; transform-origin: 0 0; background: var(--paper); color: var(--ink); font: 14px/1.4 var(--body); display: grid; grid-template-rows: 56px 1fr; }
+.app * { box-sizing: border-box }
+.a-head { display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--card); border-bottom: 1px solid var(--rule) }
+.logo { font: 600 24px var(--display) }
+.row { display: flex; gap: 8px; align-items: center }
+.btn { height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); display: inline-flex; align-items: center; gap: 8px; font: 500 14px var(--body); color: var(--ink); white-space: nowrap }
+.btn.ghost { border-color: transparent; background: transparent }
+.btn.sm { height: 32px; padding: 0 10px; font-size: 13px; border-radius: 8px }
+.btn svg, .seg svg { width: 16px; height: 16px; flex: none }
+.seg { display: inline-flex; height: 40px; padding: 3px; gap: 2px; background: var(--soft); border-radius: 10px; border: 1px solid var(--rule) }
+.seg > span { display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 7px; font: 500 13.5px var(--body); color: var(--muted); white-space: nowrap }
+.seg > span.on { background: var(--card); color: var(--ink); box-shadow: var(--shadow) }
+.grp { display: flex; flex-direction: column; gap: 6px }
+.lbl { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
+.sw { display: flex; gap: 8px; align-items: center; height: 40px }
+.sw i { width: 28px; height: 28px; border-radius: 99px; border: 1px solid var(--rule); display: block }
+.sw i.on { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--forest) }
+.body { display: grid; grid-template-columns: 360px 1fr; min-height: 0 }
+.panel { background: var(--card); border-right: 1px solid var(--rule); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow: hidden }
+.search { height: 40px; border: 1px solid var(--rule); border-radius: 10px; display: flex; align-items: center; gap: 8px; padding: 0 12px; color: var(--muted); background: var(--card) }
+.search svg { width: 16px; height: 16px }
+.status { font-size: 12.5px; color: var(--muted) }
+.chips { display: flex; gap: 6px; overflow: hidden }
+.chip { height: 32px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--rule); display: inline-flex; align-items: center; gap: 6px; font: 500 13px var(--body); white-space: nowrap }
+.chip.on { background: var(--forest); color: var(--on-forest); border-color: var(--forest) }
+.chip em { font-style: normal; font-size: 11px; background: var(--card); color: var(--forest); border-radius: 99px; padding: 0 6px; line-height: 18px }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
+.card { border: 1px solid var(--rule); border-radius: 10px; padding: 6px 6px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; background: var(--card) }
+.card img { height: 62px; width: 100%; object-fit: contain }
+.card b { font: 400 11.5px/1.2 var(--body); text-align: center }
+.card.on { border-color: var(--forest); box-shadow: 0 0 0 1px var(--forest) }
+.tick { position: absolute; top: 5px; right: 5px; width: 18px; height: 18px; border-radius: 99px; background: var(--forest); color: var(--on-forest); display: grid; place-items: center }
+.tick svg { width: 12px; height: 12px }
+.canvas { position: relative; display: grid; place-items: center; min-height: 0; padding: 20px }
+.poster { background: #fbf8f0; color: #1e1b16; aspect-ratio: 3 / 4; height: 100%; max-height: 100%; box-shadow: 0 2px 10px rgb(30 27 22 / .12); padding: 5% 6%; display: flex; flex-direction: column; align-items: center }
+.poster h4 { font: 600 26px var(--display); margin: 2% 0 4% }
+.prow { display: flex; justify-content: center; gap: 4%; width: 100%; flex: 1; align-items: center }
+.pb { display: flex; flex-direction: column; align-items: center; width: 22%; font-size: 8.5px; text-align: center; line-height: 1.15 }
+.pb img { width: 100%; height: 62px; object-fit: contain }
+.pop { position: absolute; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; box-shadow: var(--shadow-hi); padding: 12px; display: flex; flex-direction: column; gap: 10px; z-index: 4 }
+
+/* ----- small demo surfaces ----- */
+.mini { width: 100%; height: 100%; display: grid; place-items: center; padding: 18px }
+.sysrow { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; max-width: 560px }
+.mpanel { width: 340px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow); font-size: 13px }
+.strip { display: flex; gap: 6px; flex-wrap: wrap }
+.thumb { width: 40px; height: 40px; border-radius: 99px; border: 1px solid var(--rule); background: var(--card); position: relative; display: grid; place-items: center; cursor: pointer; padding: 0 }
+.thumb img { width: 32px; height: 32px; object-fit: contain }
+.thumb .x { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; border-radius: 99px; background: var(--ink); color: var(--paper); display: grid; place-items: center; opacity: 0; transition: opacity .15s }
+.thumb:hover .x, .thumb:focus-visible .x { opacity: 1 }
+.thumb .x svg { width: 10px; height: 10px }
+.tok { height: 28px; padding: 0 4px 0 4px; border-radius: 99px; border: 1px solid var(--rule); display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; background: var(--card); cursor: pointer }
+.tok img { width: 20px; height: 20px; object-fit: contain }
+.tok svg { width: 12px; height: 12px; color: var(--muted); margin-right: 4px }
+.sechead { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between }
+.drawer { border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); padding: 8px 10px; display: flex; flex-direction: column; gap: 8px }
+.gone { opacity: 0; transform: scale(.6); transition: opacity .2s, transform .2s }
+
+.stage-poster { width: 300px; height: 230px; background: #fbf8f0; border-radius: 6px; box-shadow: 0 2px 10px rgb(30 27 22 / .12); position: relative }
+.bird { position: absolute; width: 84px; height: 84px; display: grid; place-items: center; cursor: pointer; border: 0; background: none; padding: 0 }
+.bird img { width: 84px; height: 76px; object-fit: contain; display: block; pointer-events: none }
+.bird .shadow { position: absolute; bottom: 2px; left: 18px; right: 18px; height: 6px; border-radius: 50%; background: rgb(30 27 22 / .18); filter: blur(2px) }
+.ring { outline: 2px dashed var(--forest); outline-offset: 2px; border-radius: 10px }
+.cursor { position: absolute; width: 18px; height: 18px; pointer-events: none; z-index: 6; opacity: 0 }
+
+@media (max-width: 1000px) { .audit { grid-template-columns: 1fr } .opts, .opts.wide { grid-template-columns: 1fr } }
+@media (max-width: 560px) { h1 { font-size: 30px } .shots { grid-template-columns: 1fr } .stage-poster { transform: scale(.9) } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important } }
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <span class="eyebrow">Round R8 · Frontend review · 21 Nov 2026</span>
+    <h1>What is wrong with the builder, and five ways to fix each part</h1>
+    <p class="lede">I measured every control in the running app at 1600, 1280 and 390 px. Below: what is broken, the fixes I will make whatever you choose, then five decisions with five live options each. Every demo is clickable. The recommended option is marked.</p>
+  </header>
+
+  <div class="answer" role="note">
+    <b>How to answer:</b> send one code per decision, for example <code>A2 B1 C1 D3 E3</code>. Mix freely, and add notes if you want a change to an option.
+  </div>
+
+  <section aria-labelledby="audit-h">
+    <div class="head"><span class="eyebrow">Audit</span><h2 id="audit-h">What the measurements show</h2></div>
+    <div class="audit">
+      <div class="shots">
+        <figure><img src="1280-bird-bar.jpg" alt="The builder at 1280 px with a bird selected. The style toolbar takes three rows and the poster is small." width="1280" height="800"><figcaption>Today at 1280 px. The toolbar wraps to three rows and leaves the poster a third of the screen.</figcaption></figure>
+        <figure><img src="390-default.jpg" alt="The builder on a 390 px phone. The Add all button is as large as the search field." width="390" height="844"><figcaption>Today on a phone.</figcaption></figure>
+      </div>
+      <ol class="findings">
+        <li><span class="sev">High</span><b>No control system</b><span>One toolbar mixes four heights, three text sizes and four corner shapes.
+          <span class="measure"><i>44 px</i><i>52 px</i><i>70 px</i><i>100 px</i><i>12 / 14 / 16 px text</i><i>0 / 9.6 / 12 px / pill</i></span></span></li>
+        <li><span class="sev">High</span><b>Falcon pictures inflate the toolbar</b><span>The sample bird in Design and Labels makes those cards 70 and 100 px tall, so the toolbar needs three rows at 1280 px.</span></li>
+        <li><span class="sev">High</span><b>Your chosen birds are out of reach</b><span>The "Your poster" tray and the presets sit under the bird list, which is now 1,161 birds and about 51,000 px long. Nobody scrolls that far.</span></li>
+        <li><span class="sev">High</span><b>"Add all 1,161" is offered</b><span>A poster holds at most 150 birds, so this button can only make a mess. It is also as big as the search field.</span></li>
+        <li><span class="sev mid">Medium</span><b>Tap bar looks weak</b><span>The mirror icon is unclear at 20 px, the bar covers the neighbouring birds, and the green outline matches nothing else.</span></li>
+        <li><span class="sev mid">Medium</span><b>Swap has no motion</b><span>Dropping a bird on another makes both jump to their new places in one frame.</span></li>
+        <li><span class="sev mid">Medium</span><b>Small defects</b><span>Base buttons animate every property, disabled buttons ignore the pointer, and the background picker repeats the selected name under the swatches.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="fix-h">
+    <div class="head"><span class="eyebrow">Will do</span><h2 id="fix-h">Fixes I will make whatever you pick</h2></div>
+    <ul class="fixes">
+      <li><b>One spacing and type scale</b><span>Spacing 4, 8, 12, 16, 24, 32 px. Text 12, 14, 16, 20, 28 px. Nothing outside them.</span></li>
+      <li><b>No falcon pictures</b><span>Design and Labels become plain text choices, the same height as every other control.</span></li>
+      <li><b>Tap a bird to mirror it</b><span>No more bar and no Remove button. A tap turns the bird, with the animation you pick in D. Keyboard users keep Delete.</span></li>
+      <li><b>Remove birds where you chose them</b><span>Untick a card in the list, or use the chosen birds view you pick in C.</span></li>
+      <li><b>Presets above the list</b><span>"Start from a set" becomes a menu next to the search, not a row under 51,000 px of birds.</span></li>
+      <li><b>"Add all" only when it makes sense</b><span>A small button, shown for a family or a search with 150 birds or fewer.</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="a-h">
+    <div class="head"><span class="eyebrow">Decision A</span><h2 id="a-h">Where the style controls live on desktop</h2>
+      <p class="lede">Shown at a real 1280 x 720 desktop, scaled to fit. The poster is limited by height, so width spent on controls beside it is almost free, while every row above it shrinks it.</p></div>
+    <div class="opts wide" id="optsA"></div>
+  </section>
+
+  <section aria-labelledby="b-h">
+    <div class="head"><span class="eyebrow">Decision B</span><h2 id="b-h">One shape for every button and control</h2>
+      <p class="lede">The same set of controls in each system. Whatever you pick, every control in the app uses it, with one size and one small size.</p></div>
+    <div class="opts" id="optsB"></div>
+  </section>
+
+  <section aria-labelledby="c-h">
+    <div class="head"><span class="eyebrow">Decision C</span><h2 id="c-h">Seeing and unticking your chosen birds</h2>
+      <p class="lede">Try it: click a chosen bird to take it off the poster. Click the stage background to bring them all back.</p></div>
+    <div class="opts" id="optsC"></div>
+  </section>
+
+  <section aria-labelledby="d-h">
+    <div class="head"><span class="eyebrow">Decision D</span><h2 id="d-h">The mirror animation when you tap a bird</h2>
+      <p class="lede">Tap any bird to mirror it. Each stays under half a second, and people who ask for reduced motion get an instant turn.</p></div>
+    <div class="opts" id="optsD"></div>
+  </section>
+
+  <section aria-labelledby="e-h">
+    <div class="head"><span class="eyebrow">Decision E</span><h2 id="e-h">The swap animation when you drop a bird on another</h2>
+      <p class="lede">Press Play to watch the barn owl dragged onto the kingfisher.</p></div>
+    <div class="opts" id="optsE"></div>
+  </section>
+
+  <div class="answer" role="note">
+    <b>Send your picks:</b> <code>A? B? C? D? E?</code> I will build them, run the 222 tests, and show you screenshots at desktop size first.
+  </div>
+</div>
+
+<script>
+const I = {
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>',
+  redo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg>',
+  shuffle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 18h3c4 0 6-12 10-12h7"/><path d="m18 2 4 4-4 4"/><path d="M2 6h3c2 0 3.5 2.5 4.5 5"/><path d="M14.5 15c1 2 2.5 3 4.5 3h3"/><path d="m18 14 4 4-4 4"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>',
+  palette: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2a10 10 0 0 0 0 20c1.7 0 2-1.4 1.4-2.4-.6-1-.3-2.6 1.6-2.6H17a5 5 0 0 0 5-5c0-5.5-4.5-10-10-10z"/></svg>',
+  type: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>',
+  grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+  image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>',
+  ruler: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h5M4 13h3M4 17h5"/></svg>',
+  lang: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 4v16l13-8z"/></svg>',
+  feather: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.2 12.2a6 6 0 0 0-8.5-8.5L5 10.5V19h8.5z"/><path d="M16 8 2 22M17.5 15H9"/></svg>',
+};
+const SW = ["#f8f4ea","#ffffff","#e3ebe1","#f6e3df","#1d2125","#d6c9ae","#cfe0ee","#254537"];
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function card({ code, name, desc, pro, con, src, srcName, rec, why, stage }) {
+  const el = document.createElement("article");
+  el.className = "opt" + (rec ? " rec" : "");
+  el.innerHTML = `<div class="stage">${stage || ""}</div>
+    <div class="meta">
+      <div class="title"><span class="code">${code}</span><h3>${esc(name)}</h3>${rec ? '<span class="badge">Recommended</span>' : ""}</div>
+      <p class="desc">${desc}</p>
+      <dl class="pros"><dt>Strength</dt><dd>${pro}</dd><dt>Weakness</dt><dd>${con}</dd></dl>
+      <p class="src">Source: <a href="${src}" target="_blank" rel="noopener">${esc(srcName)}</a> on 21st.dev</p>
+      ${rec ? `<p class="why"><b>Why:</b> ${why}</p>` : ""}
+    </div>`;
+  return el;
+}
+
+function fit(frame) {
+  const app = frame.querySelector(".app");
+  const ro = new ResizeObserver(() => { app.style.transform = `scale(${frame.clientWidth / 1280})`; });
+  ro.observe(frame);
+}
+
+fetch("birds.json").then(r => r.json()).then(B => {
+  const by = Object.fromEntries(B.map(b => [b.id, b]));
+  const starter = ["bubo-bubo","alcedo-atthis","falco-peregrinus","haliaeetus-albicilla","anas-platyrhynchos","ardea-cinerea","dendrocopos-major","psittacula-krameri","hirundo-rustica","carduelis-carduelis","tyto-alba","cygnus-olor"];
+  const S = starter.map(id => by[id]).filter(Boolean);
+
+  /* ---------- A: app layouts ---------- */
+  const seg = (items, on) => `<span class="seg">${items.map((t, i) => `<span class="${i === on ? "on" : ""}">${t}</span>`).join("")}</span>`;
+  const g = (l, inner) => `<div class="grp"><span class="lbl">${l}</span>${inner}</div>`;
+  const swatches = `<span class="sw">${SW.map((c, i) => `<i style="background:${c}" class="${i === 0 ? "on" : ""}"></i>`).join("")}</span>`;
+  const C = {
+    design: g("Design", seg(["Field guide", "Woodblock"], 0)),
+    labels: g("Labels", seg(["Names", "Numbers", "None"], 0)),
+    names: g("Names", seg(["English", "עברית"], 0)),
+    layout: g("Layout", seg(["Scattered", "Grid", "Centerpiece"], 0)),
+    bg: g("Background", swatches),
+    size: g("Size", seg(["3:4", "2:3", "4:5", "A"], 0)),
+  };
+  const poster = () => {
+    const rows = [S.slice(0, 4), S.slice(4, 7), S.slice(7, 10), S.slice(10, 12)];
+    return `<div class="poster"><h4>Birds</h4>${rows.map(r => `<div class="prow">${r.map(b => `<div class="pb"><img src="${b.src}" alt="">${esc(b.en)}</div>`).join("")}</div>`).join("")}</div>`;
+  };
+  const panel = (extraTop = "") => `<div class="panel">${extraTop}
+      <div class="search">${I.search}Search 1,161 birds</div>
+      <div class="sechead"><span>On your poster · 12</span><span>Clear</span></div>
+      <div class="strip">${S.slice(0, 7).map(b => `<span class="thumb"><img src="${b.src}" alt=""></span>`).join("")}<span class="thumb" style="font-size:12px;color:var(--muted)">+5</span></div>
+      <div class="chips"><span class="chip on">All <em>12</em></span><span class="chip">Owls</span><span class="chip">Ducks, Swans, and Geese</span><span class="chip">Kingfishers</span></div>
+      <div class="grid3">${B.slice(0, 9).map((b, i) => `<div class="card ${starter.includes(b.id) ? "on" : ""}">${starter.includes(b.id) ? `<span class="tick">${I.check}</span>` : ""}<img src="${b.src}" alt=""><b>${esc(b.en)}</b></div>`).join("")}</div>
+    </div>`;
+  const head = `<div class="a-head"><span class="logo">animarka</span><span class="row"><span class="btn">${I.undo}Undo</span><span class="btn">${I.redo}Redo</span><span class="btn">${I.shuffle}Shuffle</span></span></div>`;
+  const layouts = {
+    A1: `<div class="app">${head}<div class="body">${panel()}<div style="display:grid;grid-template-rows:auto 1fr;min-height:0">
+          <div style="background:var(--card);border-bottom:1px solid var(--rule);padding:12px 20px;display:flex;flex-direction:column;gap:12px">
+            <div class="row" style="gap:16px">${seg(["Field guide", "Woodblock"], 0)}${seg(["Names", "Numbers", "None"], 0)}${seg(["English", "עברית"], 0)}</div>
+            <div class="row" style="gap:16px">${seg(["Scattered", "Grid", "Centerpiece"], 0)}${swatches}${seg(["3:4", "2:3", "4:5", "A"], 0)}</div></div>
+          <div class="canvas">${poster()}</div></div></div></div>`,
+    A2: `<div class="app">${head}<div class="body" style="grid-template-columns:360px 1fr 300px">${panel()}<div class="canvas">${poster()}</div>
+          <div class="panel" style="border-right:0;border-left:1px solid var(--rule);gap:18px">${C.design}${C.labels}${C.names}${C.layout}${C.bg}${C.size}</div></div></div>`,
+    A3: `<div class="app"><div class="a-head"><span class="row" style="gap:16px"><span class="logo">animarka</span>
+            <span class="row" style="gap:6px;margin-left:12px"><span class="btn">Field guide${I.down}</span><span class="btn">Names${I.down}</span><span class="btn">English${I.down}</span><span class="btn" style="background:var(--tint)">Scattered${I.down}</span><span class="btn"><i style="width:16px;height:16px;border-radius:99px;background:#f8f4ea;border:1px solid var(--rule)"></i>Cream${I.down}</span><span class="btn">3:4${I.down}</span></span></span>
+            <span class="row"><span class="btn ghost">${I.undo}</span><span class="btn ghost">${I.redo}</span><span class="btn">${I.shuffle}Shuffle</span></span></div>
+          <div class="body">${panel()}<div class="canvas">${poster()}
+            <div class="pop" style="left:40px;top:0;width:200px">${C.layout.replace('class="seg"', 'class="seg" style="flex-direction:column;height:auto"')}</div></div></div></div>`,
+    A4: `<div class="app">${head}<div class="body">${panel()}<div class="canvas" style="padding-bottom:96px">${poster()}
+            <div style="position:absolute;left:50%;bottom:20px;transform:translateX(-50%);background:var(--card);border:1px solid var(--rule);border-radius:16px;box-shadow:var(--shadow-hi);padding:6px;display:flex;gap:4px">
+              ${[["feather", "Design"], ["type", "Labels"], ["lang", "Names"], ["grid", "Layout"], ["palette", "Background"], ["ruler", "Size"]].map(([ic, t], i) => `<span class="btn ghost" style="flex-direction:column;height:56px;gap:2px;font-size:11.5px;padding:0 12px;${i === 4 ? "background:var(--tint)" : ""}">${I[ic]}${t}</span>`).join("")}</div>
+            <div class="pop" style="left:50%;bottom:94px;transform:translateX(30px)">${C.bg}</div></div></div></div>`,
+    A5: `<div class="app">${head}<div class="body"><div class="panel">
+            <span class="seg" style="width:100%"><span style="flex:1;justify-content:center">Birds</span><span class="on" style="flex:1;justify-content:center">Style</span></span>
+            <div style="display:flex;flex-direction:column;gap:18px;padding-top:6px">${C.design}${C.labels}${C.names}${C.layout}${C.bg}${C.size}</div></div>
+            <div class="canvas">${poster()}</div></div></div>`,
+  };
+  const A = [
+    { code: "A1", name: "Slim bar, two rows", desc: "All controls as text segments in two 40 px rows above the poster, replacing today's three tall rows.",
+      pro: "Every option visible at once, close to what you know.", con: "Still costs about 100 px of poster height.", src: "https://21st.dev/@ddoemonn/components/segmented-control", srcName: "Segmented Control by ddoemonn" },
+    { code: "A2", name: "Side inspector", desc: "Birds on the left, poster in the middle, style on the right in one 300 px column, like a design tool.",
+      pro: "The poster gets the full height, about 40% bigger than today.", con: "Below about 1200 px the right column has to fold into a drawer.", src: "https://21st.dev/@aloksivastava1025/components/outline-inspector-panel", srcName: "Outline Inspector Panel", rec: true,
+      why: "The poster is limited by height, so the empty width beside it is free space. This uses it and gives the poster everything." },
+    { code: "A3", name: "Menus in the header", desc: "Each setting is one button in the top bar showing its current value. A click opens a small menu.",
+      pro: "The cleanest screen. The poster gets the most room.", con: "Choices are hidden one click away, so people try fewer styles.", src: "https://21st.dev/@ruixen.ui/components/toolbar-dock", srcName: "Toolbar Dock by ruixen.ui" },
+    { code: "A4", name: "Floating dock", desc: "A small dock floats under the poster. Each icon opens its options in a popover.",
+      pro: "Feels like a creative app and keeps the controls near the poster.", con: "Icons need labels to be clear, and the dock covers part of the canvas.", src: "https://21st.dev/@manuarora700/components/floating-dock", srcName: "Floating Dock by manuarora700" },
+    { code: "A5", name: "Tabs in the left panel", desc: "The left panel switches between Birds and Style, like the phone. The poster takes the rest.",
+      pro: "One pattern on phone and desktop, and a big poster.", con: "You cannot pick birds and change the style side by side.", src: "https://21st.dev/@cnippet-dev/components/segmented-control-tabs", srcName: "Segmented Control Tabs by cnippet-dev" },
+  ];
+  const optsA = document.getElementById("optsA");
+  for (const o of A) {
+    const el = card({ ...o, stage: `<div class="frame">${layouts[o.code]}</div>` });
+    optsA.append(el); fit(el.querySelector(".frame"));
+  }
+
+  /* ---------- B: control systems ---------- */
+  const sys = {
+    B1: { h: 40, sm: 32, r: 10, f: 14, seg: "box" },
+    B2: { h: 36, sm: 28, r: 8, f: 13, seg: "box" },
+    B3: { h: 44, sm: 36, r: 12, f: 15, seg: "box" },
+    B4: { h: 40, sm: 32, r: 99, f: 14, seg: "box" },
+    B5: { h: 40, sm: 32, r: 8, f: 14, seg: "line" },
+  };
+  const sample = (k) => {
+    const s = sys[k];
+    const segBox = (items, on) => s.seg === "line"
+      ? `<span style="display:inline-flex;height:${s.h}px;gap:16px;border-bottom:1px solid var(--rule)">${items.map((t, i) => `<span style="display:inline-flex;align-items:center;font:500 ${s.f}px var(--body);color:${i === on ? "var(--ink)" : "var(--muted)"};box-shadow:${i === on ? "inset 0 -2px 0 var(--forest)" : "none"}">${t}</span>`).join("")}</span>`
+      : `<span style="display:inline-flex;height:${s.h}px;padding:3px;gap:2px;background:var(--soft);border:1px solid var(--rule);border-radius:${s.r}px">${items.map((t, i) => `<span style="display:inline-flex;align-items:center;padding:0 ${Math.round(s.h * .3)}px;border-radius:${Math.max(s.r - 3, 4)}px;font:500 ${s.f}px var(--body);color:${i === on ? "var(--ink)" : "var(--muted)"};background:${i === on ? "var(--card)" : "transparent"};box-shadow:${i === on ? "var(--shadow)" : "none"}">${t}</span>`).join("")}</span>`;
+    const b = (t, primary, small) => `<span style="display:inline-flex;align-items:center;gap:6px;height:${small ? s.sm : s.h}px;padding:0 ${Math.round((small ? s.sm : s.h) * .35)}px;border-radius:${s.r}px;border:1px solid ${primary ? "var(--forest)" : "var(--rule)"};background:${primary ? "var(--forest)" : "var(--card)"};color:${primary ? "var(--on-forest)" : "var(--ink)"};font:500 ${small ? s.f - 1 : s.f}px var(--body)">${t}</span>`;
+    const ch = (t, on) => `<span style="display:inline-flex;align-items:center;height:${s.sm}px;padding:0 12px;border-radius:${s.r === 99 ? 99 : 99}px;border:1px solid ${on ? "var(--forest)" : "var(--rule)"};background:${on ? "var(--forest)" : "var(--card)"};color:${on ? "var(--on-forest)" : "var(--ink)"};font:500 ${s.f - 1}px var(--body)">${t}</span>`;
+    return `<div class="mini"><div class="sysrow">
+      <span style="display:inline-flex;align-items:center;gap:8px;height:${s.h}px;width:100%;max-width:520px;padding:0 12px;border:1px solid var(--rule);border-radius:${s.r === 99 ? 99 : s.r}px;background:var(--card);color:var(--muted);font:${s.f}px var(--body)">${I.search.replace("<svg", '<svg width="16" height="16"')}Search 1,161 birds</span>
+      ${segBox(["Field guide", "Woodblock"], 0)}${segBox(["Names", "Numbers", "None"], 0)}
+      ${segBox(["3:4", "2:3", "4:5", "A"], 1)}
+      ${b(I.undo.replace("<svg", '<svg width="16" height="16"') + "Undo")}${b("Export", true)}
+      ${ch("All 12", true)}${ch("Owls")}${ch("Kingfishers")}${b("Add all 21", false, true)}
+    </div></div>`;
+  };
+  const Bd = [
+    { code: "B1", name: "40 and 32, soft corners", desc: "Every control 40 px tall, small ones 32 px, 10 px corners, 14 px medium text. Phones grow to 44 px.",
+      pro: "Calm and even, and it matches the theme you chose in R1.", con: "Less character than pills or underlines.", src: "https://21st.dev/@vamsiy78/components/segmented-control", srcName: "Segmented Control by vamsiy78", rec: true,
+      why: "It fixes the mess with the least change to the look you already approved, and 40 px fits two rows of controls in very little height." },
+    { code: "B2", name: "36 compact", desc: "A denser tool look: 36 px controls, 28 px small, 13 px text, 8 px corners.",
+      pro: "Fits the most on screen.", con: "Too small for touch, so phones need a second size set.", src: "https://21st.dev/@klyv-ui/components/segmented-control", srcName: "Segmented Control by klyv-ui" },
+    { code: "B3", name: "44 everywhere", desc: "Touch size on every screen: 44 px controls, 36 px small, 15 px text, 12 px corners.",
+      pro: "One size for phone and desktop, easy to hit.", con: "Feels heavy on desktop, and the controls take more room.", src: "https://21st.dev/@halaska-studio/components/segmented-control", srcName: "Segmented Control by halaska-studio" },
+    { code: "B4", name: "Pills", desc: "The 40 / 32 sizes from B1, with fully round ends on every control.",
+      pro: "Friendly and playful, suits a poster toy.", con: "Round search fields and segments read less like a precise tool.", src: "https://21st.dev/@pmalay694/components/segmented-control", srcName: "Segmented Control by pmalay694" },
+    { code: "B5", name: "Underlined choices", desc: "Choices are plain words with a green underline under the selected one. Buttons stay 40 / 32 boxes.",
+      pro: "The lightest look, lets the poster dominate.", con: "Weaker sense of a clickable control for new users.", src: "https://21st.dev/@flohoeller_5a53e102/components/segmented-control", srcName: "Segmented Control by flohoeller" },
+  ];
+  const optsB = document.getElementById("optsB");
+  for (const o of Bd) optsB.append(card({ ...o, stage: sample(o.code) }));
+
+  /* ---------- C: chosen birds ---------- */
+  const chosen = S.slice(0, 8);
+  const cards9 = (on) => `<div class="grid3">${B.slice(0, 6).map(b => `<div class="card ${on.has(b.id) ? "on" : ""}" data-id="${b.id}">${on.has(b.id) ? `<span class="tick">${I.check}</span>` : ""}<img src="${b.src}" alt=""><b>${esc(b.en)}</b></div>`).join("")}</div>`;
+  const Cviews = {
+    C1: () => `<div class="mpanel"><div class="search">${I.search}Search 1,161 birds</div>
+        <div class="sechead"><span>On your poster · <span data-count>${chosen.length}</span></span><span>Clear</span></div>
+        <div class="strip">${chosen.map(b => `<button class="thumb" data-rm="${b.id}" aria-label="Remove ${esc(b.en)}"><img src="${b.src}" alt=""><span class="x">${I.x}</span></button>`).join("")}</div>
+        <div class="chips"><span class="chip on">All</span><span class="chip">Owls</span><span class="chip">Ducks, Swans, and Geese</span></div></div>`,
+    C2: () => `<div class="mpanel"><div class="search">${I.search}Search 1,161 birds</div>
+        <div class="chips"><span class="chip">All</span><span class="chip on">On poster <em data-count>${chosen.length}</em></span><span class="chip">Owls</span></div>
+        <div class="grid3">${chosen.slice(0, 6).map(b => `<button class="card on" data-rm="${b.id}" style="cursor:pointer;font:inherit;color:inherit"><span class="tick">${I.check}</span><img src="${b.src}" alt=""><b>${esc(b.en)}</b></button>`).join("")}</div></div>`,
+    C3: () => `<div class="mpanel"><div class="search">${I.search}Search 1,161 birds</div>
+        <div class="sechead"><span>On your poster · <span data-count>${chosen.length}</span></span></div>
+        <div class="grid3">${chosen.slice(0, 3).map(b => `<button class="card on" data-rm="${b.id}" style="cursor:pointer;font:inherit;color:inherit"><span class="tick">${I.check}</span><img src="${b.src}" alt=""><b>${esc(b.en)}</b></button>`).join("")}</div>
+        <div class="sechead"><span>All birds</span></div>
+        <div class="grid3">${B.slice(12, 15).map(b => `<div class="card"><img src="${b.src}" alt=""><b>${esc(b.en)}</b></div>`).join("")}</div></div>`,
+    C4: () => `<div class="mpanel"><div class="search">${I.search}Search 1,161 birds</div>
+        <div class="strip">${chosen.map(b => `<button class="tok" data-rm="${b.id}" aria-label="Remove ${esc(b.en)}"><img src="${b.src}" alt="">${esc(b.en)}${I.x}</button>`).join("")}</div>
+        <div class="chips"><span class="chip on">All</span><span class="chip">Owls</span><span class="chip">Kingfishers</span></div></div>`,
+    C5: () => `<div class="mpanel"><div class="search">${I.search}Search 1,161 birds</div>
+        ${cards9(new Set(chosen.map(b => b.id)))}
+        <div class="drawer"><div class="sechead"><span>On your poster · <span data-count>${chosen.length}</span></span><span>Hide ▾</span></div>
+        <div class="strip">${chosen.map(b => `<button class="thumb" data-rm="${b.id}" aria-label="Remove ${esc(b.en)}"><img src="${b.src}" alt=""><span class="x">${I.x}</span></button>`).join("")}</div></div></div>`,
+  };
+  const Cd = [
+    { code: "C1", name: "Strip under the search", desc: "Your birds as round pictures, pinned under the search. Hover shows an x. One click takes a bird off.",
+      pro: "Always in view and fast to untick, even while browsing other families.", con: "Past about 20 birds it needs a +N to stay one or two rows.", src: "https://21st.dev/@preetsuthar17/components/selector-chips", srcName: "Selector Chips by preetsuthar17", rec: true,
+      why: "It answers both of your asks at once: you always see what is on the poster, and unticking is one click without leaving the list." },
+    { code: "C2", name: "On poster filter", desc: "A first chip, \"On poster 12\", filters the list to your birds. Tap a card to untick it.",
+      pro: "Uses the list you already know, no new parts.", con: "Your birds are hidden until you pick the chip.", src: "https://21st.dev/@ddoemonn/components/filter-grid", srcName: "Filter Grid by ddoemonn" },
+    { code: "C3", name: "Chosen first", desc: "The list opens with a section of your birds, then all birds below it.",
+      pro: "Big pictures of your birds, clear to scan.", con: "Scrolls out of view as soon as you browse the catalog.", src: "https://21st.dev/@coss.com/components/p-combobox-20", srcName: "Stacked Chips Combobox by coss.com" },
+    { code: "C4", name: "Name tokens", desc: "Your birds as small name chips with a picture and an x, like email recipients.",
+      pro: "Names make each bird easy to find.", con: "Long names take a lot of room; 12 birds already need four rows.", src: "https://21st.dev/@starc007/components/multi-select", srcName: "Multi Select by starc007" },
+    { code: "C5", name: "Drawer at the bottom", desc: "A tray fixed to the bottom of the panel, with a count. It opens and closes.",
+      pro: "Out of the way, but one tap from anywhere.", con: "Takes space from the list when open, and is easy to miss when closed.", src: "https://21st.dev/@kuratlielia/components/multi-select", srcName: "Multi Select by kuratlielia" },
+  ];
+  const optsC = document.getElementById("optsC");
+  for (const o of Cd) {
+    const el = card({ ...o, stage: `<div class="mini" style="padding:14px">${Cviews[o.code]()}</div><span class="hint">Click a bird to untick it</span>` });
+    const stage = el.querySelector(".stage");
+    const reset = () => { stage.querySelector(".mini").innerHTML = Cviews[o.code](); };
+    stage.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-rm]");
+      if (!btn) { if (!e.target.closest(".mpanel")) reset(); return; }
+      btn.classList.add("gone");
+      setTimeout(() => { btn.remove(); const c = stage.querySelector("[data-count]"); if (c) c.textContent = stage.querySelectorAll("[data-rm]").length; }, reduce ? 0 : 200);
+    });
+    optsC.append(el);
+  }
+
+  /* ---------- D: mirror animation ---------- */
+  const flips = {
+    D1: (img, to) => img.animate([{ transform: `perspective(400px) rotateY(0deg) scaleX(${-to})` }, { transform: `perspective(400px) rotateY(90deg) scaleX(${-to})`, offset: .5 }, { transform: `perspective(400px) rotateY(0deg) scaleX(${to})`, offset: .5001 }, { transform: `perspective(400px) rotateY(0deg) scaleX(${to})` }], { duration: 380, easing: "ease-in-out" }),
+    D2: (img, to) => img.animate([{ transform: `scaleX(${-to})` }, { transform: `scaleX(0)`, offset: .5 }, { transform: `scaleX(${to})` }], { duration: 240, easing: "cubic-bezier(.4,0,.2,1)" }),
+    D3: (img, to) => img.animate([{ transform: `translateY(0) scaleX(${-to})` }, { transform: `translateY(-14px) scaleX(0)`, offset: .45 }, { transform: `translateY(-6px) scaleX(${to})`, offset: .75 }, { transform: `translateY(1px) scaleX(${to})`, offset: .9 }, { transform: `translateY(0) scaleX(${to})` }], { duration: 420, easing: "ease-out" }),
+    D4: (img, to) => img.animate([{ transform: `scaleX(${-to})`, opacity: 1 }, { transform: `scaleX(${-to * .2})`, opacity: .6, offset: .5 }, { transform: `scaleX(${to})`, opacity: 1 }], { duration: 160, easing: "linear" }),
+    D5: (img, to, sh) => { if (sh) sh.animate([{ transform: "scaleX(1)", opacity: 1 }, { transform: "scaleX(.25)", opacity: .5, offset: .5 }, { transform: "scaleX(1)", opacity: 1 }], { duration: 360, easing: "ease-in-out" });
+      return img.animate([{ transform: `perspective(400px) rotateY(0deg) scaleX(${-to})` }, { transform: `perspective(400px) rotateY(90deg) scaleX(${-to})`, offset: .5 }, { transform: `perspective(400px) rotateY(0deg) scaleX(${to})`, offset: .5001 }, { transform: `perspective(400px) rotateY(0deg) scaleX(${to})` }], { duration: 360, easing: "ease-in-out" }); },
+  };
+  const spots = [[18, 22], [108, 14], [198, 26], [62, 128], [152, 124]];
+  const flipBirds = [by["tyto-alba"], by["alcedo-atthis"], by["upupa-epops"] || S[2], by["falco-peregrinus"], by["merops-apiaster"] || S[5]].filter(Boolean);
+  const Dd = [
+    { code: "D1", name: "Card turn", desc: "The bird turns around like a card in 3D, 380 ms.",
+      pro: "Clear, everyone reads it as turning around.", con: "The 3D perspective looks heavy on small birds.", src: "https://21st.dev/@cesaroeduardo/components/flip-card", srcName: "Tilt Flip Card by cesaroeduardo" },
+    { code: "D2", name: "Paper flip", desc: "The bird narrows to a line and opens facing the other way, like turning a paper cutout, 240 ms.",
+      pro: "Quick and crisp, never in the way.", con: "Little personality.", src: "https://21st.dev/@skyleen77/components/flip-card", srcName: "Flip Card by skyleen77" },
+    { code: "D3", name: "Hop and turn", desc: "The bird hops up a little, turns in the air and lands with a tiny settle, 420 ms.",
+      pro: "Feels alive, like the bird itself turned around.", con: "The longest of the five; rapid taps queue up.", src: "https://21st.dev/@jatin-yadav05/components/flip-hover", srcName: "FlipHover by jatin-yadav05", rec: true,
+      why: "It is the one that makes the app feel like birds, not a layout tool, and still under half a second." },
+    { code: "D4", name: "Quick turn", desc: "A fast squeeze and a slight fade, 160 ms.",
+      pro: "The least motion, good for people who flip many birds.", con: "Easy to miss, it looks almost like a jump.", src: "https://21st.dev/@shadcnspace/components/card-14", srcName: "3D Flip Card by shadcnspace" },
+    { code: "D5", name: "Turn with shadow", desc: "The card turn from D1 with a soft ground shadow that shrinks and grows with it, 360 ms.",
+      pro: "Gives depth, the bird sits on the paper.", con: "A shadow under every bird changes the clean poster look.", src: "https://21st.dev/@ayushmxxn/components/3d-flip-card", srcName: "3D Flip Card by ayushmxxn" },
+  ];
+  const optsD = document.getElementById("optsD");
+  for (const o of Dd) {
+    const el = card({ ...o, stage: `<div class="stage-poster">${flipBirds.map((b, i) => `<button class="bird" style="left:${spots[i][0]}px;top:${spots[i][1]}px" aria-label="Mirror ${esc(b.en)}" data-dir="1">${o.code === "D5" ? '<span class="shadow"></span>' : ""}<img src="${b.src}" alt=""></button>`).join("")}</div><span class="hint">Tap a bird</span>`,
+    });
+    el.querySelectorAll(".bird").forEach(btn => btn.addEventListener("click", () => {
+      const img = btn.querySelector("img"); const to = -Number(btn.dataset.dir); btn.dataset.dir = String(to);
+      img.style.transform = `scaleX(${to})`;
+      if (!reduce) flips[o.code](img, to, btn.querySelector(".shadow"));
+    }));
+    optsD.append(el);
+  }
+
+  /* ---------- E: swap animation ---------- */
+  const eBirds = [by["tyto-alba"], by["alcedo-atthis"], by["anas-platyrhynchos"], by["carduelis-carduelis"], by["ardea-cinerea"], by["hirundo-rustica"]].filter(Boolean);
+  const eSpots = [[20, 20], [110, 16], [200, 22], [30, 126], [120, 122], [206, 128]];
+  const ease = "cubic-bezier(.2,.8,.2,1)";
+  const swaps = {
+    async E1(a, b, d) { a.animate([{ transform: "none" }, { transform: `translate(${d.x}px,${d.y}px)` }], { duration: 320, easing: ease, fill: "forwards" });
+      await b.animate([{ transform: "none" }, { transform: `translate(${-d.x}px,${-d.y}px)` }], { duration: 320, easing: ease, fill: "forwards" }).finished; },
+    async E2(a, b, d) { const lift = 46;
+      a.animate([{ transform: "none" }, { transform: `translate(${d.x / 2}px,${d.y / 2 - lift}px) scale(1.08)` }, { transform: `translate(${d.x}px,${d.y}px)` }], { duration: 440, easing: "ease-in-out", fill: "forwards" });
+      await b.animate([{ transform: "none" }, { transform: `translate(${-d.x / 2}px,${-d.y / 2 + lift}px) scale(.94)` }, { transform: `translate(${-d.x}px,${-d.y}px)` }], { duration: 440, easing: "ease-in-out", fill: "forwards" }).finished; },
+    async E3(a, b, d, cur) { await drag(a, d, cur, 520, async () => { b.classList.add("ring"); await b.animate([{ transform: "none" }, { transform: `translate(${-d.x}px,${-d.y}px)` }], { duration: 260, easing: ease, fill: "forwards" }).finished; });
+      b.classList.remove("ring"); },
+    async E4(a, b, d) { const out = [{ opacity: 1, transform: "scale(1)" }, { opacity: 0, transform: "scale(.6)" }];
+      await Promise.all([a.animate(out, { duration: 130, fill: "forwards" }).finished, b.animate(out, { duration: 130, fill: "forwards" }).finished]);
+      a.animate([{ opacity: 0, transform: `translate(${d.x}px,${d.y}px) scale(.6)` }, { opacity: 1, transform: `translate(${d.x}px,${d.y}px) scale(1)` }], { duration: 160, easing: ease, fill: "forwards" });
+      await b.animate([{ opacity: 0, transform: `translate(${-d.x}px,${-d.y}px) scale(.6)` }, { opacity: 1, transform: `translate(${-d.x}px,${-d.y}px) scale(1)` }], { duration: 160, easing: ease, fill: "forwards" }).finished; },
+    async E5(a, b, d, cur) { await drag(a, d, cur, 520, () => { b.classList.add("ring"); });
+      b.classList.remove("ring");
+      a.animate([{ transform: `translate(${d.x}px,${d.y - 10}px) scale(1.06)` }, { transform: `translate(${d.x}px,${d.y + 2}px) scale(.98)`, offset: .6 }, { transform: `translate(${d.x}px,${d.y}px) scale(1)` }], { duration: 300, easing: "ease-out", fill: "forwards" });
+      await b.animate([{ transform: "none" }, { transform: `translate(${-d.x}px,${-d.y}px)` }], { duration: 320, easing: ease, fill: "forwards" }).finished; },
+  };
+  async function drag(a, d, cur, ms, onOver) {
+    cur.style.opacity = 1;
+    const start = { x: 40, y: 50 };
+    cur.style.left = start.x + 20 + "px"; cur.style.top = start.y + 20 + "px";
+    a.style.zIndex = 3;
+    const lift = a.animate([{ transform: "none", filter: "none" }, { transform: "translate(0,-8px) scale(1.06)", filter: "drop-shadow(0 8px 10px rgb(0 0 0 / .2))" }], { duration: 140, fill: "forwards" });
+    await lift.finished;
+    const mv = [{ transform: "translate(0,-8px) scale(1.06)" }, { transform: `translate(${d.x}px,${d.y - 8}px) scale(1.06)` }];
+    const c = cur.animate([{ transform: "none" }, { transform: `translate(${d.x}px,${d.y}px)` }], { duration: ms, easing: "ease-in-out", fill: "forwards" });
+    const m = a.animate(mv, { duration: ms, easing: "ease-in-out", fill: "forwards" });
+    setTimeout(() => onOver && onOver(), ms * .7);
+    await Promise.all([c.finished, m.finished]);
+    await new Promise(r => setTimeout(r, 120));
+    if (!onOver || onOver.length === 0) {}
+    await a.animate([{ transform: `translate(${d.x}px,${d.y - 8}px) scale(1.06)` }, { transform: `translate(${d.x}px,${d.y}px) scale(1)` }], { duration: 160, easing: ease, fill: "forwards" }).finished;
+    cur.style.opacity = 0; a.style.zIndex = "";
+  }
+  const Ed = [
+    { code: "E1", name: "Glide", desc: "On drop, both birds slide straight to each other's places, 320 ms.",
+      pro: "Simple and clear, you see where each bird went.", con: "Nothing shows the result before you let go.", src: "https://21st.dev/@motiondotdev/components/motion-reorder-grid", srcName: "Multidimensional reorder by motion.dev" },
+    { code: "E2", name: "Arc", desc: "The birds cross on curved paths, one over the other, 440 ms.",
+      pro: "Playful, and the paths never overlap.", con: "Longer, and busy when birds are far apart.", src: "https://21st.dev/@carolinaraulino/components/draggable-widget-grid", srcName: "Draggable Widget Grid by carolinaraulino" },
+    { code: "E3", name: "Live preview", desc: "While you drag over a bird, it already slides to your bird's old place. Drop to confirm.",
+      pro: "You see the swap before you commit, and can still change your mind.", con: "More motion during the drag, and a little more code.", src: "https://21st.dev/@uilayout.contact/components/default-swapy", srcName: "Draggable Grid Dashboard (Swapy) by uilayout", rec: true,
+      why: "Swapping is the one action where a preview prevents mistakes, and it feels the most direct with the dnd-kit drag you already have." },
+    { code: "E4", name: "Pop", desc: "Both birds shrink away and pop in at their new places, 290 ms.",
+      pro: "Very short, works even when birds are far apart.", con: "You lose track of which bird went where.", src: "https://21st.dev/@ddoemonn/components/filter-grid", srcName: "Filter Grid by ddoemonn" },
+    { code: "E5", name: "Lift and land", desc: "The target gets a dashed ring while you hover. On drop your bird lands with a small bounce and the other glides away.",
+      pro: "Strong feedback on what you are dropping on.", con: "The bounce adds time to every swap.", src: "https://21st.dev/@ebnsina/components/sortable", srcName: "Sortable List by ebnsina" },
+  ];
+  const optsE = document.getElementById("optsE");
+  for (const o of Ed) {
+    const el = card({ ...o, stage: `<div class="stage-poster">${eBirds.map((b, i) => `<div class="bird" style="left:${eSpots[i][0]}px;top:${eSpots[i][1]}px" data-i="${i}"><img src="${b.src}" alt="${esc(b.en)}"></div>`).join("")}<svg class="cursor" viewBox="0 0 24 24"><path d="M4 2l16 10-7 2-3 7z" fill="#1e1b16" stroke="#fff" stroke-width="1.5"/></svg></div><button class="play">${I.play}Play swap</button>` });
+    const stage = el.querySelector(".stage-poster"); const btn = el.querySelector(".play");
+    let busy = false;
+    btn.addEventListener("click", async () => {
+      if (busy) return; busy = true;
+      const a = stage.querySelector('[data-i="0"]'), b = stage.querySelector('[data-i="4"]');
+      a.getAnimations().forEach(x => x.cancel()); b.getAnimations().forEach(x => x.cancel());
+      const d = { x: eSpots[4][0] - eSpots[0][0], y: eSpots[4][1] - eSpots[0][1] };
+      if (!reduce) await swaps[o.code](a, b, d, stage.querySelector(".cursor"));
+      await new Promise(r => setTimeout(r, 700));
+      a.getAnimations().forEach(x => x.cancel()); b.getAnimations().forEach(x => x.cancel());
+      busy = false;
+    });
+    optsE.append(el);
+  }
+});
+</script>
