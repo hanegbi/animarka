@@ -34,7 +34,17 @@ export function LanguagePicker({
         }`
       }
       renderItem={(item) => (
-        <span lang={item.value} dir={item.value === "he" ? "rtl" : "ltr"}>
+        <span
+          lang={item.value}
+          dir={item.value === "he" ? "rtl" : "ltr"}
+          // The system font has Hebrew on every platform. Heebo's Hebrew file (12 KB) then loads
+          // only for people who switch, not for every visitor because of this one word.
+          style={
+            item.value === "he"
+              ? { fontFamily: "system-ui, sans-serif" }
+              : undefined
+          }
+        >
           {item.label}
         </span>
       )}
