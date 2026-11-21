@@ -1,0 +1,18 @@
+[
+  {
+    "id": "fg",
+    "name": "Field guide",
+    "source_url": "https://github.com/alchaincyf/huashu-bird-sticker",
+    "license": "CC BY 4.0",
+    "attribution": "Field guide art by Huashu, from huashu-bird-sticker, CC BY 4.0. AI generated, may contain errors.",
+    "sort": 0
+  },
+  {
+    "id": "wb",
+    "name": "Woodblock",
+    "source_url": "https://github.com/adamoberley/HABirdDashboard",
+    "license": "MIT",
+    "attribution": "Woodblock art by Adam Oberley, Teddy Warner and contributors, from HABirdDashboard, MIT. AI generated, may contain errors.",
+    "sort": 1
+  }
+]

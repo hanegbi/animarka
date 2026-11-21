@@ -1,0 +1,98 @@
+[
+  {
+    "id": "cream",
+    "name": "Cream",
+    "kind": "color",
+    "color": "#f8f4ea",
+    "image": null,
+    "image_full": null,
+    "is_dark": false,
+    "ink": "#1e1b16",
+    "rule": "rgb(0 0 0 / 0.25)",
+    "sort": 0
+  },
+  {
+    "id": "white",
+    "name": "White",
+    "kind": "color",
+    "color": "#ffffff",
+    "image": null,
+    "image_full": null,
+    "is_dark": false,
+    "ink": "#1e1b16",
+    "rule": "rgb(0 0 0 / 0.25)",
+    "sort": 1
+  },
+  {
+    "id": "sage",
+    "name": "Sage",
+    "kind": "color",
+    "color": "#e3eadf",
+    "image": null,
+    "image_full": null,
+    "is_dark": false,
+    "ink": "#1f2a22",
+    "rule": "rgb(0 0 0 / 0.25)",
+    "sort": 2
+  },
+  {
+    "id": "blush",
+    "name": "Blush",
+    "kind": "color",
+    "color": "#f6e4df",
+    "image": null,
+    "image_full": null,
+    "is_dark": false,
+    "ink": "#2a1c1a",
+    "rule": "rgb(0 0 0 / 0.25)",
+    "sort": 3
+  },
+  {
+    "id": "night",
+    "name": "Night",
+    "kind": "color",
+    "color": "#171b22",
+    "image": null,
+    "image_full": null,
+    "is_dark": true,
+    "ink": "#efe9da",
+    "rule": "rgb(255 255 255 / 0.4)",
+    "sort": 4
+  },
+  {
+    "id": "aged",
+    "name": "Aged paper",
+    "kind": "image",
+    "color": "#d6c9ae",
+    "image": "/backgrounds/aged.webp",
+    "image_full": "/backgrounds/full/aged.jpg",
+    "is_dark": false,
+    "ink": "#2a2014",
+    "rule": "rgb(0 0 0 / 0.25)",
+    "sort": 5
+  },
+  {
+    "id": "sky",
+    "name": "Morning sky",
+    "kind": "image",
+    "color": "#dfe4e3",
+    "image": "/backgrounds/sky.webp",
+    "image_full": "/backgrounds/full/sky.jpg",
+    "is_dark": false,
+    "ink": "#1f3347",
+    "rule": "rgb(0 0 0 / 0.25)",
+    "sort": 6
+  },
+  {
+    "id": "forest",
+    "name": "Forest",
+    "kind": "image",
+    "color": "#254537",
+    "image": "/backgrounds/forest.webp",
+    "image_full": "/backgrounds/full/forest.jpg",
+    "is_dark": true,
+    "ink": "#f1ecdc",
+    "rule": "rgb(255 255 255 / 0.4)",
+    "sort": 7
+  }
+]

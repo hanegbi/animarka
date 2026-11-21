@@ -1,7 +1,7 @@
 name: animarka
 
 x-python-env: &python-env
-  ANIMARKA_DATABASE_URL: postgresql+asyncpg://animarka:animarka@db:5432/animarka
+  ANIMARKA_DATABASE_URL: postgresql+psycopg://animarka:animarka@db:5432/animarka
   ANIMARKA_REDIS_URL: redis://redis:6379/0
   ANIMARKA_BROKER_URL: amqp://animarka:animarka@rabbitmq:5672//
   ANIMARKA_STORAGE_DIR: /data/storage

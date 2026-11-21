@@ -1,16 +1,16 @@
-import asyncio
 from logging.config import fileConfig
 
+import animarka_core.models  # noqa: F401  (registers the tables)
 from alembic import context
 from animarka_core.db import Base
 from animarka_core.settings import get_settings
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy import create_engine, pool
 
 config = context.config
 if config.config_file_name:
     fileConfig(config.config_file_name)
 target_metadata = Base.metadata
-url = get_settings().database_url
+url = config.attributes.get("url") or get_settings().database_url
 
 
 def run_offline() -> None:
@@ -19,20 +19,17 @@ def run_offline() -> None:
         context.run_migrations()
 
 
-def do_run(connection) -> None:  # type: ignore[no-untyped-def]
-    context.configure(connection=connection, target_metadata=target_metadata)
-    with context.begin_transaction():
-        context.run_migrations()
-
-
-async def run_online() -> None:
-    engine = create_async_engine(url)
-    async with engine.connect() as conn:
-        await conn.run_sync(do_run)
-    await engine.dispose()
+def run_online() -> None:
+    # Migrations run synchronously. The app's async engine is not needed here.
+    engine = create_engine(url, poolclass=pool.NullPool)
+    with engine.connect() as connection:
+        context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+        with context.begin_transaction():
+            context.run_migrations()
+    engine.dispose()
 
 
 if context.is_offline_mode():
     run_offline()
 else:
-    asyncio.run(run_online())
+    run_online()

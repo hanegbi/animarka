@@ -1,0 +1,100 @@
+[
+  {
+    "id": "owls",
+    "catalog_id": "birds",
+    "title": "Owls of the world",
+    "description": "Every owl in the set.",
+    "species_ids": [
+      "tyto-alba",
+      "asio-flammeus",
+      "athene-noctua",
+      "asio-otus",
+      "bubo-bubo",
+      "otus-scops",
+      "strix-uralensis",
+      "aegolius-funereus",
+      "glaucidium-passerinum",
+      "surnia-ulula",
+      "tyto-longimembris",
+      "bubo-virginianus"
+    ],
+    "sort": 0
+  },
+  {
+    "id": "garden-europe",
+    "catalog_id": "birds",
+    "title": "Garden birds of Europe",
+    "description": "Finches, woodpeckers and swallows you see near houses.",
+    "species_ids": [
+      "fringilla-coelebs",
+      "chloris-chloris",
+      "carduelis-carduelis",
+      "pyrrhula-pyrrhula",
+      "spinus-spinus",
+      "fringilla-montifringilla",
+      "linaria-cannabina",
+      "serinus-serinus",
+      "dendrocopos-major",
+      "picus-viridis",
+      "hirundo-rustica",
+      "delichon-urbicum",
+      "athene-noctua",
+      "psittacula-krameri"
+    ],
+    "sort": 1
+  },
+  {
+    "id": "raptors",
+    "catalog_id": "birds",
+    "title": "Birds of prey",
+    "description": "Falcons, eagles, hawks and harriers.",
+    "species_ids": [
+      "falco-tinnunculus",
+      "falco-subbuteo",
+      "falco-peregrinus",
+      "falco-naumanni",
+      "falco-columbarius",
+      "falco-vespertinus",
+      "falco-rusticolus",
+      "hieraaetus-pennatus",
+      "milvus-migrans",
+      "clanga-clanga",
+      "circus-aeruginosus",
+      "elanus-caeruleus",
+      "aegypius-monachus",
+      "circaetus-gallicus",
+      "aquila-heliaca",
+      "accipiter-nisus",
+      "circus-macrourus",
+      "circus-cyaneus",
+      "haliaeetus-albicilla"
+    ],
+    "sort": 2
+  },
+  {
+    "id": "waterside",
+    "catalog_id": "birds",
+    "title": "By the water",
+    "description": "Ducks, swans, herons, egrets and kingfishers.",
+    "species_ids": [
+      "alcedo-atthis",
+      "aythya-fuligula",
+      "spatula-querquedula",
+      "anas-acuta",
+      "spatula-clypeata",
+      "mareca-penelope",
+      "anas-platyrhynchos",
+      "tadorna-ferruginea",
+      "cygnus-olor",
+      "anser-anser",
+      "egretta-garzetta",
+      "nycticorax-nycticorax",
+      "ardea-alba",
+      "ardea-purpurea",
+      "ardea-cinerea",
+      "botaurus-stellaris",
+      "ardeola-ralloides"
+    ],
+    "sort": 3
+  }
+]
