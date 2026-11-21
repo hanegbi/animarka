@@ -55,6 +55,7 @@ def database_url() -> Iterator[str]:
     admin.dispose()
 
     os.environ["ANIMARKA_DATABASE_URL"] = TEST_URL
+    os.environ["ANIMARKA_DB_POOL"] = "false"
     from animarka_core.db import reset_engines
     from animarka_core.settings import get_settings
 

@@ -9,7 +9,7 @@ from contextlib import contextmanager
 from functools import lru_cache
 from typing import Any
 
-from sqlalchemy import JSON, Engine, create_engine
+from sqlalchemy import JSON, Engine, NullPool, create_engine
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -31,7 +31,11 @@ class Base(DeclarativeBase):
 
 @lru_cache
 def async_engine() -> AsyncEngine:
-    return create_async_engine(get_settings().database_url, pool_pre_ping=True)
+    s = get_settings()
+    if not s.db_pool:
+        # Tests: each TestClient runs its own event loop, and pooled connections cannot cross loops.
+        return create_async_engine(s.database_url, poolclass=NullPool)
+    return create_async_engine(s.database_url, pool_pre_ping=True)
 
 
 @lru_cache

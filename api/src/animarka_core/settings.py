@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     broker_url: str = "amqp://guest:guest@localhost:5672//"
     storage_dir: str = "./storage"
     admin_token: str = ""
+    db_pool: bool = True
     # Public path prefix where stored files are served, for example /api/v1/files
     files_url_prefix: str = "/api/v1/files"
     # A GitHub token is optional. Without it the two catalog listings use the public rate limit.

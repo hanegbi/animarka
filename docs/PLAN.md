@@ -157,7 +157,7 @@ One box size per species for both styles: the box aspect is the mean of the two 
 | GET `/orders/{token}` | Download page data: status, job, file links. |
 | POST `/reports` | "Report a wrong bird". |
 | GET `/admin/review/facing`, POST `/admin/artworks/{id}/faces`, same for upscale review | Token protected. |
-| GET `/art/{key}` | Files from the storage interface (local disk now). |
+| GET `/files/{key}` | Files from the storage interface (local disk now). Keys hold a content hash, so a year of cache. |
 | GET `/healthz`, GET `/metrics` | Ops. |
 
 ## Design decisions to bring with the rule of five
