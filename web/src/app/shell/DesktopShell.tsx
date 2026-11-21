@@ -2,6 +2,8 @@
 
 import { UndoRedo, useUndoShortcuts } from "@/controls/HistoryBar";
 import { Inspector } from "@/controls/Inspector";
+import { ExportButton } from "@/export/ExportButton";
+import { ShareButton } from "@/export/ShareButton";
 import { Picker } from "@/picker/Picker";
 import { Credits } from "./Credits";
 import { PosterStage } from "./PosterStage";
@@ -20,6 +22,8 @@ export function DesktopShell() {
         >
           <Credits />
           <UndoRedo />
+          <ShareButton />
+          <ExportButton />
         </div>
       </header>
       <aside

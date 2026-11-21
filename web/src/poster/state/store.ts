@@ -1,7 +1,7 @@
 import { createStore, type StoreApi } from "zustand/vanilla";
 import { apply, createHistory, redo, undo, type History } from "./history";
 import { initialState } from "./reducer";
-import { loadState, saveState } from "./storage";
+import { loadState, sanitize, saveState } from "./storage";
 import type { PosterAction, PosterContext, PosterState } from "./types";
 
 export type PosterStore = {
@@ -19,10 +19,14 @@ export function createPosterStore(
   options: {
     starter?: string[];
     storage?: Pick<Storage, "getItem" | "setItem">;
+    /** A poster opened from a share link. It wins over the saved one when it is valid. */
+    initial?: unknown;
   } = {},
 ): StoreApi<PosterStore> {
-  const saved = loadState(options.storage, ctx);
-  const start = saved ?? initialState(ctx, options.starter ?? []);
+  const shared =
+    options.initial === undefined ? null : sanitize(options.initial, ctx);
+  const saved = shared ? null : loadState(options.storage, ctx);
+  const start = shared ?? saved ?? initialState(ctx, options.starter ?? []);
 
   const store = createStore<PosterStore>((set, get) => ({
     history: createHistory(start),

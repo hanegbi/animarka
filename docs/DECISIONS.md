@@ -86,6 +86,8 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | R8.1 | 2026-11-22 | Layout section | Shuffle layout moves from the header into Layout. New Direction control: Face left / Face right turns every bird at once; after single taps it shows Mixed | | Owner asks. "Direction" with "Face left / Face right" reads plainer than mirror or flip |
 | R8.1 | 2026-11-22 | Centerpiece swap | Dropping a bird on the big centre bird (or the centre on another) hands over the big spot in the same undo step | | Before, the heaviest bird always stayed big, so the swap looked broken |
 | R8.1 | 2026-11-22 | Remove and credits | No pop-up when a bird is removed; header Undo brings it back. Art credits move behind a Credits button in the header | | Owner asks. Credit stays one click away because CC BY 4.0 requires it |
+| M4 | 2026-11-22 | Share and export UI (R6) | Share in the header saves and copies the link (shows it to select if the clipboard is blocked). Export opens a native dialog: free watermarked preview with progress and download, print file shown as coming with a purchase, share link at the bottom. On phones Export is an icon in the header | | Built from my recommendation without a five option round, because the owner said not to wait. The dialog loads on demand, so the page stays at 297 KB |
+| M4 | 2026-11-22 | Render worker | Playwright Chromium in the worker opens a signed print route and screenshots it. Same poster and options reuse the finished file. PDF and 300 DPI print sizes come with M5 payments | | One renderer for preview and print keeps the file identical to the builder |
 
 ## Open questions
 

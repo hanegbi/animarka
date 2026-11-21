@@ -40,10 +40,13 @@ export function PosterProvider({
   children,
   fallback,
   catalog: given,
+  shared,
 }: {
   children: ReactNode;
   fallback: ReactNode;
   catalog?: CatalogData;
+  /** A poster state from a share link. */
+  shared?: unknown;
 }) {
   // Start both requests from the document head, before the scripts run.
   if (!given) {
@@ -55,11 +58,16 @@ export function PosterProvider({
     catalogStore.get,
     catalogStore.server,
   );
-  if (given) return <Ready data={given}>{children}</Ready>;
+  if (given)
+    return (
+      <Ready data={given} shared={shared}>
+        {children}
+      </Ready>
+    );
   if (loaded.status === "loading") return <>{fallback}</>;
   if (loaded.status === "error") return <CatalogError />;
   return (
-    <Ready data={loaded.data} stale={loaded.stale}>
+    <Ready data={loaded.data} stale={loaded.stale} shared={shared}>
       {children}
     </Ready>
   );
@@ -68,10 +76,12 @@ export function PosterProvider({
 function Ready({
   data,
   stale,
+  shared,
   children,
 }: {
   data: CatalogData;
   stale?: boolean;
+  shared?: unknown;
   children: ReactNode;
 }) {
   const value = useMemo(() => {
@@ -88,13 +98,13 @@ function Ready({
     }
     const starter = STARTER_IDS.filter((id) => data.species.has(id));
     return {
-      store: createPosterStore(poster, { starter, storage }),
+      store: createPosterStore(poster, { starter, storage, initial: shared }),
       poster,
       species: data.species,
       list: data.list,
       presets: data.presets,
     };
-  }, [data]);
+  }, [data, shared]);
 
   useEffect(() => {
     if (stale)

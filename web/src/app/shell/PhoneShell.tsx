@@ -15,6 +15,7 @@ import {
   useUndoShortcuts,
 } from "@/controls/HistoryBar";
 import { DirectionPicker } from "@/controls/DirectionPicker";
+import { ExportButton } from "@/export/ExportButton";
 import { LayoutPicker } from "@/controls/LayoutPicker";
 import { facing } from "@/poster/state/mirror";
 import { SizePicker } from "@/controls/SizePicker";
@@ -126,6 +127,7 @@ export function PhoneShell() {
         >
           <Credits />
           <UndoRedo iconOnly />
+          <ExportButton iconOnly />
         </div>
       </header>
 

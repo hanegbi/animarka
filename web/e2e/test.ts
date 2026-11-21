@@ -101,8 +101,46 @@ export const test = base.extend<
   mockApi: [
     async ({ context, raw }, use) => {
       if (!LIVE) {
+        // Share links and renders, kept per test like a tiny backend.
+        const posters = new Map<string, unknown>();
+        let jobPolls = 0;
         await context.route("**/api/v1/**", (route) => {
-          const { pathname } = new URL(route.request().url());
+          const req = route.request();
+          const { pathname } = new URL(req.url());
+          if (pathname === "/api/v1/posters" && req.method() === "POST") {
+            const id = `t${String(posters.size + 1).padStart(7, "0")}`;
+            posters.set(id, (req.postDataJSON() as { state: unknown }).state);
+            return route.fulfill({ json: { id, url: `/p/${id}` } });
+          }
+          const poster = pathname.match(/^\/api\/v1\/posters\/([^/]+)$/);
+          if (poster)
+            return posters.has(poster[1])
+              ? route.fulfill({
+                  json: { id: poster[1], state: posters.get(poster[1]) },
+                })
+              : route.fulfill({
+                  status: 404,
+                  json: { detail: "No such poster" },
+                });
+          if (pathname === "/api/v1/renders")
+            return route.fulfill({
+              status: 202,
+              json: { job_id: "job1", status: "queued" },
+            });
+          if (pathname === "/api/v1/jobs/job1") {
+            jobPolls += 1;
+            const done = jobPolls > 1;
+            return route.fulfill({
+              json: {
+                id: "job1",
+                type: "render",
+                status: done ? "done" : "running",
+                progress: done ? 1 : 0.4,
+                result: done ? { png: "/api/v1/files/renders/job1.png" } : null,
+                error: null,
+              },
+            });
+          }
           if (pathname.endsWith("/species"))
             return route.fulfill({ json: raw.species });
           if (pathname.endsWith("/presets"))
