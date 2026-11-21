@@ -72,9 +72,7 @@ test("page weight before images is under 300 KB", async ({ page }, info) => {
   // The breakdown goes in the message too, so a CI failure annotation shows it without the log.
   expect(
     kb(beforeImages),
-    `${JSON.stringify(report)}
-${lines.join("
-")}`,
+    [JSON.stringify(report), ...lines].join(" | "),
   ).toBeLessThanOrEqual(300);
   if (LIVE) expect(kb(catalog)).toBeLessThanOrEqual(CATALOG_KB);
 });
