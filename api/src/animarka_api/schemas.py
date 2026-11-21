@@ -81,3 +81,47 @@ class ReportIn(Wire):
 
 class ReportOut(Wire):
     id: int
+
+
+class PosterState(BaseModel):
+    """The saved poster, as the web stores it. Unknown keys are kept, sizes are bounded."""
+
+    model_config = ConfigDict(extra="allow")
+    v: Literal[1]
+    catalog: Literal["birds"]
+    order: list[str] = Field(max_length=150)
+    flip: dict[str, bool] = Field(default_factory=dict)
+    center: str | None = None
+    seed: int = 0
+    title: str = Field(default="", max_length=32)
+    titleAuto: bool = True  # noqa: N815 (wire name from the web)
+    labels: Literal["names", "legend", "none"]
+    lang: Literal["en", "he"]
+    style: str = Field(max_length=16)
+    bg: str = Field(max_length=32)
+    layout: Literal["scatter", "grid", "centerpiece"]
+    size: Literal["3:4", "2:3", "4:5"]
+    orientation: Literal["portrait", "landscape"] = "portrait"
+
+
+class PosterIn(BaseModel):
+    state: PosterState
+
+
+class PosterOut(BaseModel):
+    id: str
+    url: str
+
+
+class PosterStateOut(BaseModel):
+    id: str
+    state: dict[str, object]
+
+
+class JobOut(Wire):
+    id: str
+    type: str
+    status: str
+    progress: float
+    result: dict[str, object] | None = None
+    error: str | None = None

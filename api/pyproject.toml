@@ -12,6 +12,7 @@ dependencies = [
   "alembic>=1.14",
   "redis>=5.2",
   "kombu>=5.4",
+  "celery>=5.4",
 ]
 
 [build-system]

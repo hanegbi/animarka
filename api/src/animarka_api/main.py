@@ -4,7 +4,7 @@ import sys
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
 
-from animarka_api.routers import catalog, files, reports
+from animarka_api.routers import catalog, files, jobs, posters, renders, reports
 
 if sys.platform == "win32":
     # psycopg's async mode cannot use Windows' default event loop. Only matters for local runs.
@@ -15,6 +15,9 @@ app.add_middleware(GZipMiddleware, minimum_size=1024)
 app.include_router(catalog.router)
 app.include_router(files.router)
 app.include_router(reports.router)
+app.include_router(posters.router)
+app.include_router(jobs.router)
+app.include_router(renders.router)
 
 
 @app.get("/healthz")

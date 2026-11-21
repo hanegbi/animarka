@@ -79,8 +79,11 @@ services:
     build: *python-build
     command: >
       celery -A animarka_workers.app:app worker --loglevel=INFO
-      -Q ingest,vision,upscale,render,generate --concurrency=2
-    environment: *python-env
+      -Q ingest,render --concurrency=2
+    environment:
+      <<: *python-env
+      # The render worker's browser opens the web app's print route inside the compose network.
+      ANIMARKA_WEB_ORIGIN: http://web:3000
     volumes:
       - ../../api/src:/app/api/src
       - ../../workers/src:/app/workers/src

@@ -8,7 +8,11 @@ app = Celery(
     "animarka",
     broker=settings.broker_url,
     backend=settings.redis_url,
-    include=["animarka_workers.tasks.ping", "animarka_workers.tasks.ingest"],
+    include=[
+        "animarka_workers.tasks.ping",
+        "animarka_workers.tasks.ingest",
+        "animarka_workers.tasks.render",
+    ],
 )
 
 app.conf.update(
@@ -17,7 +21,10 @@ app.conf.update(
     task_default_exchange=work_exchange.name,
     task_default_exchange_type="direct",
     task_default_routing_key="ingest",
-    task_routes={"animarka.*": {"queue": "ingest", "routing_key": "ingest"}},
+    task_routes={
+        "animarka.render": {"queue": "render", "routing_key": "render"},
+        "animarka.*": {"queue": "ingest", "routing_key": "ingest"},
+    },
     task_acks_late=True,
     task_reject_on_worker_lost=True,
     worker_prefetch_multiplier=1,

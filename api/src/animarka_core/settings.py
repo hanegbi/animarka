@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     files_url_prefix: str = "/api/v1/files"
     # A GitHub token is optional. Without it the two catalog listings use the public rate limit.
     github_token: str = ""
+    # Where the render worker's browser finds the web app, and the secret that signs render links.
+    web_origin: str = "http://localhost:3000"
+    render_secret: str = ""
 
 
 @lru_cache
