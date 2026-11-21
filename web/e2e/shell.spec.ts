@@ -235,4 +235,25 @@ test.describe("accessibility", () => {
     }
     expect([...new Set(found)]).toEqual([]);
   });
+
+  test("with a bird selected, the Mirror and Remove bar has no serious or critical axe violations", async ({
+    page,
+  }) => {
+    await open(page);
+    await page.locator('[data-animal="bubo-bubo"] [data-art]').click();
+    await expect(page.locator("[data-bird-bar]")).toBeVisible();
+    const result = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
+    const bad = result.violations
+      .filter((v) => v.impact === "serious" || v.impact === "critical")
+      .map(
+        (v) =>
+          `${v.id}: ${v.nodes
+            .slice(0, 2)
+            .map((n) => n.target.join(" "))
+            .join(" | ")}`,
+      );
+    expect(bad).toEqual([]);
+  });
 });

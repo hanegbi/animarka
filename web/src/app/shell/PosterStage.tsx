@@ -1,6 +1,8 @@
 "use client";
 
 import { PRESETS } from "@/catalog/presets";
+import { displayName } from "@/catalog/species-view";
+import { notifyUndoable } from "@/lib/notify";
 import { Button } from "@/components/ui/button";
 import { InteractivePoster } from "@/poster/components/InteractivePoster";
 import { frameAspect } from "@/poster/layout/sizing";
@@ -58,7 +60,7 @@ function EmptyPoster({ phone }: { phone?: boolean }) {
  */
 export function PosterStage({ phone }: { phone?: boolean }) {
   const state = usePosterState();
-  const { dispatch } = usePosterActions();
+  const { dispatch, undo } = usePosterActions();
   const { species, ctx } = useCatalog();
   const aspect = frameAspect(state.size, state.orientation);
 
@@ -75,6 +77,12 @@ export function PosterStage({ phone }: { phone?: boolean }) {
           className="shadow-md"
           onTitleChange={(title) => dispatch({ type: "setTitle", title })}
           onMirror={(id) => dispatch({ type: "mirror", id })}
+          onRemove={(id) => {
+            const sp = species.get(id);
+            const name = sp ? displayName(sp, state.lang) : "Bird";
+            if (dispatch({ type: "toggle", id }))
+              notifyUndoable(`${name} removed`, undo);
+          }}
           onSwap={(a, b) => dispatch({ type: "swap", a, b })}
           onMove={(id, delta) => dispatch({ type: "move", id, delta })}
           overlay={
