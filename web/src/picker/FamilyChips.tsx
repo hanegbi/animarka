@@ -133,7 +133,7 @@ export const FamilyChips = memo(function FamilyChips({
                   />
                   <span className="min-w-0 flex-1 truncate">{r.label}</span>
                   {r.onPoster > 0 && (
-                    <span className="bg-primary text-primary-foreground shrink-0 rounded-full px-1.5 text-[11px] leading-5 font-medium tabular-nums">
+                    <span className="bg-primary text-primary-foreground shrink-0 rounded-full px-1.5 text-[12px] leading-5 font-medium tabular-nums">
                       {r.onPoster}
                     </span>
                   )}

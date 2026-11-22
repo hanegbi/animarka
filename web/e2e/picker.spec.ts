@@ -269,3 +269,34 @@ test("bird cards have no hover tooltip", async ({ page }) => {
   await open(page);
   expect(await page.locator("[role=option][title]").count()).toBe(0);
 });
+
+test("the search field has one clear button, ours (B8)", async ({ page }) => {
+  await page.goto("/make");
+  const field = page.getByPlaceholder(/Search all birds/).first();
+  await field.fill("owl");
+  await expect(
+    page.getByRole("button", { name: "Clear search" }),
+  ).toBeVisible();
+  const native = await field.evaluate(
+    (el) => getComputedStyle(el, "::-webkit-search-cancel-button").display,
+  );
+  expect(native).toBe("none");
+});
+
+test("no builder text is smaller than 12 px (B11)", async ({ page }) => {
+  await page.goto("/make");
+  await expect(page.locator("[data-poster] [data-animal]")).toHaveCount(12);
+  const small = await page.evaluate(() =>
+    [...document.querySelectorAll("body *")]
+      .filter(
+        (el) =>
+          !el.closest("[data-poster]") &&
+          [...el.childNodes].some(
+            (c) => c.nodeType === 3 && c.textContent!.trim(),
+          ) &&
+          parseFloat(getComputedStyle(el).fontSize) < 12,
+      )
+      .map((el) => el.textContent!.trim().slice(0, 30)),
+  );
+  expect(small).toEqual([]);
+});

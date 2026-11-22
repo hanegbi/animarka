@@ -18,7 +18,7 @@ import type { Lang } from "@/poster/state/types";
 const MIN_CARD = 96;
 const MAX_CARD = 100;
 const GAP = 8;
-const ROW_HEIGHT = 124;
+const ROW_HEIGHT = 132;
 
 /** The nearest ancestor that scrolls vertically: the picker panel on desktop, the sheet on a phone. */
 function scrollParent(el: HTMLElement): HTMLElement {
@@ -207,10 +207,10 @@ export function BirdGrid({
                     loading="lazy"
                     decoding="async"
                     draggable={false}
-                    className="h-16 w-full object-contain"
+                    className="h-14 w-full object-contain"
                   />
                   <span
-                    className="line-clamp-2 text-[11px] leading-tight"
+                    className="line-clamp-3 text-[12px] leading-tight"
                     aria-hidden
                   >
                     {name}

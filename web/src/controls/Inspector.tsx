@@ -24,7 +24,7 @@ export function ControlSection({
 }) {
   return (
     <section className="flex min-w-0 flex-col gap-2">
-      <h3 className="text-muted-foreground flex justify-between font-sans text-[11px] font-semibold tracking-wide uppercase">
+      <h3 className="text-muted-foreground flex justify-between font-sans text-[12px] font-semibold tracking-wide uppercase">
         <span>{title}</span>
         {value && (
           <span

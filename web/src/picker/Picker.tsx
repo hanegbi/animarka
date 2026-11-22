@@ -152,7 +152,7 @@ export function Picker() {
         <div className="flex items-center justify-between gap-2">
           <h2
             id="tray-title"
-            className="text-muted-foreground font-sans text-[11px] font-semibold tracking-wide uppercase"
+            className="text-muted-foreground font-sans text-[12px] font-semibold tracking-wide uppercase"
           >
             Your poster{" "}
             <span className="sr-only">, {trayLabel(state.order, species)}</span>
