@@ -97,8 +97,25 @@ function Cta({ children, light }: { children: ReactNode; light?: boolean }) {
   );
 }
 
-const Ext = ({ href, children }: { href: string; children: ReactNode }) => (
-  <a href={href} className="lp-link" target="_blank" rel="noopener noreferrer">
+/**
+ * An outside link. Inline in running text it gets transparent padding, so the hit area is 44 px
+ * tall on phones and 32 px on desktop (L7) while the line looks the same.
+ */
+const Ext = ({
+  href,
+  children,
+  className = "py-3.5 sm:py-2",
+}: {
+  href: string;
+  children: ReactNode;
+  className?: string;
+}) => (
+  <a
+    href={href}
+    className={`lp-link ${className}`}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
     {children}
   </a>
 );
@@ -113,7 +130,7 @@ export function Landing() {
         <div className="lp-wrap flex h-16 items-center justify-between gap-6">
           <Link
             href="/"
-            className="font-[family-name:var(--font-display)] text-[26px] font-medium tracking-[-0.01em] transition-opacity duration-150 hover:opacity-75"
+            className="inline-flex min-h-11 items-center font-[family-name:var(--font-display)] text-[26px] font-medium tracking-[-0.01em] transition-opacity duration-150 hover:opacity-75"
           >
             animarka
           </Link>
@@ -355,7 +372,11 @@ export function Landing() {
             <span className="text-[var(--lp-muted)]">
               Illustrated bird posters, made by you.
             </span>
-            <Link href="/make" prefetch={false} className="lp-link font-medium">
+            <Link
+              href="/make"
+              prefetch={false}
+              className="lp-link inline-flex min-h-11 items-center font-medium sm:min-h-8"
+            >
               Make your poster
             </Link>
           </div>
@@ -378,7 +399,12 @@ export function Landing() {
             </p>
             <p className="flex flex-col gap-2 md:items-end md:text-end">
               <span>AI generated, may contain errors.</span>
-              <Ext href={REPORT}>Report a wrong bird</Ext>
+              <Ext
+                href={REPORT}
+                className="inline-flex min-h-11 items-center sm:min-h-8 md:self-end"
+              >
+                Report a wrong bird
+              </Ext>
             </p>
           </div>
         </div>

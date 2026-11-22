@@ -140,6 +140,25 @@ test.describe("landing page", () => {
     expect(p.y + p.height).toBeLessThanOrEqual(footer.y);
   });
 
+  test("every link is tall enough to hit: 44 px on phones, 32 px on desktop (L7)", async ({
+    page,
+  }, info) => {
+    await page.goto("/");
+    const min = info.project.name.startsWith("phone") ? 44 : 32;
+    const short = await page.evaluate(
+      (min) =>
+        [...document.querySelectorAll<HTMLAnchorElement>("[data-landing] a")]
+          .filter((a) => a.getClientRects().length)
+          .map((a) => ({
+            t: a.textContent!.trim().slice(0, 24),
+            h: Math.min(...[...a.getClientRects()].map((r) => r.height)),
+          }))
+          .filter((x) => x.h < min - 0.5),
+      min,
+    );
+    expect(short).toEqual([]);
+  });
+
   test("a set card opens the builder with that set, named after it", async ({
     page,
   }) => {
