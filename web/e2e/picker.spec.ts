@@ -326,9 +326,7 @@ test("a field guide only bird is tagged in woodblock and keeps its own art on th
   await openTab(page, "Birds");
   await find(page, "Gadwall");
   const pochard = page.getByRole("option", { name: /^Gadwall/ });
-  await expect(pochard).toHaveAccessibleName(
-    "Gadwall, field guide art only",
-  );
+  await expect(pochard).toHaveAccessibleName("Gadwall, field guide art only");
   await expect(pochard.locator("[data-one-style]")).toHaveText("Field guide");
   await pochard.click();
   const bird = page

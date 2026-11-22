@@ -143,13 +143,22 @@ export const test = base.extend<
               },
             });
           }
-          if (pathname.endsWith("/species"))
+          if (pathname.endsWith("/species")) {
+            const params = new URL(req.url()).searchParams;
+            const full = raw.species as unknown as ApiSpeciesList;
+            const only = params.get("ids")?.split(",");
+            // ?ids= answers just those birds, like the real API does for the first poster.
+            const list = only
+              ? {
+                  ...full,
+                  species: full.species.filter((s) => only.includes(s.id)),
+                }
+              : full;
             return route.fulfill({
               json:
-                new URL(req.url()).searchParams.get("format") === "compact"
-                  ? encodeCompact(raw.species as unknown as ApiSpeciesList)
-                  : raw.species,
+                params.get("format") === "compact" ? encodeCompact(list) : list,
             });
+          }
           if (pathname.endsWith("/presets"))
             return route.fulfill({ json: raw.presets });
           if (pathname.startsWith("/api/v1/files/"))

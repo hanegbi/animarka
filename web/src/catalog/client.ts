@@ -2,10 +2,15 @@
  * Loads the catalog from the API once per page. The browser's HTTP cache handles ETag revalidation.
  * The last good copy is also kept in localStorage, so a failed request (offline, API down) still
  * shows the birds, marked stale. Only when there is no copy at all does the page show an error.
+ *
+ * With 11,000 birds the full list is about 320 KB, so the first poster does not wait for it: a
+ * saved copy shows at once, or else a tiny request brings just the poster's birds, and the full
+ * list replaces either when it arrives (`complete`).
  */
 
 import { PRESETS_URL, SPECIES_URL, type ApiPreset } from "./api";
 import { decodeCompact, type ApiCompact } from "./compact";
+import { STARTER_IDS } from "./starter";
 import type { Preset } from "./presets";
 import { toView, type SpeciesView } from "./species-view";
 
@@ -18,7 +23,13 @@ export type CatalogData = {
 
 export type CatalogState =
   | { status: "loading" }
-  | { status: "ready"; data: CatalogData; stale: boolean }
+  | {
+      status: "ready";
+      data: CatalogData;
+      stale: boolean;
+      /** False while only the poster's birds are loaded; the picker waits for the rest. */
+      complete: boolean;
+    }
   | { status: "error" };
 
 /** As it came over the wire: the compact species form and the presets. Also the saved copy. */
@@ -108,14 +119,59 @@ function idle(fn: () => void) {
   else setTimeout(fn, 1000);
 }
 
+/** Birds the first poster needs: a shared poster's, else the saved poster's, else the starter. */
+let wanted: string[] | null = null;
+const POSTER_KEY = "animarka-poster-v1"; // poster/state/storage.ts STORAGE_KEY
+
+function firstIds(storage: Storage | undefined): string[] {
+  if (wanted) return wanted;
+  try {
+    const order = JSON.parse(storage?.getItem(POSTER_KEY) ?? "null")?.order;
+    if (Array.isArray(order) && order.length)
+      return order.filter((x): x is string => typeof x === "string");
+  } catch {
+    // Unreadable: the starter poster it is.
+  }
+  return STARTER_IDS;
+}
+
 function start() {
   if (started) return;
   started = true;
-  fetchCatalog(window.fetch.bind(window), browserStorage(), idle).then(
-    ({ data, stale }) => set({ status: "ready", data, stale }),
+  const fetchFn = window.fetch.bind(window);
+  const storage = browserStorage();
+  const full = fetchCatalog(fetchFn, storage, idle);
+  const cached = readCache(storage);
+  if (cached)
+    set({
+      status: "ready",
+      data: buildCatalog(cached),
+      stale: true,
+      complete: true,
+    });
+  else {
+    const ids = encodeURIComponent(firstIds(storage).join(","));
+    Promise.all([
+      getJson<ApiCompact>(fetchFn, `${SPECIES_URL}&ids=${ids}`),
+      getJson<ApiPreset[]>(fetchFn, PRESETS_URL),
+    ]).then(
+      ([species, presets]) => {
+        if (state.status !== "ready")
+          set({
+            status: "ready",
+            data: buildCatalog({ species, presets }),
+            stale: false,
+            complete: false,
+          });
+      },
+      () => {},
+    );
+  }
+  full.then(
+    ({ data, stale }) => set({ status: "ready", data, stale, complete: true }),
     () => {
       started = false;
-      set({ status: "error" });
+      if (state.status !== "ready") set({ status: "error" });
     },
   );
 }
@@ -127,6 +183,10 @@ export const catalogStore = {
     return () => listeners.delete(listener);
   },
   get: () => state,
+  /** A shared poster's birds, so the first request brings them. Call before subscribing. */
+  want(ids: string[]) {
+    wanted = ids;
+  },
   server: () => SERVER_STATE,
   retry() {
     set({ status: "loading" });

@@ -151,11 +151,19 @@ async def list_species(
     format: Annotated[
         str, Query(description="full (default) or compact: one short row per bird")
     ] = "full",
+    ids: Annotated[
+        str | None,
+        Query(description="Comma separated species ids: only these, for the first poster"),
+    ] = None,
 ) -> Response:
     await require_catalog(session, catalog_id)
     langs = {code.strip() for code in lang.split(",")} & SUPPORTED_LANGS or {"en"}
     rows = await load_catalog(session, catalog_id)
+    # Weights from the whole catalog first, so a family median is the same in a partial answer.
     mass = fill_mass([s for s, _ in rows])
+    if ids is not None:
+        wanted = {i.strip() for i in ids.split(",") if i.strip()}
+        rows = [r for r in rows if r[0].id in wanted]
     if format == "compact":
         return etag_json(request, compact(catalog_id, rows, mass, langs))
     storage = get_storage()

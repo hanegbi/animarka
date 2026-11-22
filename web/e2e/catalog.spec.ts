@@ -123,3 +123,27 @@ test("search answers in under 100 ms, from typing to the updated list", async ({
   );
   expect(Math.max(...times)).toBeLessThan(100);
 });
+
+test("the first poster does not wait for the full bird list", async ({
+  page,
+}) => {
+  test.skip(LIVE, "Holds back the API on purpose");
+  // Hold the full list back; the small request for the poster's birds goes through.
+  let release!: () => void;
+  const held = new Promise<void>((r) => (release = r));
+  await page.route(/\/species\?(?!.*ids=)/, async (route) => {
+    await held;
+    await route.fallback();
+  });
+  await page.goto("/make");
+  await expect(page.locator(poster)).toHaveCount(12);
+  await openTab(page, "Birds");
+  await expect(page.locator("[data-catalog-loading]")).toBeVisible();
+  release();
+  await expect(page.locator("[data-catalog-loading]")).toHaveCount(0);
+  await expect(
+    page.getByRole("listbox").first().getByRole("option").first(),
+  ).toBeVisible();
+  // The poster kept going: still 12 birds, and nothing was reset.
+  await expect(page.locator(poster)).toHaveCount(12);
+});

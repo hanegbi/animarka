@@ -3,7 +3,9 @@
 import {
   createContext,
   useContext,
+  useLayoutEffect,
   useMemo,
+  useState,
   useSyncExternalStore,
   type ReactNode,
 } from "react";
@@ -11,7 +13,7 @@ import { preload } from "react-dom";
 import { useStore, type StoreApi } from "zustand";
 import { PRESETS_URL, SPECIES_URL } from "@/catalog/api";
 import { catalogStore, type CatalogData } from "@/catalog/client";
-import { BACKGROUND_IDS, STYLE_IDS, viewLookup } from "@/catalog/lookup";
+import { BACKGROUND_IDS, STYLE_IDS, liveLookup } from "@/catalog/lookup";
 import type { Preset } from "@/catalog/presets";
 import type { SpeciesView } from "@/catalog/species-view";
 import { STARTER_IDS } from "@/catalog/starter";
@@ -21,6 +23,8 @@ import type { PosterContext } from "./types";
 
 type Ctx = {
   store: StoreApi<PosterStore>;
+  /** False while only the poster's birds are loaded. */
+  complete: boolean;
   poster: PosterContext;
   species: Map<string, SpeciesView>;
   list: SpeciesView[];
@@ -48,6 +52,9 @@ export function PosterProvider({
 }) {
   // Start both requests from the document head, before the scripts run.
   if (!given) {
+    const order = (shared as { order?: unknown } | undefined)?.order;
+    if (Array.isArray(order))
+      catalogStore.want(order.filter((x) => typeof x === "string"));
     preload(SPECIES_URL, { as: "fetch", crossOrigin: "anonymous" });
     preload(PRESETS_URL, { as: "fetch", crossOrigin: "anonymous" });
   }
@@ -65,7 +72,12 @@ export function PosterProvider({
   if (loaded.status === "loading") return <>{fallback}</>;
   if (loaded.status === "error") return <CatalogError />;
   return (
-    <Ready data={loaded.data} stale={loaded.stale} shared={shared}>
+    <Ready
+      data={loaded.data}
+      stale={loaded.stale}
+      complete={loaded.complete}
+      shared={shared}
+    >
       {children}
     </Ready>
   );
@@ -74,17 +86,23 @@ export function PosterProvider({
 function Ready({
   data,
   shared,
+  complete = true,
   children,
 }: {
   data: CatalogData;
   /** True when the catalog came from this device's saved copy. Shown nowhere for now. */
   stale?: boolean;
+  complete?: boolean;
   shared?: unknown;
   children: ReactNode;
 }) {
-  const value = useMemo(() => {
+  // The poster store is made once. When the full catalog replaces the first, partial one, the
+  // store keeps its poster and its undo history and simply sees the new birds through `live`.
+  const [live] = useState(() => liveLookup(data.species));
+  useLayoutEffect(() => live.set(data.species), [live, data.species]);
+  const made = useMemo(() => {
     const poster: PosterContext = {
-      catalog: viewLookup(data.species),
+      catalog: live.lookup,
       styles: STYLE_IDS,
       backgrounds: BACKGROUND_IDS,
     };
@@ -98,11 +116,20 @@ function Ready({
     return {
       store: createPosterStore(poster, { starter, storage, initial: shared }),
       poster,
+    };
+    // Made once per poster source; new catalog data flows in through `live`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [live, shared]);
+  const value = useMemo(
+    () => ({
+      ...made,
+      complete,
       species: data.species,
       list: data.list,
       presets: data.presets,
-    };
-  }, [data, shared]);
+    }),
+    [made, complete, data],
+  );
 
   return (
     <PosterReactContext.Provider value={value}>
@@ -162,6 +189,6 @@ export function useHistoryFlags() {
 }
 
 export function useCatalog() {
-  const { species, list, presets, poster } = useCtx();
-  return { species, list, presets, ctx: poster };
+  const { species, list, presets, poster, complete } = useCtx();
+  return { species, list, presets, ctx: poster, complete };
 }

@@ -195,3 +195,12 @@ def test_compact_form_has_every_bird_in_short_rows(client: TestClient) -> None:
     assert only[7] == 0
     strix = next(r for r in body["species"] if r[0] == "strix-aluco")
     assert strix[4] == 1005 and strix[5] == 1
+
+
+def test_ids_returns_only_those_birds_with_whole_catalog_weights(client: TestClient) -> None:
+    body = client.get(
+        "/api/v1/catalogs/birds/species?format=compact&ids=strix-aluco,tyto-alba,nope"
+    ).json()
+    assert [r[0] for r in body["species"]] == ["tyto-alba", "strix-aluco"]
+    strix = body["species"][1]
+    assert strix[4] == 1005  # the family median over the whole catalog, not just these two

@@ -64,7 +64,7 @@ function SearchMiss({
 export function Picker() {
   const state = usePosterState();
   const { dispatch } = usePosterActions();
-  const { species, list, presets } = useCatalog();
+  const { species, list, presets, complete } = useCatalog();
   const [view, setView] = useState(ALL);
   const [query, setQuery] = useState("");
   const [setsOpen, setSetsOpen] = useState(false);
@@ -218,7 +218,16 @@ export function Picker() {
         </div>
       )}
 
-      {shown.length === 0 ? (
+      {!complete ? (
+        // The poster's birds are in; the full list of 11,000 is still on its way.
+        <p
+          role="status"
+          className="text-muted-foreground px-1 py-6 text-center text-sm"
+          data-catalog-loading
+        >
+          Loading all the birds
+        </p>
+      ) : shown.length === 0 ? (
         <SearchMiss query={query} onTry={setQuery} />
       ) : (
         <BirdGrid
