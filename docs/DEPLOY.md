@@ -41,3 +41,17 @@ Still to come in M6: nightly backups (M6.3) and deploy from CI (M6.4).
 - Logs are one JSON object per line (`ts`, `level`, `logger`, `msg`, plus fields such as `method`, `path`, `status`, `ms` for each API request). Read them with
   `docker compose -f infra/compose/docker-compose.prod.yml --env-file infra/compose/.env logs -f api worker`.
 - The queue dashboard (Flower) is at `https://$DOMAIN/flower`, behind basic auth: set `FLOWER_USER` and `FLOWER_PASSWORD` in `.env`.
+
+## Backups
+
+`scripts/backup.sh` streams a Postgres dump to the bucket set in `.env` (`BACKUP_REMOTE` and the `RCLONE_CONFIG_BUCKET_*` lines), mirrors the poster storage next to it, and keeps 14 days (`BACKUP_KEEP_DAYS`). Files changed or deleted since the last run go to a dated `storage/changed-*` folder, so a bad day can be undone. It needs only Docker on the server.
+
+Nightly at 03:00, from the repo root on the server:
+
+```
+0 3 * * * cd /srv/animarka && ./scripts/backup.sh >> /var/log/animarka-backup.log 2>&1
+```
+
+Restore on a fresh machine: bring the stack up once, stop `api worker flower`, run `./scripts/restore.sh` (newest dump) or `./scripts/restore.sh animarka-<stamp>.dump`, then start them again. `RESTORE_DB=animarka_restore SKIP_STORAGE=1 ./scripts/restore.sh` restores into a side database to check a backup without touching live data.
+
+Tested on 2026-11-22 against the dev stack: a dump and the storage mirror, a restore into a side database with the same row counts in every table (1,161 species, 2,322 artworks, 11 presets, posters and jobs), and the 14 day pruning.
