@@ -23,7 +23,6 @@ import { LanguagePicker } from "@/controls/LanguagePicker";
 import { LabelCards, StyleCards } from "@/controls/StyleCards";
 import { Picker } from "@/picker/Picker";
 import { usePosterActions, usePosterState } from "@/poster/state/provider";
-import { Credits } from "./Credits";
 import { PosterStage } from "./PosterStage";
 
 type TabId = "birds" | "layout" | "style";
@@ -125,7 +124,6 @@ export function PhoneShell() {
           role="toolbar"
           aria-label="Poster actions"
         >
-          <Credits />
           <UndoRedo iconOnly />
           <ExportButton iconOnly />
         </div>

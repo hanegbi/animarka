@@ -5,7 +5,6 @@ import { Inspector } from "@/controls/Inspector";
 import { ExportButton } from "@/export/ExportButton";
 import { ShareButton } from "@/export/ShareButton";
 import { Picker } from "@/picker/Picker";
-import { Credits } from "./Credits";
 import { PosterStage } from "./PosterStage";
 
 /** Desktop shell, R8 A2: birds on the left, the poster in the middle, style on the right. */
@@ -20,7 +19,6 @@ export function DesktopShell() {
           role="toolbar"
           aria-label="Poster actions"
         >
-          <Credits />
           <UndoRedo />
           <ShareButton />
           <ExportButton />

@@ -126,22 +126,14 @@ test.describe("phone shell (poster on top, tab bar, short sheet)", () => {
     ).toBeVisible();
   });
 
-  test("the builder never shows the credit line; Credits opens the credits page", async ({
+  test("the builder shows no art credit and no Credits link", async ({
     page,
   }) => {
     await open(page);
     await expect(page.getByText("Huashu")).toHaveCount(0);
     await expect(page.getByText("AI generated")).toHaveCount(0);
-    await page.getByRole("link", { name: "Credits" }).click();
-    await expect(page).toHaveURL(/\/credits$/);
-    await expect(
-      page.getByRole("link", { name: "huashu-bird-sticker" }),
-    ).toBeVisible();
-    await expect(page.getByRole("link", { name: "CC BY 4.0" })).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: "HABirdDashboard" }),
-    ).toBeVisible();
-    await expect(page.getByText("AI generated")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Credits" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Credits" })).toHaveCount(0);
   });
 });
 

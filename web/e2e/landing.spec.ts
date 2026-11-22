@@ -290,18 +290,15 @@ test.describe("landing page", () => {
     ).toBeVisible();
   });
 
-  test("the footer links to the credits page without showing the credit line, and the page never scrolls sideways", async ({
+  test("no art credit anywhere on the landing, and the page never scrolls sideways", async ({
     page,
   }) => {
     await page.goto("/");
     const footer = page.locator("footer");
-    // The credit line never shows; the footer links to the credits page.
-    await expect(footer).not.toContainText("Huashu");
-    await expect(footer).not.toContainText("AI generated");
-    await expect(footer.getByRole("link", { name: "Credits" })).toHaveAttribute(
-      "href",
-      "/credits",
-    );
+    // No art credit anywhere on the page (owner's call).
+    await expect(page.locator("body")).not.toContainText("Huashu");
+    await expect(page.locator("body")).not.toContainText("HABirdDashboard");
+    await expect(page.getByRole("link", { name: "Credits" })).toHaveCount(0);
     await expect(
       footer.getByRole("link", { name: "Report a wrong bird" }),
     ).toHaveAttribute("href", /issues\/new/);

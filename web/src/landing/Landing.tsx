@@ -60,10 +60,6 @@ const FAQ = [
   ],
   ["Do I need an account?", "No. Open the builder and start."],
   [
-    "Who made the art?",
-    "Two open, AI generated sets: field guide art by Huashu (huashu-bird-sticker, CC BY 4.0) and woodblock art by Adam Oberley, Teddy Warner and contributors (HABirdDashboard, MIT).",
-  ],
-  [
     "Can I use Hebrew names?",
     "Yes. 1,129 birds have a Hebrew name, the rest keep their English one.",
   ],
@@ -382,13 +378,6 @@ export function Landing() {
             </Link>
           </div>
           <div className="grid gap-4 border-t border-[rgb(var(--lp-shadow)/0.12)] pt-8 text-sm leading-relaxed text-[var(--lp-muted)] md:grid-cols-[1fr_1fr] md:gap-12">
-            <Link
-              href="/credits"
-              prefetch={false}
-              className="lp-link inline-flex min-h-11 items-center sm:min-h-8"
-            >
-              Credits
-            </Link>
             <Ext
               href={REPORT}
               className="inline-flex min-h-11 items-center sm:min-h-8 md:justify-self-end"
