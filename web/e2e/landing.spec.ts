@@ -290,23 +290,18 @@ test.describe("landing page", () => {
     ).toBeVisible();
   });
 
-  test("the footer credits both art sets with links and licences, and the page never scrolls sideways", async ({
+  test("the footer links to the credits page without showing the credit line, and the page never scrolls sideways", async ({
     page,
   }) => {
     await page.goto("/");
     const footer = page.locator("footer");
-    await expect(footer).toContainText("Field guide art by Huashu");
-    await expect(
-      footer.getByRole("link", { name: "huashu-bird-sticker" }),
-    ).toHaveAttribute("href", /alchaincyf\/huashu-bird-sticker/);
-    await expect(
-      footer.getByRole("link", { name: "CC BY 4.0" }),
-    ).toHaveAttribute("href", /creativecommons\.org\/licenses\/by\/4\.0/);
-    await expect(
-      footer.getByRole("link", { name: "HABirdDashboard" }),
-    ).toHaveAttribute("href", /HABirdDashboard/);
-    await expect(footer.getByRole("link", { name: "MIT" })).toBeVisible();
-    await expect(footer).toContainText("AI generated, may contain errors.");
+    // The credit line never shows; the footer links to the credits page.
+    await expect(footer).not.toContainText("Huashu");
+    await expect(footer).not.toContainText("AI generated");
+    await expect(footer.getByRole("link", { name: "Credits" })).toHaveAttribute(
+      "href",
+      "/credits",
+    );
     await expect(
       footer.getByRole("link", { name: "Report a wrong bird" }),
     ).toHaveAttribute("href", /issues\/new/);

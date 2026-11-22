@@ -126,12 +126,22 @@ test.describe("phone shell (poster on top, tab bar, short sheet)", () => {
     ).toBeVisible();
   });
 
-  test("the art credits open from the header", async ({ page }) => {
+  test("the builder never shows the credit line; Credits opens the credits page", async ({
+    page,
+  }) => {
     await open(page);
-    await expect(page.getByText("CC BY 4.0")).toHaveCount(0);
-    await page.getByRole("button", { name: "Credits" }).click();
-    await expect(page.getByText("CC BY 4.0")).toBeVisible();
-    await expect(page.getByText("Both sets are AI generated")).toBeVisible();
+    await expect(page.getByText("Huashu")).toHaveCount(0);
+    await expect(page.getByText("AI generated")).toHaveCount(0);
+    await page.getByRole("link", { name: "Credits" }).click();
+    await expect(page).toHaveURL(/\/credits$/);
+    await expect(
+      page.getByRole("link", { name: "huashu-bird-sticker" }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "CC BY 4.0" })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "HABirdDashboard" }),
+    ).toBeVisible();
+    await expect(page.getByText("AI generated")).toHaveCount(0);
   });
 });
 
@@ -186,15 +196,6 @@ test.describe("desktop shell (birds left, poster centre, style right)", () => {
         () => document.documentElement.scrollHeight <= window.innerHeight + 1,
       ),
     ).toBe(true);
-  });
-
-  test("art credits for both sources open from the header", async ({
-    page,
-  }) => {
-    await open(page);
-    await page.getByRole("button", { name: "Credits" }).click();
-    await expect(page.getByText("CC BY 4.0")).toBeVisible();
-    await expect(page.getByText("MIT. Both sets")).toBeVisible();
   });
 
   test("at 1100 px wide the desktop shell still works, and just below it the phone shell takes over", async ({

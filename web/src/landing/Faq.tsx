@@ -26,7 +26,7 @@ export function Faq({
                 {q}
                 <span
                   aria-hidden
-                  className={`text-2xl leading-none text-[var(--lp-cobalt)] transition-transform duration-200 ease-out motion-reduce:transition-none ${on ? "rotate-45" : ""}`}
+                  className={`text-2xl leading-none text-[var(--lp-blue)] transition-transform duration-200 ease-out motion-reduce:transition-none ${on ? "rotate-45" : ""}`}
                 >
                   +
                 </span>

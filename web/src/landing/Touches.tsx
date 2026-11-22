@@ -81,7 +81,7 @@ export function Touches() {
             className="w-full"
           />
         </div>
-        <span className="lp-demo-tap absolute top-[44%] left-1/2 size-12 -translate-x-1/2 rounded-full border-2 border-[var(--lp-cobalt)]" />
+        <span className="lp-demo-tap absolute top-[44%] left-1/2 size-12 -translate-x-1/2 rounded-full border-2 border-[var(--lp-blue)]" />
         <span className={`${label} bottom-[12%]`}>Common Kingfisher</span>
       </Plate>
 
@@ -117,7 +117,7 @@ export function Touches() {
             loading="lazy"
             className="w-full"
           />
-          <span className="lp-demo-bin absolute -top-2 -right-2 grid size-7 place-items-center rounded-full bg-[var(--lp-cobalt)] text-[var(--lp-paper)]">
+          <span className="lp-demo-bin absolute -top-2 -right-2 grid size-7 place-items-center rounded-full bg-[var(--lp-blue)] text-[var(--lp-paper)]">
             <svg
               viewBox="0 0 24 24"
               className="size-4"

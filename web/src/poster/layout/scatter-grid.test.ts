@@ -143,29 +143,27 @@ describe("scatter specifics", () => {
     expect(bad).toEqual([]);
   });
 
-  it("shows no rows: most horizontal neighbours sit at different heights (B6)", () => {
+  it("stands like a printed plate: birds in a row share one baseline, rows are even", () => {
     for (const seed of [1, 2, 3, 4]) {
       const r = scatterLayout(inputFor(20, 0.75, "names", { seed }));
-      const blocks = r.items.map(blockOf);
-      let pairs = 0;
-      let level = 0;
-      blocks.forEach((a, i) =>
-        blocks.forEach((b, j) => {
-          if (j <= i) return;
-          const side =
-            Math.abs(a.x + a.w / 2 - (b.x + b.w / 2)) < (a.w + b.w) * 0.75;
-          const near = Math.abs(a.y - b.y) < Math.max(a.h, b.h);
-          if (!side || !near) return;
-          pairs++;
-          if (Math.abs(a.y + a.h - (b.y + b.h)) < 0.08 * Math.max(a.h, b.h))
-            level++;
-        }),
+      const feet = [
+        ...new Set(r.items.map((i) => (i.art.y + i.art.h).toFixed(4))),
+      ];
+      // A few baselines, not one per bird.
+      expect(feet.length).toBeGreaterThan(1);
+      expect(feet.length).toBeLessThanOrEqual(8);
+      const perRow = feet.map(
+        (f) =>
+          r.items.filter((i) => (i.art.y + i.art.h).toFixed(4) === f).length,
       );
-      expect(level / Math.max(1, pairs)).toBeLessThan(0.35);
+      // Balanced: no row is left with a lone bird while others are full.
+      expect(Math.min(...perRow)).toBeGreaterThanOrEqual(
+        Math.max(...perRow) / 2 - 1,
+      );
     }
   });
 
-  it("has real size variation: the biggest bird is clearly bigger than the smallest", () => {
+  it("the same weight and shape gives the same size", () => {
     const input = inputFor(20, 0.75, "none", { seed: 3 });
     input.animals = input.animals.map((a) => ({
       ...a,
@@ -173,11 +171,16 @@ describe("scatter specifics", () => {
       massG: 200,
     }));
     const areas = scatterLayout(input).items.map((i) => i.art.w * i.art.h);
-    expect(Math.max(...areas) / Math.min(...areas)).toBeGreaterThan(1.3);
+    expect(Math.max(...areas) / Math.min(...areas)).toBeCloseTo(1, 6);
   });
 
-  it("swapping two birds moves only those two", () => {
+  it("swapping two equal birds moves only those two", () => {
     const input = inputFor(12, 0.75, "names", { seed: 5 });
+    input.animals = input.animals.map((a) => ({
+      ...a,
+      aspect: 0.8,
+      massG: 300,
+    }));
     const before = scatterLayout(input).items;
     const swapped = { ...input, animals: input.animals.slice() };
     [swapped.animals[2], swapped.animals[7]] = [

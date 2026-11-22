@@ -8,9 +8,9 @@
 /*
  * Landing page only (R9). Imported by landing routes only, so these never ship with the builder,
  * and scoped to [data-landing] as a second guard.
- * Cobalt is the accent (L3): large shapes, icons, the plus signs, the slider handle, focus rings,
- * most of it from the hero birds. Any blue text uses cobalt text; cobalt itself never on text under
- * 24 px. Split: about 60% paper and stage, 30% forest and ink, 10% cobalt.
+ * Blue is the accent, taken from the hero birds (cassowary head, kingfisher back): large shapes, icons, the plus signs, the slider handle, focus rings,
+ * most of it from the hero birds. Any blue text uses blue text; the shape blue is never text
+ * under 24 px. Split: about 60% paper and stage, 30% forest and ink, 10% blue.
  */
 [data-landing] {
   --lp-ivory: #f6f1e4;
@@ -22,8 +22,8 @@
   --lp-on-forest-muted: #c9d6cc; /* 6.7:1 on forest */
   --lp-ink: #1e1b16; /* body text: 15.2:1 on paper */
   --lp-muted: #5e574b; /* secondary text: 6.3:1 on paper, 5.7:1 on stage */
-  --lp-cobalt: #2364c8; /* shapes and icons: 5.0:1 on paper, 4.5:1 on stage */
-  --lp-cobalt-text: #1e56b0; /* blue text and links: 6.2:1 on paper */
+  --lp-blue: #3a68cc; /* the hero birds' blue (cassowary head, kingfisher back), hue 263: 4.6:1 on paper */
+  --lp-blue-text: #2a55ae; /* the same blue, deeper, for any blue text: 6.2:1 on paper */
   --lp-oak: #c8a676;
   --lp-oak-dark: #9a7748;
   --lp-shadow: 54 40 22; /* warm umber, as rgb channels for layered shadows */
@@ -79,7 +79,7 @@
   text-decoration-color: var(--lp-forest);
 }
 [data-landing] :is(a, button, input, [tabindex]):focus-visible {
-  outline: 2px solid var(--lp-cobalt);
+  outline: 2px solid var(--lp-blue);
   outline-offset: 3px;
   border-radius: 4px;
 }

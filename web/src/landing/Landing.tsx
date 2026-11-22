@@ -381,32 +381,20 @@ export function Landing() {
               Make your poster
             </Link>
           </div>
-          <div className="grid gap-4 border-t border-[rgb(var(--lp-shadow)/0.12)] pt-8 text-sm leading-relaxed text-[var(--lp-muted)] md:grid-cols-[2fr_1fr] md:gap-12">
-            <p>
-              Field guide art by Huashu, from{" "}
-              <Ext href="https://github.com/alchaincyf/huashu-bird-sticker">
-                huashu-bird-sticker
-              </Ext>
-              ,{" "}
-              <Ext href="https://creativecommons.org/licenses/by/4.0/">
-                CC BY 4.0
-              </Ext>
-              . Woodblock art by Adam Oberley, Teddy Warner and contributors,
-              from{" "}
-              <Ext href="https://github.com/adamoberley/HABirdDashboard">
-                HABirdDashboard
-              </Ext>
-              , <Ext href="https://opensource.org/license/mit">MIT</Ext>.
-            </p>
-            <p className="flex flex-col gap-2 md:items-end md:text-end">
-              <span>AI generated, may contain errors.</span>
-              <Ext
-                href={REPORT}
-                className="inline-flex min-h-11 items-center sm:min-h-8 md:self-end"
-              >
-                Report a wrong bird
-              </Ext>
-            </p>
+          <div className="grid gap-4 border-t border-[rgb(var(--lp-shadow)/0.12)] pt-8 text-sm leading-relaxed text-[var(--lp-muted)] md:grid-cols-[1fr_1fr] md:gap-12">
+            <Link
+              href="/credits"
+              prefetch={false}
+              className="lp-link inline-flex min-h-11 items-center sm:min-h-8"
+            >
+              Credits
+            </Link>
+            <Ext
+              href={REPORT}
+              className="inline-flex min-h-11 items-center sm:min-h-8 md:justify-self-end"
+            >
+              Report a wrong bird
+            </Ext>
           </div>
         </div>
       </footer>
