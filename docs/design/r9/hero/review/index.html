@@ -1,0 +1,193 @@
+<title>animarka Hero Round</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one review document. Desktop shots run wide with the notes beside them, then the five phone shots in a row, then the rules and the numbers. */
+:root {
+  --paper: #f6f1e4; --card: #fffdf8; --ink: #1f4a3a; --text: #1d2823; --muted: #4a5f55; --rule: #ddd4bf; --soft: #ece5d5; --tint: #e3ebe5; --on-ink: #f6f1e4; --accent: #f04a24;
+  --display: "Fraunces", Georgia, serif; --body: "Inter", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper: #131a17; --card: #1a2420; --ink: #b9d8c6; --text: #ebe6d8; --muted: #a7b4ac; --rule: #2d3a34; --soft: #202a26; --tint: #22302a; --on-ink: #131a17; --accent: #ff7a57; color-scheme: dark } }
+:root[data-theme="dark"] { --paper: #131a17; --card: #1a2420; --ink: #b9d8c6; --text: #ebe6d8; --muted: #a7b4ac; --rule: #2d3a34; --soft: #202a26; --tint: #22302a; --on-ink: #131a17; --accent: #ff7a57; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--text); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1440px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 96px; display: flex; flex-direction: column; gap: 48px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 500; color: var(--ink); margin: 0; text-wrap: balance; letter-spacing: -0.01em }
+h1 { font-size: clamp(34px, 5vw, 56px); line-height: 1.02 } h2 { font-size: 30px; line-height: 1.15 } h3 { font-size: 22px; line-height: 1.2 }
+p { margin: 0 }
+header { display: flex; flex-direction: column; gap: 14px; max-width: 76ch }
+.lede { color: var(--muted); font-size: 17px }
+.mark { color: var(--accent) }
+.answer { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center }
+.chip { font: 600 14px/1 var(--body); font-variant-numeric: tabular-nums; color: var(--on-ink); background: var(--ink); padding: 6px 9px; border-radius: 6px; white-space: nowrap }
+.jump { display: flex; flex-wrap: wrap; gap: 8px }
+.jump a { color: var(--ink); text-decoration: none; border: 1px solid var(--rule); background: var(--card); border-radius: 8px; padding: 8px 12px; font-size: 14px; transition: border-color 160ms ease-out }
+.jump a:hover { border-color: var(--ink) }
+section { display: flex; flex-direction: column; gap: 20px; scroll-margin-top: 16px }
+.note { color: var(--muted); max-width: 76ch }
+.opts { display: flex; flex-direction: column; gap: 24px }
+.opt { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) 340px }
+.opt.rec { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink) }
+.shot { background: var(--soft); border-right: 1px solid var(--rule); padding: 12px; min-width: 0 }
+.shot img { width: 100%; height: auto; display: block; border-radius: 4px; box-shadow: 0 1px 2px rgb(54 40 22 / 0.18) }
+.meta { padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap }
+.badge { font-size: 12px; font-weight: 600; color: var(--on-ink); background: var(--ink); padding: 4px 9px; border-radius: 99px }
+.desc { font-size: 15px }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 14px; color: var(--muted); margin: 0 }
+dt { font-weight: 600; color: var(--text) } dd { margin: 0 }
+.num { font-variant-numeric: tabular-nums }
+.src { font-size: 13.5px; color: var(--muted) }
+a { color: var(--ink); text-underline-offset: 3px }
+.why { font-size: 14px; background: var(--tint); border-radius: 8px; padding: 10px 12px }
+.phones { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px }
+.phones figure { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0 }
+.phones img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--rule) }
+.phones figcaption { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px }
+.phones figcaption span.num { color: var(--muted) }
+.phones figure.rec img { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink) }
+.rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; max-width: 80ch }
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 12px; background: var(--card) }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14px }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--rule); vertical-align: top }
+th { font-weight: 600; color: var(--text); background: var(--soft) }
+tr:last-child td { border-bottom: 0 }
+td.num, th.num { text-align: right; white-space: nowrap }
+a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px }
+@media (max-width: 1080px) { .opt { grid-template-columns: 1fr } .shot { border-right: 0; border-bottom: 1px solid var(--rule) } }
+@media (max-width: 900px) { .phones { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (prefers-reduced-motion: reduce) { .jump a { transition: none } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>The hero, five ways</h1>
+    <p class="lede">Five real first screens for the landing page, built with art from the app and the copy we already use. Desktop at 1440 px first, then the phone at 390 px. All five follow the hero rules from your brief, and the amount of <span class="mark">vermilion</span> is measured on each screenshot.</p>
+  </header>
+
+  <div class="answer" role="note"><b>How to answer:</b> reply with one code, for example <span class="chip">H1</span>. Add a note to change the bird, the red word or the crop. Any bird from the art set can go in any of the five layouts.</div>
+
+  <nav class="jump" aria-label="Parts of this page">
+    <a href="#desktop">Desktop, 1440 px</a>
+    <a href="#phone">Phone, 390 px</a>
+    <a href="#rules">Rules and numbers</a>
+  </nav>
+
+  <section id="desktop" aria-labelledby="desktop-h">
+    <h2 id="desktop-h">Desktop, 1440 px</h2>
+    <div class="opts">
+
+      <article class="opt rec" aria-labelledby="h1-name">
+        <div class="shot"><img src="H1-desktop.webp" width="1440" height="900" alt="Option 1, knockout: a huge headline crosses a scarlet tanager, and the letters over the bird turn ivory"></div>
+        <div class="meta">
+          <div class="title"><span class="chip">H1</span><h3 id="h1-name">Knockout</h3><span class="badge">Recommended</span></div>
+          <p class="desc">The scarlet tanager sits under a very large headline. Where the letters cross the bird they turn to paper, as if the type were cut out of the ink. Over the pale beak they stay green, so every word stays readable.</p>
+          <dl>
+            <dt>Strength</dt><dd>The one moment nobody else has. The words and the bird read as one image, and it carries the most red with no decoration at all.</dd>
+            <dt>Weakness</dt><dd>The bird is shown at 1.3 times its art size, so it is a little soft on retina screens. The cut needs a few lines of script to follow the bird when the window changes size.</dd>
+            <dt>Red</dt><dd class="num">21.6% desktop, 19.3% phone</dd>
+          </dl>
+          <p class="src">Reference: <a href="https://21st.dev/@ham7a311/components/letterform-hero" target="_blank" rel="noopener">Letterform Hero</a> on 21st.dev, huge letters as windows onto artwork. Here the letters are cut out of the art instead.</p>
+          <p class="why">Why I recommend it: it is the unforgettable moment the brief asks for, made only from the headline and a real bird.</p>
+        </div>
+      </article>
+
+      <article class="opt" aria-labelledby="h2-name">
+        <div class="shot"><img src="H2-desktop.webp" width="1440" height="900" alt="Option 2, gaze: a northern cardinal on the left looks at the headline, where the word poster is vermilion" loading="lazy"></div>
+        <div class="meta">
+          <div class="title"><span class="chip">H2</span><h3 id="h2-name">Gaze</h3></div>
+          <p class="desc">The cardinal, turned with the app's own mirror, fills the left side and looks straight at the headline. The word it looks at, <i>poster</i>, is in vermilion.</p>
+          <dl>
+            <dt>Strength</dt><dd>The calmest and clearest order: bird, headline, button. The bird is shown near its art size, so it stays sharp.</dd>
+            <dt>Weakness</dt><dd>One red word is the most familiar of the five ideas, so it surprises less than 1 or 5.</dd>
+            <dt>Red</dt><dd class="num">18.5% desktop, 17.0% phone</dd>
+          </dl>
+          <p class="src">Reference: <a href="https://21st.dev/@felipemenezes098/components/hero-04" target="_blank" rel="noopener">Editorial Collage Hero</a> on 21st.dev, two columns with a serif headline. One bird here instead of a collage.</p>
+        </div>
+      </article>
+
+      <article class="opt" aria-labelledby="h3-name">
+        <div class="shot"><img src="H3-desktop.webp" width="1440" height="900" alt="Option 3, framed print: a real Birds in red poster in a thin oak frame with a vermilion mat" loading="lazy"></div>
+        <div class="meta">
+          <div class="title"><span class="chip">H3</span><h3 id="h3-name">Framed print</h3></div>
+          <p class="desc">One real poster from the builder, Birds in red, hangs in a thin oak frame with a vermilion mat and a soft shadow. The word <i>one</i> is in vermilion.</p>
+          <dl>
+            <dt>Strength</dt><dd>Shows exactly what people get. The poster is rendered at 1,600 px, so it is sharp on every screen.</dd>
+            <dt>Weakness</dt><dd>The red is mostly the mat, not a bird, and the birds on the poster are small. It is the closest to the old hero.</dd>
+            <dt>Red</dt><dd class="num">17.0% desktop, 16.7% phone</dd>
+          </dl>
+          <p class="src">Reference: <a href="https://21st.dev/@dhxwhy/components/picture-rail-gallery" target="_blank" rel="noopener">Picture Rail Image Gallery</a> on 21st.dev, framed prints with mats for an art print shop. One print here, with no wires or swing.</p>
+        </div>
+      </article>
+
+      <article class="opt" aria-labelledby="h4-name">
+        <div class="shot"><img src="H4-desktop.webp" width="1440" height="900" alt="Option 4, masthead: a two line headline across the top, a cardinal rising from the corner with its crest under the vermilion word love" loading="lazy"></div>
+        <div class="meta">
+          <div class="title"><span class="chip">H4</span><h3 id="h4-name">Masthead</h3></div>
+          <p class="desc">The headline runs across the top like the title of a field guide. The cardinal rises from the corner and its crest stops just under <i>love</i>, which is in the same red.</p>
+          <dl>
+            <dt>Strength</dt><dd>The biggest type of the five, with the bird and the word tied by colour and by position.</dd>
+            <dt>Weakness</dt><dd>The bird is shown at 1.5 times its art size, the softest of the five, and the red sits right at the 15% floor. On the phone the crest and the word sit apart.</dd>
+            <dt>Red</dt><dd class="num">15.0% desktop, 16.3% phone</dd>
+          </dl>
+          <p class="src">Reference: <a href="https://21st.dev/@felipemenezes098/components/hero-07" target="_blank" rel="noopener">Editorial Image Hero</a> on 21st.dev, a serif headline with a large image. Here the headline is set as a two line masthead.</p>
+        </div>
+      </article>
+
+      <article class="opt" aria-labelledby="h5-name">
+        <div class="shot"><img src="H5-desktop.webp" width="1440" height="900" alt="Option 5, spread: an open field guide page; a scarlet tanager crosses the gutter and its beak points at the vermilion word bird" loading="lazy"></div>
+        <div class="meta">
+          <div class="title"><span class="chip">H5</span><h3 id="h5-name">Spread</h3></div>
+          <p class="desc">The hero is an open field guide. The tanager crosses the gutter, steps out of the top of the page, and its beak points at the word <i>bird</i>.</p>
+          <dl>
+            <dt>Strength</dt><dd>The most field guide of the five. It sets up the plates idea for the rest of the page.</dd>
+            <dt>Weakness</dt><dd>A page on the page adds a frame and a gutter shadow, so the first screen is busier. On the phone the spread becomes a single page.</dd>
+            <dt>Red</dt><dd class="num">18.0% desktop, 16.3% phone</dd>
+          </dl>
+          <p class="src">Reference: <a href="https://21st.dev/@shadcnspace/components/book-page-curl" target="_blank" rel="noopener">Book Page Curl</a> on 21st.dev, a book that opens with a page curl. Here the spread stays open and still.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="phone" aria-labelledby="phone-h">
+    <h2 id="phone-h">Phone, 390 px</h2>
+    <p class="note">The same five, in order. On the phone the subject sits under the words or behind them, so both buttons stay on the first screen.</p>
+    <div class="phones">
+      <figure class="rec"><img src="H1-phone.webp" width="780" height="1688" alt="Option 1 on a phone" loading="lazy"><figcaption><span class="chip">H1</span>Knockout <span class="num">19.3%</span></figcaption></figure>
+      <figure><img src="H2-phone.webp" width="780" height="1688" alt="Option 2 on a phone" loading="lazy"><figcaption><span class="chip">H2</span>Gaze <span class="num">17.0%</span></figcaption></figure>
+      <figure><img src="H3-phone.webp" width="780" height="1688" alt="Option 3 on a phone" loading="lazy"><figcaption><span class="chip">H3</span>Framed print <span class="num">16.7%</span></figcaption></figure>
+      <figure><img src="H4-phone.webp" width="780" height="1688" alt="Option 4 on a phone" loading="lazy"><figcaption><span class="chip">H4</span>Masthead <span class="num">16.3%</span></figcaption></figure>
+      <figure><img src="H5-phone.webp" width="780" height="1688" alt="Option 5 on a phone" loading="lazy"><figcaption><span class="chip">H5</span>Spread <span class="num">16.3%</span></figcaption></figure>
+    </div>
+  </section>
+
+  <section id="rules" aria-labelledby="rules-h">
+    <h2 id="rules-h">What all five follow</h2>
+    <ul class="rules">
+      <li><b>One big subject.</b> One real bird from the field guide art set, or one real poster made in the builder. No small framed posters.</li>
+      <li><b>One accent.</b> Vermilion on ivory, with deep forest type. It belongs to the subject: the bird's own red, the mat of the print, and one display word. Vermilion lives in landing tokens only, never in the builder.</li>
+      <li><b>Paper, not a flat colour.</b> A fine paper grain over the ivory field.</li>
+      <li><b>Light frames.</b> No frame and a soft shadow, or a thin oak frame in option 3. No black frames.</li>
+      <li><b>The headline reacts to the subject,</b> in a different way in each option (last column below).</li>
+      <li><b>Contrast.</b> Deep forest on ivory is 8.9:1. Vermilion is used only at display size, where 3.3:1 passes for large text, and never on buttons or small text.</li>
+    </ul>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Option</th><th class="num">Red, desktop</th><th class="num">Red, phone</th><th>Art size at 1440 px</th><th>How the headline reacts</th></tr></thead>
+        <tbody>
+          <tr><td><span class="chip">H1</span> Knockout</td><td class="num">21.6%</td><td class="num">19.3%</td><td>1.3 times</td><td>Letters turn to paper over the bird</td></tr>
+          <tr><td><span class="chip">H2</span> Gaze</td><td class="num">18.5%</td><td class="num">17.0%</td><td>1.0 times</td><td><i>poster</i> in vermilion, and the bird looks at it</td></tr>
+          <tr><td><span class="chip">H3</span> Framed print</td><td class="num">17.0%</td><td class="num">16.7%</td><td>Poster rendered at 1,600 px, sharp everywhere</td><td><i>one</i> in vermilion</td></tr>
+          <tr><td><span class="chip">H4</span> Masthead</td><td class="num">15.0%</td><td class="num">16.3%</td><td>1.5 times</td><td><i>love</i> in vermilion, with the crest just under it</td></tr>
+          <tr><td><span class="chip">H5</span> Spread</td><td class="num">18.0%</td><td class="num">16.3%</td><td>1.1 times</td><td><i>bird</i> in vermilion, and the beak points at it</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Red is the vermilion family as a share of the hero, with the top bar left out, measured with the colour analysis script on these screenshots. The brief asks for 15 to 30%. Art size is how much a bird is enlarged at 1440 px: the field guide art is about 1,024 px wide, so anything above 1 time is a little soft on retina screens.</p>
+    <p class="note">Live samples run on the dev server at /design/hero?o=1 to o=5.</p>
+  </section>
+
+  <div class="answer" role="note"><b>Send your pick:</b> <span class="chip">H?</span> I then build it into the landing page at /, with tests at 390 and 1280, and go on with the rest of the page.</div>
+</div>
