@@ -271,7 +271,7 @@ Cut by the owner on 2026-11-22: k3s, KEDA, Grafana dashboards, the load test, ma
 | M6.1 Production compose (done 2026-11-22) | `infra/compose/docker-compose.prod.yml`, `infra/compose/Caddyfile` | Built images for web, api and worker, Postgres, Redis, RabbitMQ, Caddy in front with automatic TLS. Secrets from a `.env` on the server, never in the repo. Restart policies and volumes for data and storage. | `docker compose -f docker-compose.prod.yml up -d` on a clean machine serves the site over HTTPS. |
 | M6.2 Health and logs (done 2026-11-22) | api, worker | Health checks on every service, structured JSON logs, Flower behind basic auth for the queues. | Every container reports healthy. |
 | M6.3 Backups (done 2026-11-22) | `scripts/backup.sh` | Nightly Postgres dump and storage sync to an off server bucket, 14 days kept. | A restore test on a fresh machine. |
-| M6.4 Deploy from CI | `.github/workflows/deploy.yml` | Build and push images, then pull and restart on the server over SSH on push to `master`. | A commit reaches production. |
+| M6.4 Deploy from CI (built 2026-11-22, waits for a server and the DEPLOY_* secrets) | `.github/workflows/deploy.yml` | Build and push images, then pull and restart on the server over SSH on push to `master`. | A commit reaches production. |
 
 ## Risks
 

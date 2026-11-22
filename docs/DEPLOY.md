@@ -55,3 +55,22 @@ Nightly at 03:00, from the repo root on the server:
 Restore on a fresh machine: bring the stack up once, stop `api worker flower`, run `./scripts/restore.sh` (newest dump) or `./scripts/restore.sh animarka-<stamp>.dump`, then start them again. `RESTORE_DB=animarka_restore SKIP_STORAGE=1 ./scripts/restore.sh` restores into a side database to check a backup without touching live data.
 
 Tested on 2026-11-22 against the dev stack: a dump and the storage mirror, a restore into a side database with the same row counts in every table (1,161 species, 2,322 artworks, 11 presets, posters and jobs), and the 14 day pruning.
+
+## Deploy from CI
+
+`.github/workflows/deploy.yml` runs after CI passes on `master`. It builds the Python and web images, pushes them to GitHub's container registry as `ghcr.io/<owner>/<repo>-python` and `-web` (tagged with the commit and `latest`), then connects to the server over SSH, checks out that commit, pulls the images and restarts. Until the secrets below exist it only writes "nothing to deploy" and passes.
+
+One time setup:
+
+1. On the server, clone the repo to the deploy folder (for example `/srv/animarka`) and create `infra/compose/.env` as above.
+2. Let the server pull the images: `docker login ghcr.io` with a GitHub token that has `read:packages` (or make the two packages public on GitHub).
+3. Make a deploy key pair: `ssh-keygen -t ed25519 -f deploy -N ""`. Add `deploy.pub` to `~/.ssh/authorized_keys` of the deploy user on the server.
+4. In the GitHub repo, Settings, Secrets and variables, Actions, add:
+   - `DEPLOY_HOST`: the server's address
+   - `DEPLOY_USER`: the user that runs Docker
+   - `DEPLOY_PATH`: the deploy folder
+   - `DEPLOY_SSH_KEY`: the contents of the private key file `deploy`
+   - `DEPLOY_KNOWN_HOSTS`: the output of `ssh-keyscan <server address>`
+5. Run the workflow once by hand (Actions, deploy, Run workflow) and check `docker compose ... ps`.
+
+On the server compose uses `IMAGE_PREFIX` and `IMAGE_TAG` to pick the images; without them it falls back to local images, so `up -d --build` still works for a manual deploy.

@@ -1,0 +1,102 @@
+name: deploy
+
+# After CI passes on master: build the images, push them to GitHub's registry, then pull and
+# restart on the server over SSH. Does nothing until the DEPLOY_* secrets exist, so it is safe
+# to have before there is a server. Setup: docs/DEPLOY.md, "Deploy from CI".
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_PREFIX: ghcr.io/${{ github.repository }}
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - name: Skip until a server is set up
+        id: gate
+        run: |
+          if [ -z "$DEPLOY_HOST" ]; then
+            echo "No DEPLOY_HOST secret yet, nothing to deploy." >> "$GITHUB_STEP_SUMMARY"
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.go == 'true'
+        with:
+          ref: ${{ env.SHA }}
+
+      - uses: docker/setup-buildx-action@v3
+        if: steps.gate.outputs.go == 'true'
+
+      - uses: docker/login-action@v3
+        if: steps.gate.outputs.go == 'true'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push the Python image (api, worker, flower)
+        if: steps.gate.outputs.go == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/compose/python.Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_PREFIX }}-python:${{ env.SHA }},${{ env.IMAGE_PREFIX }}-python:latest
+          cache-from: type=gha,scope=python
+          cache-to: type=gha,mode=max,scope=python
+
+      - name: Build and push the web image
+        if: steps.gate.outputs.go == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/compose/web.prod.Dockerfile
+          build-args: API_ORIGIN=http://api:8000
+          push: true
+          tags: ${{ env.IMAGE_PREFIX }}-web:${{ env.SHA }},${{ env.IMAGE_PREFIX }}-web:latest
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
+
+      - name: Pull and restart on the server
+        if: steps.gate.outputs.go == 'true'
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          DIR: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy "$USER@$DEPLOY_HOST" bash -s -- "$DIR" "$SHA" "$IMAGE_PREFIX" <<'REMOTE'
+          set -euo pipefail
+          cd "$1"
+          git fetch --quiet origin master && git checkout --quiet "$2"
+          export IMAGE_TAG="$2" IMAGE_PREFIX="$3"
+          dc="docker compose -f infra/compose/docker-compose.prod.yml --env-file infra/compose/.env"
+          $dc pull --quiet
+          $dc up -d --no-build --remove-orphans
+          docker image prune -f --filter "until=168h" > /dev/null
+          $dc ps
+          REMOTE
+          echo "Deployed $SHA" >> "$GITHUB_STEP_SUMMARY"

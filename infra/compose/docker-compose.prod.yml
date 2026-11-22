@@ -54,6 +54,7 @@ services:
 
   api:
     build: *python-build
+    image: ${IMAGE_PREFIX:-animarka}-python:${IMAGE_TAG:-latest}
     restart: unless-stopped
     command: >
       sh -c "cd /app/api && alembic upgrade head && python -m animarka_core.seed &&
@@ -72,6 +73,7 @@ services:
 
   worker:
     build: *python-build
+    image: ${IMAGE_PREFIX:-animarka}-python:${IMAGE_TAG:-latest}
     restart: unless-stopped
     command: celery -A animarka_workers.app:app worker --loglevel=INFO -Q ingest,render --concurrency=2
     environment: *python-env
@@ -88,6 +90,7 @@ services:
   # Queue dashboard, behind basic auth, served by Caddy at https://$DOMAIN/flower
   flower:
     build: *python-build
+    image: ${IMAGE_PREFIX:-animarka}-python:${IMAGE_TAG:-latest}
     restart: unless-stopped
     command: >
       celery -A animarka_workers.app:app flower --port=5555 --url_prefix=flower
@@ -107,6 +110,7 @@ services:
       dockerfile: infra/compose/web.prod.Dockerfile
       args:
         API_ORIGIN: http://api:8000
+    image: ${IMAGE_PREFIX:-animarka}-web:${IMAGE_TAG:-latest}
     restart: unless-stopped
     environment:
       API_ORIGIN: http://api:8000
