@@ -13,7 +13,7 @@ test.describe("landing page", () => {
       }),
     ).toBeVisible();
     await expect(page.locator("[data-hero-bird]")).toHaveCount(3);
-    await expect(page.locator("#hero-roller")).toBeVisible();
+    await expect(page.locator("#hero-cassowary")).toBeVisible();
     await page.getByRole("link", { name: "Start from a set" }).click();
     await expect(page).toHaveURL(/#sets$/);
     await expect(
@@ -28,17 +28,17 @@ test.describe("landing page", () => {
     await expect(page.locator("[data-poster] [data-animal]")).toHaveCount(12);
   });
 
-  test("the hero shows three blue birds, named in the plate caption (L3)", async ({
+  test("the hero shows the cassowary, the shoebill and the kingfisher, named in the plate caption", async ({
     page,
   }) => {
     await page.goto("/");
-    for (const id of ["hero-roller", "hero-jay", "hero-kingfisher"])
+    for (const id of ["hero-cassowary", "hero-shoebill", "hero-kingfisher"])
       await expect(page.locator(`#${id}`)).toBeVisible();
     const caption = page.locator("[data-hero] p").last();
-    await expect(caption).toContainText("European roller");
+    await expect(caption).toContainText("Southern cassowary");
     await expect(caption.locator("i")).toHaveText([
-      "Coracias garrulus",
-      "Cyanocitta cristata",
+      "Casuarius casuarius",
+      "Balaeniceps rex",
       "Alcedo atthis",
     ]);
   });
@@ -120,7 +120,7 @@ test.describe("landing page", () => {
     await expect(
       page.locator('[data-hero-bird][fetchpriority="high"]'),
     ).toHaveCount(1);
-    await expect(page.locator("#hero-roller")).toHaveAttribute(
+    await expect(page.locator("#hero-cassowary")).toHaveAttribute(
       "fetchpriority",
       "high",
     );
@@ -157,6 +157,87 @@ test.describe("landing page", () => {
       min,
     );
     expect(short).toEqual([]);
+  });
+
+  test("hero appearance: birds overlap, sit behind the headline on desktop, and never cover the words or buttons", async ({
+    page,
+  }, info) => {
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    const phone = info.project.name.startsWith("phone");
+    // The knockout is laid on after the page hydrates.
+    if (!phone)
+      await expect
+        .poll(() =>
+          page
+            .locator("#hero-title")
+            .evaluate((el) => getComputedStyle(el).webkitBackgroundClip),
+        )
+        .toBe("text");
+    const r = await page.evaluate(() => {
+      const box = (el: Element) => {
+        const b = el.getBoundingClientRect();
+        return { l: b.left, t: b.top, r: b.right, b: b.bottom };
+      };
+      const meet = (a: ReturnType<typeof box>, b: ReturnType<typeof box>) =>
+        Math.max(0, Math.min(a.r, b.r) - Math.max(a.l, b.l)) *
+        Math.max(0, Math.min(a.b, b.b) - Math.max(a.t, b.t));
+      const bird = (id: string) =>
+        document.getElementById(id) as HTMLImageElement;
+      const hero = box(document.querySelector("[data-hero]")!);
+      const ids = ["hero-cassowary", "hero-shoebill", "hero-kingfisher"];
+      const title = document.getElementById("hero-title")!;
+      const sub = document.querySelector("[data-hero] p")!;
+      const buttons = [...document.querySelectorAll("[data-hero] a")].filter(
+        (a) => /Make your poster|Start from a set/.test(a.textContent ?? ""),
+      );
+      return {
+        loaded: ids.map((id) => bird(id).complete && bird(id).naturalWidth > 0),
+        inside: ids.map((id) => {
+          const b = box(bird(id));
+          return b.l < hero.r && b.r > hero.l && b.t < hero.b && b.b > hero.t;
+        }),
+        shoebillOnCassowary: meet(
+          box(bird("hero-shoebill")),
+          box(bird("hero-cassowary")),
+        ),
+        kingfisherOnBirds:
+          meet(box(bird("hero-kingfisher")), box(bird("hero-cassowary"))) +
+          meet(box(bird("hero-kingfisher")), box(bird("hero-shoebill"))),
+        zFront: Number(getComputedStyle(bird("hero-kingfisher")).zIndex),
+        zBack: Number(getComputedStyle(bird("hero-cassowary")).zIndex),
+        underTitle: Math.max(
+          ...ids.map((id) => meet(box(bird(id)), box(title))),
+        ),
+        // Chromium reports the knockout under the prefixed name.
+        knockout: [
+          getComputedStyle(title).backgroundClip,
+          getComputedStyle(title).getPropertyValue("-webkit-background-clip"),
+        ].includes("text")
+          ? "text"
+          : getComputedStyle(title).backgroundClip,
+        onSub: Math.max(...ids.map((id) => meet(box(bird(id)), box(sub)))),
+        onButtons: Math.max(
+          ...ids.flatMap((id) =>
+            buttons.map((b) => meet(box(bird(id)), box(b))),
+          ),
+        ),
+      };
+    });
+    expect(r.loaded).toEqual([true, true, true]);
+    expect(r.inside).toEqual([true, true, true]);
+    // One group: the shoebill stands against the cassowary, the kingfisher in front of them.
+    expect(r.shoebillOnCassowary).toBeGreaterThan(0);
+    expect(r.kingfisherOnBirds).toBeGreaterThan(0);
+    expect(r.zFront).toBeGreaterThan(r.zBack);
+    // Birds never cover the line under the headline or the buttons.
+    expect(r.onSub).toBe(0);
+    expect(r.onButtons).toBe(0);
+    if (!phone) {
+      // On wide screens a body passes behind the headline, which turns to paper there.
+      expect(r.underTitle).toBeGreaterThan(0);
+      expect(r.knockout).toBe("text");
+    }
   });
 
   test("a set card opens the builder with that set, named after it", async ({

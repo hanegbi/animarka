@@ -4,9 +4,9 @@ import type { CSSProperties } from "react";
 import { KnockoutHeadline, type KnockBird } from "./Knockout";
 
 /**
- * The landing hero (R9 H1, QA round L1 to L5): three common blue birds from the field guide set read
- * as one blue shape, a European roller large at the back, a blue jay in the middle and a common
- * kingfisher small in front. No sticker outlines, only a soft natural shadow. On wide screens the
+ * The landing hero (R9 H1, QA round L1 to L5): a southern cassowary large at the back, a shoebill
+ * in front of it and a common kingfisher small in front, all from the field guide set (owner's
+ * pick). They may overlap each other and pass behind the headline. No sticker outlines, only a soft natural shadow. On wide screens the
  * headline turns to paper where it crosses a bird's body, and every bill sits clear of the letters.
  * On phones the headline and buttons come first and the birds stand below them.
  */
@@ -19,8 +19,8 @@ const SHADOW: CSSProperties = {
 
 const KNOCK: KnockBird[] = [
   { id: "hero-kingfisher", silhouette: "/landing/r9/kingfisher-knock.webp" },
-  { id: "hero-jay", silhouette: "/landing/r9/jay-knock.webp" },
-  { id: "hero-roller", silhouette: "/landing/r9/roller-knock.webp" },
+  { id: "hero-shoebill", silhouette: "/landing/r9/shoebill-knock.webp" },
+  { id: "hero-cassowary", silhouette: "/landing/r9/cassowary-knock.webp" },
 ];
 
 type BirdProps = {
@@ -69,27 +69,27 @@ function Bird({
 
 const BIRDS: BirdProps[] = [
   {
-    id: "hero-roller",
-    name: "roller",
-    w: 998,
-    h: 651,
-    bill: [0, 0.204],
-    sizes: "(min-width: 1024px) 50vw, 88vw",
-    alt: "A European roller from the field guide set",
+    id: "hero-cassowary",
+    name: "cassowary",
+    w: 774,
+    h: 999,
+    bill: [0, 0.178],
+    sizes: "(min-width: 1024px) 48vw, 56vw",
+    alt: "A southern cassowary from the field guide set",
     className:
-      "right-[-14%] bottom-[34%] z-0 w-[92%] sm:right-[-4%] sm:w-[64%] lg:top-[11%] lg:right-[0%] lg:bottom-auto lg:w-[52%]",
+      "right-[-10%] bottom-[-8%] z-0 w-[72%] sm:right-[2%] sm:w-[40%] lg:top-[6%] lg:right-[2%] lg:bottom-auto lg:w-[47%]",
     main: true,
   },
   {
-    id: "hero-jay",
-    name: "jay",
-    w: 998,
-    h: 758,
-    bill: [0, 0.264],
-    sizes: "(min-width: 1024px) 32vw, 58vw",
-    alt: "A blue jay from the field guide set",
+    id: "hero-shoebill",
+    name: "shoebill",
+    w: 585,
+    h: 999,
+    bill: [0, 0.29],
+    sizes: "(min-width: 1024px) 26vw, 40vw",
+    alt: "A shoebill from the field guide set",
     className:
-      "bottom-[-4%] left-[2%] z-10 w-[58%] sm:left-[10%] sm:w-[40%] lg:top-[47%] lg:bottom-auto lg:left-[50%] lg:w-[32%]",
+      "bottom-[-6%] left-[14%] z-10 w-[46%] sm:left-[28%] sm:w-[26%] lg:top-[36%] lg:bottom-auto lg:left-[39%] lg:w-[26%]",
   },
   {
     id: "hero-kingfisher",
@@ -97,10 +97,10 @@ const BIRDS: BirdProps[] = [
     w: 1000,
     h: 864,
     bill: [0, 0.157],
-    sizes: "(min-width: 1024px) 18vw, 36vw",
+    sizes: "(min-width: 1024px) 16vw, 30vw",
     alt: "A common kingfisher from the field guide set",
     className:
-      "right-[2%] bottom-[-2%] z-20 w-[36%] sm:right-[8%] sm:w-[24%] lg:right-[4%] lg:bottom-[2%] lg:w-[18%]",
+      "bottom-[0%] left-[-4%] z-20 w-[36%] sm:left-[6%] sm:w-[20%] lg:right-[24%] lg:bottom-[3%] lg:left-auto lg:w-[15%]",
   },
 ];
 
@@ -145,15 +145,15 @@ export function Hero() {
         {/* Phones: the birds get their own stage under the words, so none touches a letter (L1). */}
         <div
           data-hero-stage
-          className="relative mt-6 h-[340px] sm:h-[420px] lg:absolute lg:inset-0 lg:mt-0 lg:h-auto"
+          className="relative mt-2 h-[350px] sm:h-[440px] lg:absolute lg:inset-0 lg:mt-0 lg:h-auto"
         >
           {BIRDS.map((b) => (
             <Bird key={b.id} {...b} />
           ))}
         </div>
         <p className="relative z-30 mt-4 mb-8 max-w-[52ch] text-[13px] leading-snug text-[var(--lp-muted)] lg:absolute lg:bottom-8 lg:left-16 lg:m-0">
-          Plate 1. European roller <i>Coracias garrulus</i>, blue jay{" "}
-          <i>Cyanocitta cristata</i> and common kingfisher <i>Alcedo atthis</i>.
+          Plate 1. Southern cassowary <i>Casuarius casuarius</i>, shoebill{" "}
+          <i>Balaeniceps rex</i> and common kingfisher <i>Alcedo atthis</i>.
         </p>
       </div>
     </section>
