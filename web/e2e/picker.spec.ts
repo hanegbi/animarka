@@ -277,10 +277,22 @@ test("the search field has one clear button, ours (B8)", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Clear search" }),
   ).toBeVisible();
-  const native = await field.evaluate(
-    (el) => getComputedStyle(el, "::-webkit-search-cancel-button").display,
+  // Browsers do not report computed styles for this pseudo element, so read the rule itself.
+  const hidden = await page.evaluate(() =>
+    [...document.styleSheets].some((sheet) => {
+      try {
+        return [...sheet.cssRules].some(
+          (r) =>
+            r instanceof CSSStyleRule &&
+            r.selectorText.includes("::-webkit-search-cancel-button") &&
+            r.style.display === "none",
+        );
+      } catch {
+        return false;
+      }
+    }),
   );
-  expect(native).toBe("none");
+  expect(hidden).toBe(true);
 });
 
 test("no builder text is smaller than 12 px (B11)", async ({ page }) => {
