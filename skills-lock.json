@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "skills": {
+    "charles-color-analysis": {
+      "source": "LemonFace0309/charles-skills",
+      "commit": "4fc00ba7b56b7856d602067c1e876aa2389f9561",
+      "sourceType": "github",
+      "skillPath": "skills/design/charles-color-analysis/SKILL.md",
+      "computedHash": "b8f01dc6dfc4212b047bed2b30ca52fbd7c963464170aa0a84ad039d7cd9c4cc"
+    },
+    "charles-polish": {
+      "source": "LemonFace0309/charles-skills",
+      "commit": "4fc00ba7b56b7856d602067c1e876aa2389f9561",
+      "sourceType": "github",
+      "skillPath": "skills/design/charles-polish/SKILL.md",
+      "computedHash": "32f6c9556cd0a86de2d26209256b157d43366f11e8b4dd731a8fb442d7f2fc86"
+    },
+    "charles-unreasonable-craft": {
+      "source": "LemonFace0309/charles-skills",
+      "commit": "4fc00ba7b56b7856d602067c1e876aa2389f9561",
+      "sourceType": "github",
+      "skillPath": "skills/design/charles-unreasonable-craft/SKILL.md",
+      "computedHash": "d5cb30c3df649f3d79e9f0aab7f7742e26a54d2eeb189eabf5808fa0a3cf3da8"
+    },
+    "charles-unslop": {
+      "source": "LemonFace0309/charles-skills",
+      "commit": "4fc00ba7b56b7856d602067c1e876aa2389f9561",
+      "sourceType": "github",
+      "skillPath": "skills/design/charles-unslop/SKILL.md",
+      "computedHash": "14c99266e4a88a7a30a2e927c410461a2413e57430238fca0fb97eacda68a3c2"
+    },
+    "charles-ux-animation": {
+      "source": "LemonFace0309/charles-skills",
+      "commit": "4fc00ba7b56b7856d602067c1e876aa2389f9561",
+      "sourceType": "github",
+      "skillPath": "skills/drops/charles-ux-animation/SKILL.md",
+      "computedHash": "9e5075a8759ba1c232c7b1b1f46199deb6dd1f70fe10ce96bc1d964478ba33ad"
+    }
+  }
+}
