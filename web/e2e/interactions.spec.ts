@@ -155,6 +155,71 @@ test("dropping a bird on empty space changes nothing", async ({ page }) => {
   await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "false");
 });
 
+/** Every bird on the poster is drawn (B1: a lost drag end used to leave one at opacity 0). */
+async function allVisible(page: Page) {
+  await expect
+    .poll(() =>
+      page
+        .locator("[data-animal]")
+        .evaluateAll((els) =>
+          els
+            .filter((e) => getComputedStyle(e).opacity !== "1")
+            .map((e) => e.getAttribute("data-animal")),
+        ),
+    )
+    .toEqual([]);
+}
+
+test("a fast drag onto another bird never leaves a bird hidden", async ({
+  page,
+}) => {
+  await open(page);
+  for (let i = 0; i < 3; i++) {
+    const a = await center(page, ONE);
+    const b = await center(page, TWO);
+    await page.mouse.move(a.x, a.y);
+    await page.mouse.down();
+    // One jump, no steps: the fastest drag a mouse can make.
+    await page.mouse.move(b.x, b.y);
+    await page.mouse.up();
+    await allVisible(page);
+  }
+});
+
+test("a drag released outside any bird leaves every bird visible", async ({
+  page,
+}) => {
+  await open(page);
+  const before = await order(page);
+  const a = await center(page, ONE);
+  const poster = (await page.locator("[data-poster]").boundingBox())!;
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  await page.mouse.move(a.x + 12, a.y, { steps: 2 });
+  await page.mouse.move(poster.x + poster.width / 2, poster.y + 6, {
+    steps: 2,
+  });
+  await page.mouse.up();
+  await allVisible(page);
+  expect(await order(page)).toEqual(before);
+});
+
+test("a drag ends cleanly on Escape and when the window loses focus", async ({
+  page,
+}) => {
+  await open(page);
+  for (const end of ["escape", "blur"] as const) {
+    const a = await center(page, ONE);
+    await page.mouse.move(a.x, a.y);
+    await page.mouse.down();
+    await page.mouse.move(a.x + 40, a.y + 30, { steps: 4 });
+    if (end === "escape") await page.keyboard.press("Escape");
+    else await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+    await page.mouse.up();
+    await allVisible(page);
+  }
+});
+
 test("touch: a finger can drag one bird onto another", async ({
   page,
   browserName,

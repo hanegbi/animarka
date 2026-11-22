@@ -19,6 +19,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -42,6 +43,8 @@ type Preview = { id: string; dx: number; dy: number } | null;
 
 type Ctx = Handlers & {
   activeId: string | null;
+  /** True only while a pointer is actually held down. A bird is hidden only when this is true. */
+  pressed: boolean;
   preview: Preview;
   /** Birds that jump to their new place with no transition, right after a drop. */
   settling: Set<string>;
@@ -88,7 +91,8 @@ function InteractiveShell({
     [drag, drop],
   );
 
-  const dragging = ctx.activeId === id;
+  // Never hide a bird unless a pointer is really down (B1): a lost drag end must not strand it.
+  const dragging = ctx.activeId === id && ctx.pressed;
   const preview = ctx.preview?.id === id ? ctx.preview : null;
   const settling = ctx.settling.has(id);
 
@@ -154,6 +158,8 @@ export function InteractivePoster(props: PosterProps & Handlers) {
   const [preview, setPreview] = useState<Preview>(null);
   const [settling, setSettling] = useState<Set<string>>(() => new Set());
   const suppressClick = useRef(false);
+  /** True while the pointer is off the poster: dropping there removes the bird. */
+  const [outside, setOutside] = useState(false);
 
   // A small movement threshold keeps a plain tap a tap, so tap can mirror and drag can swap.
   const sensors = useSensors(
@@ -209,17 +215,62 @@ export function InteractivePoster(props: PosterProps & Handlers) {
     });
   };
 
-  const endDrag = () => {
+  const endDrag = useCallback(() => {
     setFloating(null);
     setPreview(null);
+    setOutside(false);
     // The click that follows a drag must not mirror the bird.
     window.setTimeout(() => {
       suppressClick.current = false;
     }, 60);
-  };
+  }, []);
 
-  /** True while the pointer is off the poster: dropping there removes the bird. */
-  const [outside, setOutside] = useState(false);
+  /** Pointer held down anywhere; tracked on the window so a release off the poster still counts. */
+  const [pressed, setPressed] = useState(false);
+  useEffect(() => {
+    const down = () => setPressed(true);
+    const up = () => setPressed(false);
+    window.addEventListener("pointerdown", down, true);
+    window.addEventListener("pointerup", up, true);
+    window.addEventListener("pointercancel", up, true);
+    return () => {
+      window.removeEventListener("pointerdown", down, true);
+      window.removeEventListener("pointerup", up, true);
+      window.removeEventListener("pointercancel", up, true);
+    };
+  }, []);
+
+  // While a drag is active, any way it can end without dnd-kit noticing clears it (B1): a fast
+  // release it missed, a cancelled touch, the window losing focus, the page hiding, or Escape.
+  const dragId = floating?.id ?? null;
+  useEffect(() => {
+    if (!dragId) return;
+    let timer = 0;
+    const release = () => {
+      // dnd-kit handles a normal release first; only clean up if it did not.
+      timer = window.setTimeout(endDrag, 150);
+    };
+    const now = () => endDrag();
+    const key = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") endDrag();
+    };
+    const hidden = () => {
+      if (document.visibilityState === "hidden") endDrag();
+    };
+    window.addEventListener("pointerup", release);
+    window.addEventListener("pointercancel", now);
+    window.addEventListener("blur", now);
+    window.addEventListener("keydown", key);
+    document.addEventListener("visibilitychange", hidden);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", now);
+      window.removeEventListener("blur", now);
+      window.removeEventListener("keydown", key);
+      document.removeEventListener("visibilitychange", hidden);
+    };
+  }, [dragId, endDrag]);
 
   const pointerOutside = (e: DragMoveEvent | DragEndEvent) => {
     const start = pointOf(e.activatorEvent);
@@ -245,7 +296,6 @@ export function InteractivePoster(props: PosterProps & Handlers) {
     const over = e.over ? String(e.over.id) : null;
     const remove = pointerOutside(e);
     endDrag();
-    setOutside(false);
     if (remove) {
       onRemove(active);
       return;
@@ -267,12 +317,23 @@ export function InteractivePoster(props: PosterProps & Handlers) {
       onSwap,
       onMove,
       activeId: floating?.id ?? null,
+      pressed,
       preview,
       settling,
       mirror,
       suppressClick,
     }),
-    [onMirror, onRemove, onSwap, onMove, floating, preview, settling, mirror],
+    [
+      onMirror,
+      onRemove,
+      onSwap,
+      onMove,
+      floating,
+      pressed,
+      preview,
+      settling,
+      mirror,
+    ],
   );
 
   const sp = floating ? species.get(floating.id) : undefined;
@@ -286,10 +347,7 @@ export function InteractivePoster(props: PosterProps & Handlers) {
         onDragOver={onDragOver}
         onDragMove={onDragMove}
         onDragEnd={onDragEnd}
-        onDragCancel={() => {
-          endDrag();
-          setOutside(false);
-        }}
+        onDragCancel={endDrag}
         accessibility={{
           screenReaderInstructions: {
             draggable:
