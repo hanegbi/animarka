@@ -11,6 +11,7 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
+  type DragMoveEvent,
   type DragOverEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
@@ -25,6 +26,7 @@ import {
 } from "react";
 import { artSrc, displayName } from "@/catalog/species-view";
 import { keyToAction } from "@/poster/interactions";
+import { Trash2Icon } from "lucide-react";
 import { hopTurn } from "@/poster/motion";
 import { Poster, type AnimalShellProps, type PosterProps } from "./Poster";
 
@@ -47,6 +49,19 @@ type Ctx = Handlers & {
   suppressClick: { current: boolean };
 };
 const ShellContext = createContext<Ctx | null>(null);
+
+/** Where a drag started, for mouse, pen and touch. */
+function pointOf(e: Event | null): { x: number; y: number } | null {
+  if (!e) return null;
+  if ("touches" in e) {
+    const t =
+      (e as TouchEvent).touches[0] ?? (e as TouchEvent).changedTouches[0];
+    return t ? { x: t.clientX, y: t.clientY } : null;
+  }
+  if ("clientX" in e)
+    return { x: (e as PointerEvent).clientX, y: (e as PointerEvent).clientY };
+  return null;
+}
 
 const shellOf = (id: string) =>
   document.querySelector<HTMLElement>(`[data-animal="${CSS.escape(id)}"]`);
@@ -203,10 +218,38 @@ export function InteractivePoster(props: PosterProps & Handlers) {
     }, 60);
   };
 
+  /** True while the pointer is off the poster: dropping there removes the bird. */
+  const [outside, setOutside] = useState(false);
+
+  const pointerOutside = (e: DragMoveEvent | DragEndEvent) => {
+    const start = pointOf(e.activatorEvent);
+    const poster = document
+      .querySelector("[data-poster]")
+      ?.getBoundingClientRect();
+    if (!start || !poster) return false;
+    const x = start.x + e.delta.x;
+    const y = start.y + e.delta.y;
+    return (
+      x < poster.left || x > poster.right || y < poster.top || y > poster.bottom
+    );
+  };
+
+  const onDragMove = (e: DragMoveEvent) => {
+    const off = pointerOutside(e);
+    if (off !== outside) setOutside(off);
+    if (off && preview) setPreview(null);
+  };
+
   const onDragEnd = (e: DragEndEvent) => {
     const active = String(e.active.id);
     const over = e.over ? String(e.over.id) : null;
+    const remove = pointerOutside(e);
     endDrag();
+    setOutside(false);
+    if (remove) {
+      onRemove(active);
+      return;
+    }
     if (!over || over === active) return;
     // Both birds are already where they belong (the preview moved one, the drop the other), so
     // they take their new places with no transition, then motion comes back on.
@@ -241,8 +284,12 @@ export function InteractivePoster(props: PosterProps & Handlers) {
         collisionDetection={pointerWithin}
         onDragStart={onDragStart}
         onDragOver={onDragOver}
+        onDragMove={onDragMove}
         onDragEnd={onDragEnd}
-        onDragCancel={endDrag}
+        onDragCancel={() => {
+          endDrag();
+          setOutside(false);
+        }}
         accessibility={{
           screenReaderInstructions: {
             draggable:
@@ -271,17 +318,31 @@ export function InteractivePoster(props: PosterProps & Handlers) {
         />
         <DragOverlay dropAnimation={null}>
           {floating && sp && (
-            <img
-              src={artSrc(sp, state.style)}
-              alt=""
-              draggable={false}
-              className="pointer-events-none object-contain drop-shadow-lg"
-              style={{
-                width: floating.width,
-                height: floating.height,
-                transform: floating.mirrored ? "scaleX(-1)" : undefined,
-              }}
-            />
+            <div
+              className="pointer-events-none relative"
+              data-drag-outside={outside ? "true" : undefined}
+            >
+              <img
+                src={artSrc(sp, state.style)}
+                alt=""
+                draggable={false}
+                className={`object-contain drop-shadow-lg transition-opacity ${outside ? "opacity-60" : ""}`}
+                style={{
+                  width: floating.width,
+                  height: floating.height,
+                  transform: floating.mirrored ? "scaleX(-1)" : undefined,
+                }}
+              />
+              {outside && (
+                // Off the poster: let go here to remove the bird.
+                <span
+                  className="bg-destructive absolute -end-2 -top-2 grid size-8 place-items-center rounded-full text-white shadow-lg"
+                  data-trash
+                >
+                  <Trash2Icon aria-hidden className="size-4" />
+                </span>
+              )}
+            </div>
           )}
         </DragOverlay>
       </DndContext>

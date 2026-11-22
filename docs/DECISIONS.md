@@ -91,6 +91,7 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | R8.2 | 2026-11-22 | Owner fixes | Click a bird's name on the poster to rename it (F2 from the keyboard); the art still mirrors. Names are saved with the poster and in share links. Count lines under the search and in the poster strip are read aloud only. Strip pictures 44 px with a fixed two row height, so Add all no longer moves the buttons. No card tooltips, no message on replace, the export Close button works | | Owner asks |
 | R8.3 | 2026-11-22 | Owner fixes | No pop-up messages at all (sonner removed; a full poster says Full next to Your poster). Renaming opens a small card at normal UI size under the name, with Save, Cancel and Use original name; works under birds and in the legend. Left panel 400 px; bird cards at most 100 px wide, at least three per row, bird and name centred | | Owner asks. The poster text can be about 9 px, too small to edit in place |
 | R8.4 | 2026-11-22 | Owner fixes | Picking a set names the poster after it (stays until edited). Bird names are edited in place, no pop-up: a text box over the name, at least 14 px, never clipped by the poster edge; Enter or clicking away saves, Esc cancels | | Owner asks |
+| R8.5 | 2026-11-22 | Drag off to remove | Dragging a bird off the poster fades it and shows a red trash badge at its top right; letting go there removes it (header Undo brings it back). Back over the poster, the badge goes and nothing is removed | | Owner asks |
 
 ## Open questions
 

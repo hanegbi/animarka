@@ -513,3 +513,48 @@ test("renaming happens in place with no pop-up, readable even on a small poster"
   await expect(owl.locator("[data-label]")).toHaveText("Hoot");
   await expect(owl).toHaveAttribute("data-mirrored", "false");
 });
+
+test("dragging a bird off the poster shows a trash badge, and letting go there removes it", async ({
+  page,
+}) => {
+  await open(page);
+  const a = await center(page, ONE);
+  const poster = (await page.locator("[data-poster]").boundingBox())!;
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  await page.mouse.move(a.x + 14, a.y + 4, { steps: 3 });
+  // Inside the poster: no badge yet.
+  await expect(page.locator("[data-trash]")).toHaveCount(0);
+  // Off the poster, past its top edge.
+  await page.mouse.move(poster.x + poster.width / 2, poster.y - 30, {
+    steps: 12,
+  });
+  await expect(page.locator("[data-trash]")).toBeVisible();
+  await page.mouse.up();
+  await expect(animal(page, ONE)).toHaveCount(0);
+  await expect(page.locator("[data-animal]")).toHaveCount(11);
+  await page.waitForTimeout(150);
+  await undoHeader(page).click();
+  await expect(animal(page, ONE)).toHaveCount(1);
+});
+
+test("dragging a bird off the poster and back onto it removes nothing", async ({
+  page,
+}) => {
+  await open(page);
+  const a = await center(page, ONE);
+  const poster = (await page.locator("[data-poster]").boundingBox())!;
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  await page.mouse.move(a.x + 14, a.y + 4, { steps: 3 });
+  await page.mouse.move(poster.x + poster.width / 2, poster.y - 30, {
+    steps: 8,
+  });
+  await expect(page.locator("[data-trash]")).toBeVisible();
+  await page.mouse.move(poster.x + 6, poster.y + poster.height - 6, {
+    steps: 8,
+  });
+  await expect(page.locator("[data-trash]")).toHaveCount(0);
+  await page.mouse.up();
+  await expect(page.locator("[data-animal]")).toHaveCount(12);
+});

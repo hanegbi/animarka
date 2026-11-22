@@ -157,6 +157,7 @@ The prototype already shows 6.1 to 6.5. Keep what works and improve whatever you
 - Tap or click an animal to mirror it, with a short hop and turn (about 300 ms). Animals are removed in the picker: untick a card, or click a picture in the strip of chosen birds. (R8, 2026-11-22. Replaces the Mirror and Remove bar.)
 - Drag one animal onto another to swap places. Works with mouse and touch.
 - Click an animal's name on the poster to rename it for this poster (F2 from the keyboard). An empty name goes back to the catalog name.
+- Drag an animal off the poster to remove it: a trash badge shows while it is outside, and letting go there removes it.
 - Keyboard: Enter or Space mirrors an animal, Delete removes it, arrow keys move it through the order.
 - Shuffle button gives a new arrangement inside the chosen layout.
 - Undo and redo (new), at least 20 steps.
