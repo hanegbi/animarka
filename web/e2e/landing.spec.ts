@@ -126,6 +126,20 @@ test.describe("landing page", () => {
     );
   });
 
+  test("the final call poster is shown whole, above the footer line (L6)", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const poster = page.locator("[data-final-poster]");
+    await poster.scrollIntoViewIfNeeded();
+    const p = (await poster.boundingBox())!;
+    const band = (await page.locator("[data-final]").boundingBox())!;
+    const footer = (await page.locator("footer").boundingBox())!;
+    expect(p.y).toBeGreaterThanOrEqual(band.y);
+    expect(p.y + p.height).toBeLessThanOrEqual(band.y + band.height);
+    expect(p.y + p.height).toBeLessThanOrEqual(footer.y);
+  });
+
   test("a set card opens the builder with that set, named after it", async ({
     page,
   }) => {

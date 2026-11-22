@@ -315,10 +315,10 @@ export function Landing() {
           </div>
         </section>
 
-        {/* Final call: words left, a real poster rising from the bottom edge on the right. */}
-        <section aria-labelledby="final" className="lp-paper2 overflow-hidden">
-          <div className="lp-wrap grid items-end gap-12 pt-16 sm:pt-24 md:grid-cols-[1fr_auto] lg:pt-28">
-            <div className="flex flex-col gap-8 pb-0 md:pb-24 lg:pb-28">
+        {/* Final call: words left, a real poster shown whole on the right (L6). */}
+        <section aria-labelledby="final" className="lp-paper2" data-final>
+          <div className="lp-wrap grid items-center gap-12 py-16 sm:py-24 md:grid-cols-[1fr_auto] lg:py-28">
+            <div className="flex flex-col gap-8">
               <h2
                 id="final"
                 className="text-[44px] leading-[1] text-balance sm:text-[64px] lg:text-[80px]"
@@ -338,7 +338,8 @@ export function Landing() {
               width={600}
               height={800}
               loading="lazy"
-              className="mx-auto -mb-24 w-[280px] rounded-t-[3px] sm:w-[340px] md:me-8"
+              data-final-poster
+              className="mx-auto w-[260px] rounded-[3px] sm:w-[320px] md:me-8"
               style={{ boxShadow: "var(--lp-shadow-print)" }}
             />
           </div>
