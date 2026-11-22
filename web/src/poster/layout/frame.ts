@@ -3,7 +3,11 @@ import { planLegend } from "./legend";
 import type { Frame } from "./types";
 
 export const WIDTH = 100;
-export const MARGIN = 4;
+/**
+ * Edge margin in poster units (% of the width). 6 puts the title's letters about 8% from the top, the
+ * same as the space beside and below the birds (B4). Units, so the print file matches the screen.
+ */
+export const MARGIN = 6;
 export const TITLE_HEIGHT = 8;
 export const GAP = 2;
 

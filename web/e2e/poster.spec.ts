@@ -153,3 +153,23 @@ test("every bird has alt text from its name", async ({ page }) => {
   expect(alts).toHaveLength(12);
   expect(alts.every((a) => a.length > 2)).toBe(true);
 });
+
+test("the title sits as far from the top edge as the birds sit from the sides (B4)", async ({
+  page,
+}) => {
+  await page.goto("/make");
+  await expect(page.locator("[data-poster] [data-animal]")).toHaveCount(12);
+  const m = await page.evaluate(() => {
+    const poster = document
+      .querySelector("[data-poster]")!
+      .getBoundingClientRect();
+    const t = document.querySelector<HTMLElement>("[data-poster-title]")!;
+    const fs = parseFloat(getComputedStyle(t).fontSize);
+    const r = t.getBoundingClientRect();
+    // Cap height of the title face is about 0.7 em, centred in the title box.
+    const top = r.top + (r.height - fs * 0.7) / 2 - poster.top;
+    return { top: top / poster.width, w: poster.width };
+  });
+  expect(m.top).toBeGreaterThanOrEqual(0.075);
+  expect(m.top).toBeLessThanOrEqual(0.1);
+});
