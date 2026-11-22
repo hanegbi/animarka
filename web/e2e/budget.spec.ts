@@ -102,3 +102,38 @@ test("the first poster is visible within 2 seconds on a 4G connection", async ({
   );
   expect(ms).toBeLessThan(2000);
 });
+
+test("the landing page is under 300 KB before images and shows its headline fast on 4G", async ({
+  page,
+}, info) => {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send("Network.enable");
+  await cdp.send("Network.setCacheDisabled", { cacheDisabled: true });
+  const kinds = new Map<string, string>();
+  let total = 0;
+  cdp.on("Network.responseReceived", (e) => kinds.set(e.requestId, e.type));
+  cdp.on("Network.loadingFinished", (e) => {
+    if ((kinds.get(e.requestId) ?? "Other") !== "Image")
+      total += e.encodedDataLength;
+  });
+  await page.goto("/", { waitUntil: "networkidle" });
+  const kb = Math.round(total / 1024);
+  console.log(`[${info.project.name}] landing KB before images: ${kb}`);
+  expect(kb).toBeLessThanOrEqual(300);
+
+  await cdp.send("Network.emulateNetworkConditions", {
+    offline: false,
+    latency: 100,
+    downloadThroughput: (4 * 1024 * 1024) / 8,
+    uploadThroughput: (1 * 1024 * 1024) / 8,
+  });
+  const start = Date.now();
+  await page.goto("/", { waitUntil: "commit" });
+  await page.getByRole("heading", { level: 1 }).waitFor();
+  await page.locator("[data-gallery-wall] img").first().waitFor();
+  const ms = Date.now() - start;
+  console.log(
+    `[${info.project.name}] landing hero visible after ${ms} ms on 4G`,
+  );
+  expect(ms).toBeLessThan(2000);
+});

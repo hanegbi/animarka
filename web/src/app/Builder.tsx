@@ -1,13 +1,38 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { DESKTOP_QUERY, useMediaQuery } from "@/lib/use-media-query";
+import { useCatalog, usePosterActions } from "@/poster/state/provider";
 import { DesktopShell } from "./shell/DesktopShell";
 import { PhoneShell } from "./shell/PhoneShell";
 
 /** Picks the shell for the window: desktop (R2 S2) at 1100 px and wider, phone (R2 P3) below that. */
 export function Builder() {
   const desktop = useMediaQuery(DESKTOP_QUERY);
+  useSetFromUrl();
   return <>{desktop ? <DesktopShell /> : <PhoneShell />}</>;
+}
+
+/**
+ * /make?set=owls-of-the-world opens the builder with that set, named after it (the landing page's
+ * set cards link here). The parameter is then dropped from the address, so a reload keeps your edits.
+ */
+function useSetFromUrl() {
+  const { presets } = useCatalog();
+  const { dispatch } = usePosterActions();
+  const done = useRef(false);
+  useEffect(() => {
+    if (done.current) return;
+    done.current = true;
+    const url = new URL(window.location.href);
+    const id = url.searchParams.get("set");
+    if (!id) return;
+    const preset = presets.find((p) => p.id === id);
+    if (preset)
+      dispatch({ type: "replaceWith", ids: preset.ids, title: preset.title });
+    url.searchParams.delete("set");
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+  }, [presets, dispatch]);
 }
 
 const pulse = "animate-pulse motion-reduce:animate-none bg-muted";
