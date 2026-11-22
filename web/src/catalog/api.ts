@@ -39,5 +39,6 @@ export type ApiPreset = {
 };
 
 export const CATALOG_ID = "birds";
-export const SPECIES_URL = `/api/v1/catalogs/${CATALOG_ID}/species?lang=en,he`;
+/** The compact form: one short row per bird, decoded by compact.ts. */
+export const SPECIES_URL = `/api/v1/catalogs/${CATALOG_ID}/species?lang=en,he&format=compact`;
 export const PRESETS_URL = `/api/v1/catalogs/${CATALOG_ID}/presets`;

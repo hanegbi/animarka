@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import type { ApiSpeciesList } from "../src/catalog/api";
+import { encodeCompact } from "../src/catalog/compact";
 import path from "node:path";
 import { test as base, expect } from "@playwright/test";
 
@@ -142,7 +144,12 @@ export const test = base.extend<
             });
           }
           if (pathname.endsWith("/species"))
-            return route.fulfill({ json: raw.species });
+            return route.fulfill({
+              json:
+                new URL(req.url()).searchParams.get("format") === "compact"
+                  ? encodeCompact(raw.species as unknown as ApiSpeciesList)
+                  : raw.species,
+            });
           if (pathname.endsWith("/presets"))
             return route.fulfill({ json: raw.presets });
           if (pathname.startsWith("/api/v1/files/"))

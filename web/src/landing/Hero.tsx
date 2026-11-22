@@ -122,7 +122,7 @@ export function Hero() {
           </KnockoutHeadline>
           <div className="flex flex-col gap-8 lg:mt-10">
             <p className="max-w-[36ch] text-lg leading-[1.55] text-[var(--lp-muted)]">
-              Pick birds from 1,161 species, choose an illustrated style, and
+              Pick birds from 11,011 species, choose an illustrated style, and
               arrange them your way. Free, in your browser, no sign up.
             </p>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3">

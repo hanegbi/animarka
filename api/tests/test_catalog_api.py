@@ -53,7 +53,7 @@ def client(db: Session, tmp_path: Path) -> Iterator[TestClient]:
     add_species(db, "tyto-alba", 2, "Tytonidae", 400.0)
     add_species(db, "bubo-bubo", 1, "Strigidae", 2000.0)
     add_species(db, "strix-aluco", 3, "Strigidae", None)  # mass from its family
-    add_species(db, "only-fg", 4, "Strigidae", 10.0, styles=("fg",))  # missing a style, so hidden
+    add_species(db, "only-fg", 4, "Strigidae", 10.0, styles=("fg",))  # one style: listed with it
     db.commit()
     storage = LocalStorage(tmp_path)
     storage.put("art/fg/tyto-alba/h-200.webp", b"RIFFxxxxWEBP")
@@ -69,12 +69,19 @@ def client(db: Session, tmp_path: Path) -> Iterator[TestClient]:
     cat.get_storage, files.get_storage = original
 
 
-def test_species_lists_complete_birds_in_taxonomic_order(client: TestClient) -> None:
+def test_species_lists_every_bird_with_art_in_taxonomic_order(client: TestClient) -> None:
     res = client.get("/api/v1/catalogs/birds/species")
     assert res.status_code == 200
     body = res.json()
-    assert body["count"] == 3
-    assert [s["id"] for s in body["species"]] == ["bubo-bubo", "tyto-alba", "strix-aluco"]
+    assert body["count"] == 4
+    assert [s["id"] for s in body["species"]] == [
+        "bubo-bubo",
+        "tyto-alba",
+        "strix-aluco",
+        "only-fg",
+    ]
+    # A bird with field guide art only is listed with just that style.
+    assert list(body["species"][3]["art"]) == ["fg"]
     owl = body["species"][1]
     assert owl["names"] == {"en": "tyto-alba en", "he": "tyto-alba he"}
     assert owl["family"] == "Tytonidae english" and owl["familySci"] == "Tytonidae"
@@ -91,7 +98,8 @@ def test_species_lists_complete_birds_in_taxonomic_order(client: TestClient) -> 
 
 def test_missing_mass_takes_the_family_median(client: TestClient) -> None:
     strix = client.get("/api/v1/catalogs/birds/species").json()["species"][2]
-    assert strix["massG"] == 2000.0 and strix["massEstimated"] is True
+    # Median of its family's known weights: 2000 g and 10 g.
+    assert strix["massG"] == 1005.0 and strix["massEstimated"] is True
 
 
 def test_lang_filter(client: TestClient) -> None:
@@ -124,7 +132,7 @@ def test_unknown_catalog_is_404(client: TestClient) -> None:
 def test_families_with_counts(client: TestClient) -> None:
     res = client.get("/api/v1/catalogs/birds/families")
     assert res.json() == [
-        {"id": "Strigidae", "name": "Strigidae english", "count": 2},
+        {"id": "Strigidae", "name": "Strigidae english", "count": 3},
         {"id": "Tytonidae", "name": "Tytonidae english", "count": 1},
     ]
     assert "etag" in res.headers
@@ -169,3 +177,21 @@ def test_report_a_wrong_bird(client: TestClient, db: Session) -> None:
         ).status_code
         == 422
     )
+
+
+def test_compact_form_has_every_bird_in_short_rows(client: TestClient) -> None:
+    full = client.get("/api/v1/catalogs/birds/species").json()
+    res = client.get("/api/v1/catalogs/birds/species?format=compact")
+    assert res.status_code == 200 and "etag" in res.headers
+    body = res.json()
+    assert body["v"] == 2 and body["count"] == 4 and body["files"] == "/api/v1/files/"
+    assert [r[0] for r in body["species"]] == [s["id"] for s in full["species"]]
+    owl = next(r for r in body["species"] if r[0] == "tyto-alba")
+    assert owl[1] == "tyto-alba en" and owl[2] == "tyto-alba he"
+    assert body["families"][owl[3]] == ["Tytonidae", "Tytonidae english"]
+    # [width, height, hash, faces right, faces known]: the URL is rebuilt from the hash.
+    assert owl[6] == [300, 400, "h", 0, 0] and owl[7] == [300, 400, "h", 1, 1]
+    only = next(r for r in body["species"] if r[0] == "only-fg")
+    assert only[7] == 0
+    strix = next(r for r in body["species"] if r[0] == "strix-aluco")
+    assert strix[4] == 1005 and strix[5] == 1

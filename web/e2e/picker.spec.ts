@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 import { STARTER_IDS } from "../src/catalog/starter";
-import { openFamilies, pickPreset } from "./helpers";
+import { openFamilies, openTab, pickPreset } from "./helpers";
 import { expect, test } from "./test";
 
 /** A fresh visitor: no saved poster, so the 12 bird starter poster shows. */
@@ -311,4 +311,47 @@ test("no builder text is smaller than 12 px (B11)", async ({ page }) => {
       .map((el) => el.textContent!.trim().slice(0, 30)),
   );
   expect(small).toEqual([]);
+});
+
+test("a field guide only bird is tagged in woodblock and keeps its own art on the poster", async ({
+  page,
+}) => {
+  await open(page);
+  // The Gadwall has field guide art only in the fixture.
+  await openTab(page, "Style");
+  await page
+    .getByRole("radiogroup", { name: "Design" })
+    .getByRole("radio", { name: "Woodblock" })
+    .click();
+  await openTab(page, "Birds");
+  await find(page, "Gadwall");
+  const pochard = page.getByRole("option", { name: /^Gadwall/ });
+  await expect(pochard).toHaveAccessibleName(
+    "Gadwall, field guide art only",
+  );
+  await expect(pochard.locator("[data-one-style]")).toHaveText("Field guide");
+  await pochard.click();
+  const bird = page
+    .locator('[data-poster] [data-animal="mareca-strepera"] img')
+    .first();
+  await expect(bird).toHaveAttribute("src", /\/art\/fg\/mareca-strepera\//);
+  // Its neighbours switched to woodblock.
+  await expect(
+    page.locator(`[data-poster] [data-animal="${STARTER_IDS[0]}"] img`).first(),
+  ).toHaveAttribute("src", /\/art\/wb\//);
+  await openTab(page, "Style");
+  await expect(page.locator("[data-style-note]")).toHaveText(
+    "1 bird has field guide art only and stays that way in woodblock.",
+  );
+});
+
+test("birds with both styles show no tag, and no note when every bird has both", async ({
+  page,
+}) => {
+  await open(page);
+  await openTab(page, "Style");
+  await expect(page.locator("[data-style-note]")).toHaveCount(0);
+  await openTab(page, "Birds");
+  await find(page, "owl");
+  await expect(page.locator("[data-one-style]")).toHaveCount(0);
 });

@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 from animarka_workers.ingest.catalog import species_row
 from animarka_workers.ingest.images import process
 from animarka_workers.ingest.match import Match, match_species
-from animarka_workers.ingest.sources import Fetcher, TreeEntry
+from animarka_workers.ingest.sources import Fetcher, TreeEntry, load_aliases
 
 log = logging.getLogger(__name__)
 
@@ -36,7 +36,9 @@ def plan(session: Session, fetcher: Fetcher, sources: dict[str, Any]) -> Plan:
     species_list: list[dict[str, Any]] = species["species"]
     styles: dict[str, Any] = sources["styles"]
     trees = {sid: fetcher.tree(s["repo"], s["ref"]) for sid, s in styles.items()}
-    matches = match_species(species_list, trees, {sid: s["pattern"] for sid, s in styles.items()})
+    matches = match_species(
+        species_list, trees, {sid: s["pattern"] for sid, s in styles.items()}, load_aliases()
+    )
 
     rows = [species_row(m.slug, m.meta) for m in matches]
     for i in range(0, len(rows), 500):
@@ -49,6 +51,8 @@ def plan(session: Session, fetcher: Fetcher, sources: dict[str, Any]) -> Plan:
     counts = {f"files_{sid}": len(t) for sid, t in trees.items()}
     counts["species_json"] = len(species_list)
     counts["matched"] = len(matches)
+    for sid in styles:
+        counts[f"with_{sid}"] = sum(1 for m in matches if sid in m.files)
     log.info("ingest plan: %s", counts)
     return Plan(matches, counts)
 

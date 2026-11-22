@@ -38,7 +38,7 @@ test.describe("catalog from the API", () => {
     await page.goto("/make");
     await expect(page.locator(poster)).toHaveCount(12);
     await page.waitForFunction(
-      () => !!localStorage.getItem("animarka:catalog:v1"),
+      () => !!localStorage.getItem("animarka:catalog:v2"),
       undefined,
       { timeout: 10_000 },
     );

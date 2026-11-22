@@ -428,7 +428,7 @@ const LOAD: Item[] = [
       },
       how: "Each card holds its size and the picture fades in over a gray block.",
       strength:
-        "No layout shift. Great for the 1,161 thumbnails loading as you scroll.",
+        "No layout shift. Great for the 11,011 thumbnails loading as you scroll.",
       weakness:
         "Not a full page loader, so it needs to be paired with another.",
     },

@@ -24,6 +24,12 @@ def load_sources() -> dict[str, Any]:
     return sources
 
 
+def load_aliases() -> dict[str, dict[str, str]]:
+    """Per style: older scientific name of a file to the species.json name. Only woodblock today."""
+    data: dict[str, Any] = json.loads((DATA / "wb_aliases.json").read_text(encoding="utf-8"))
+    return {"wb": dict(data["aliases"])}
+
+
 def load_manual_faces() -> dict[str, dict[str, str]]:
     faces: dict[str, dict[str, str]] = json.loads(
         (DATA / "faces_manual.json").read_text(encoding="utf-8")

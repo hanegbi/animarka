@@ -358,7 +358,7 @@ test.describe("landing page", () => {
     );
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       "content",
-      /1,161 species/,
+      /11,011 species/,
     );
   });
 });

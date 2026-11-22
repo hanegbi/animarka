@@ -2,7 +2,7 @@ import type { SpeciesView } from "@/catalog/species-view";
 import type { Lang } from "@/poster/state/types";
 import { MAX_BIRDS } from "@/poster/state/types";
 
-/** 1161 reads as "1,161". */
+/** 1161 reads as "11,011". */
 export const num = (n: number) => n.toLocaleString("en-US");
 
 export const ALL = "All";

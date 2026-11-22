@@ -35,7 +35,7 @@ const SETS: LandingSet[] = [
 const STEPS = [
   {
     t: "Pick your birds.",
-    d: "Search 1,161 species or start from a ready set.",
+    d: "Search 11,011 species or start from a ready set.",
     img: "step-pick",
     alt: "The builder's search showing herons and bitterns after typing heron",
   },
@@ -65,7 +65,7 @@ const FAQ = [
   ],
   [
     "Can I use Hebrew names?",
-    "Yes. 595 birds have a Hebrew name, the rest keep their English one.",
+    "Yes. 1,129 birds have a Hebrew name, the rest keep their English one.",
   ],
   ["Where can I print it?", "At any print shop. The print file is 300 DPI."],
   [
@@ -211,8 +211,9 @@ export function Landing() {
                 Two ways to see the same birds.
               </h2>
               <p className="text-lg text-[var(--lp-muted)]">
-                Drag the line. In the builder one click switches the whole
-                poster, and every bird keeps its place.
+                Drag the line. Every bird has field guide art, and 1,180 of them
+                also come in woodblock. One click switches the whole poster, and
+                every bird keeps its place.
               </p>
               <dl className="grid gap-8 sm:grid-cols-2">
                 <div className="flex flex-col gap-2">
@@ -244,7 +245,7 @@ export function Landing() {
               Start from a set.
             </h2>
             <p className="text-lg text-[var(--lp-muted)]">
-              Or build your own from 1,161 species.
+              Or build your own from 11,011 species.
             </p>
           </div>
           <SetsCarousel sets={SETS} />

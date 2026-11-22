@@ -47,7 +47,7 @@ Technical calls made by the planner (owner can overrule):
 | T1 | pnpm for `web/`, uv workspace for Python (`api/`, `workers/`) | Fast, lockfiles, one command each. |
 | T2 | Shared Python package `animarka_core` (settings, models, storage, queue names) lives in `api/src/animarka_core` and `workers/` depends on it through the uv workspace | API and workers need the same models. |
 | T3 | Poster state is a pure reducer in TypeScript, wrapped in a Zustand store, with past and future stacks for undo | Reducers are unit testable and the same state JSON goes to the server. |
-| T4 | The whole catalog (1,161 species, about 40 KB gzipped) is sent in one cached response and searched in the browser | Meets the 100 ms feedback rule. No search endpoint needed in v1. |
+| T4 | The whole catalog (11,011 species since 2026-11-22, in the compact form, about 400 KB gzipped) is sent in one cached response and searched in the browser | Meets the 100 ms feedback rule. No search endpoint needed in v1. |
 | T5 | Layout units are percent of poster width. Layout functions take aspect ratios and never touch the DOM | Same result at 390 px and at 7200 px. |
 | T6 | Label text gets a fixed box (names: up to 2 lines, then ellipsis) that the layout reserves | Removes the need for `fitInside`. |
 | T7 | Centerpiece: the heaviest species is the center by default. Dragging a bird onto the center makes it the new center (`state.center`) | The PRD says "largest". Users will still want to choose. |
@@ -229,7 +229,7 @@ Milestone check: full parity with the prototype plus sheet, undo, three layouts,
 | M2.3 Ingest tasks | `workers/tasks/ingest.py` | On the `ingest` queue: shallow clone or tarball both repos at pinned commits, parse `species.json`, match by slug `genus-species`, keep species present in both sets, trim, write thumb, medium and original, upsert rows. Chunked with a parent job reporting progress to Redis. Idempotent: a rerun changes nothing. | Worker tests on a 20 species fixture for idempotency and retry. Full run reports the matched count. If it is not 1,161, record the real number in decisions and tell the owner. |
 | M2.4 Catalog API | `routers/catalog.py`, `routers/reports.py`, `schemas.py` | Endpoints from the contract with ETag. | API tests for every endpoint. |
 | M2.5 Presets | `api/data/presets.json` | "Birds of Israel", "Owls of the world", "Garden birds of North America" and a few more, as data. Lists drafted by the model, reviewed by the owner. | API returns them. Every slug exists in the catalog. |
-| M2.6 Web on the API | `web/src/catalog/client.ts`, picker | Load the catalog from the API, cache it, fall back gracefully on error. Virtualized list holds 1,161 species smoothly. Hebrew language switch and Hebrew names. Remove `static-m1.ts` and the committed M1 art. | Playwright against compose. Search answers in under 100 ms in a perf test. |
+| M2.6 Web on the API | `web/src/catalog/client.ts`, picker | Load the catalog from the API, cache it, fall back gracefully on error. Virtualized list holds 11,011 species smoothly. Hebrew language switch and Hebrew names. Remove `static-m1.ts` and the committed M1 art. | Playwright against compose. Search answers in under 100 ms in a perf test. |
 
 Until M3 fills `faces`, woodblock artworks outside the old `WB_FLIP` list default to `left`. Known and accepted for M2.
 
@@ -281,7 +281,7 @@ Cut by the owner on 2026-11-22: k3s, KEDA, Grafana dashboards, the load test, ma
 | Source art is small | Soft prints | Upscale queue (decision 2), reviewed samples, proof prints at M4. |
 | Chromium renders are heavy | Slow jobs, large image, memory spikes at A2 | One render per worker process, memory limits, cache by hash. |
 | The woodblock pose the prototype used is unknown | `WB_FLIP` may not match the downloaded files | Visual check in M1.1, stop and ask on mismatch. |
-| The 1,161 overlap is unverified | Catalog size differs | M2.3 reports the real count. |
+| The 1,161 overlap is unverified | Catalog size differs | M2.3 reported 1,161; since 2026-11-22 the catalog is every bird in the field guide set (11,011). |
 | Both art sets are AI made and may show wrong birds | Trust | Report link per species, `reports` table, status flag on artworks. |
 | Source repos change or vanish | Ingest breaks | Pin commits, keep originals in storage. |
 | The handoff between models loses context | Wrong assumptions | Everything lives in `docs/PRD.md`, `docs/PLAN.md`, `docs/DECISIONS.md`. Tasks say "stop and ask" where a choice is open. |

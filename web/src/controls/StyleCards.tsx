@@ -1,5 +1,6 @@
 "use client";
 
+import { useCatalog, usePosterState } from "@/poster/state/provider";
 import type { LabelMode } from "@/poster/state/types";
 import type { RadioItem } from "./RadioGroup";
 import { Segmented } from "./Segmented";
@@ -18,13 +19,31 @@ export function StyleCards({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const { species } = useCatalog();
+  const { order } = usePosterState();
+  // Most birds have field guide art only; they keep it on a woodblock poster.
+  const noWb = order.filter(
+    (id) => species.get(id) && !species.get(id)!.art.wb,
+  ).length;
   return (
-    <Segmented
-      label="Design"
-      value={value}
-      items={STYLES}
-      onChange={onChange}
-    />
+    <div className="flex flex-col gap-2">
+      <Segmented
+        label="Design"
+        value={value}
+        items={STYLES}
+        onChange={onChange}
+      />
+      {noWb > 0 && (
+        <p
+          className="text-muted-foreground text-[13px] leading-snug"
+          data-style-note
+        >
+          {noWb === 1
+            ? "1 bird has field guide art only and stays that way in woodblock."
+            : `${noWb} birds have field guide art only and stay that way in woodblock.`}
+        </p>
+      )}
+    </div>
   );
 }
 

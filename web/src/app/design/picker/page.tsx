@@ -185,7 +185,7 @@ const SPECIES: Item[] = [
       },
       how: "A grid of cards with a larger picture and the name. A ring and a check mark show it is on.",
       strength: "Birds are easy to recognize.",
-      weakness: "Fewer birds per screen, which hurts a list of 118 or 1,161.",
+      weakness: "Fewer birds per screen, which hurts a list of 118 or 11,011.",
     },
     () => <M.SpeciesCards />,
   ],
@@ -333,7 +333,7 @@ export default function PickerRound() {
           and Inter. Real birds and our tokens, shown as mock-ups so you can
           compare looks side by side at desktop width. The source link is the
           21st.dev component the option is based on. The chosen one is installed
-          with the shadcn command and adapted to our tokens. The list of 1,161
+          with the shadcn command and adapted to our tokens. The list of 11,011
           birds is virtualized with the same library whichever look you choose.
         </p>
       </header>

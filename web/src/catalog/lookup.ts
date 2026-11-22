@@ -8,7 +8,11 @@ export function viewLookup(views: Map<string, SpeciesView>): CatalogLookup {
   return {
     has: (id) => views.has(id),
     family: (id) => views.get(id)?.family ?? null,
-    faces: (id, style) => views.get(id)?.art[style]?.faces ?? "left",
+    faces: (id, style) => {
+      const art = views.get(id)?.art;
+      // A bird with one style faces the way its own art does.
+      return (art?.[style] ?? Object.values(art ?? {})[0])?.faces ?? "left";
+    },
     ids: () => ids,
   };
 }

@@ -6,6 +6,7 @@ from typing import Annotated, Any
 
 from animarka_core.db import get_session
 from animarka_core.models import Artwork, Background, Catalog, Preset, Species, Style
+from animarka_core.settings import get_settings
 from animarka_core.storage import get_storage
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from sqlalchemy import select
@@ -54,8 +55,8 @@ def fill_mass(rows: list[Species]) -> dict[str, tuple[float, bool]]:
 async def load_catalog(
     session: AsyncSession, catalog_id: str
 ) -> list[tuple[Species, dict[str, Artwork]]]:
-    """Species that have active main art in every style, in taxonomic order."""
-    style_ids = set((await session.scalars(select(Style.id))).all())
+    """Species with active main art in at least one style, in taxonomic order. Most birds have
+    field guide art only; a poster shows each bird in the art it has."""
     species = (
         await session.scalars(
             select(Species)
@@ -75,9 +76,70 @@ async def load_catalog(
     by_species: dict[str, dict[str, Artwork]] = defaultdict(dict)
     for a in arts:
         by_species[a.species_id][a.style_id] = a
-    return [
-        (s, by_species[s.id]) for s in species if style_ids and set(by_species[s.id]) >= style_ids
-    ]
+    return [(s, by_species[s.id]) for s in species if by_species[s.id]]
+
+
+def art_hash(medium_key: str) -> str:
+    """The part of an art key that changes with the file: art/{style}/{id}/{hash}-640.webp."""
+    return medium_key.rsplit("/", 1)[-1].removesuffix("-640.webp")
+
+
+def compact(
+    catalog_id: str,
+    rows: list[tuple[Species, dict[str, Artwork]]],
+    mass: dict[str, tuple[float, bool]],
+    langs: set[str],
+) -> dict[str, Any]:
+    """The whole catalog in one small document (about 11,000 birds).
+
+    species rows: [id, english, hebrew or 0, family index, mass in grams, 1 if mass is estimated,
+    field guide art, woodblock art], where art is 0 when the bird has none in that style, else
+    [width, height, hash, faces (0 left, 1 right), 1 if faces is known]. Image URLs are rebuilt
+    from `files`: {files}art/{style}/{id}/{hash}-640.webp and -200.webp. The scientific name is
+    the id with a capital and a space. Same order as the full form: taxonomic.
+    """
+    families: dict[str, int] = {}
+    fam_rows: list[list[str]] = []
+    out: list[list[Any]] = []
+    for s, arts in rows:
+        if s.family not in families:
+            families[s.family] = len(fam_rows)
+            fam_rows.append([s.family, s.family_english])
+        m, estimated = mass[s.id]
+
+        def art(style: str, arts: dict[str, Artwork] = arts) -> Any:
+            a = arts.get(style)
+            if a is None:
+                return 0
+            faces = a.faces or DEFAULT_FACES
+            return [
+                a.width,
+                a.height,
+                art_hash(a.medium_key),
+                1 if faces == "right" else 0,
+                0 if a.faces is None else 1,
+            ]
+
+        out.append(
+            [
+                s.id,
+                s.names.get("en") if "en" in langs else s.names.get(next(iter(langs)), ""),
+                (s.names.get("he") or 0) if "he" in langs else 0,
+                families[s.family],
+                round(m) if m >= 10 else m,
+                1 if estimated else 0,
+                art("fg"),
+                art("wb"),
+            ]
+        )
+    return {
+        "v": 2,
+        "catalog": catalog_id,
+        "count": len(out),
+        "files": get_settings().files_url_prefix.rstrip("/") + "/",
+        "families": fam_rows,
+        "species": out,
+    }
 
 
 @router.get("/catalogs/{catalog_id}/species", response_model=SpeciesList)
@@ -86,11 +148,16 @@ async def list_species(
     request: Request,
     session: Session,
     lang: Annotated[str, Query(description="Comma separated language codes")] = "en,he",
+    format: Annotated[
+        str, Query(description="full (default) or compact: one short row per bird")
+    ] = "full",
 ) -> Response:
     await require_catalog(session, catalog_id)
     langs = {code.strip() for code in lang.split(",")} & SUPPORTED_LANGS or {"en"}
     rows = await load_catalog(session, catalog_id)
     mass = fill_mass([s for s, _ in rows])
+    if format == "compact":
+        return etag_json(request, compact(catalog_id, rows, mass, langs))
     storage = get_storage()
     out: list[SpeciesOut] = []
     for s, arts in rows:

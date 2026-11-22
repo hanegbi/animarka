@@ -4,12 +4,8 @@
  * shows the birds, marked stale. Only when there is no copy at all does the page show an error.
  */
 
-import {
-  PRESETS_URL,
-  SPECIES_URL,
-  type ApiPreset,
-  type ApiSpeciesList,
-} from "./api";
+import { PRESETS_URL, SPECIES_URL, type ApiPreset } from "./api";
+import { decodeCompact, type ApiCompact } from "./compact";
 import type { Preset } from "./presets";
 import { toView, type SpeciesView } from "./species-view";
 
@@ -25,13 +21,17 @@ export type CatalogState =
   | { status: "ready"; data: CatalogData; stale: boolean }
   | { status: "error" };
 
-export type CatalogRaw = { species: ApiSpeciesList; presets: ApiPreset[] };
+/** As it came over the wire: the compact species form and the presets. Also the saved copy. */
+export type CatalogRaw = { species: ApiCompact; presets: ApiPreset[] };
 type Raw = CatalogRaw;
 
-export const CACHE_KEY = "animarka:catalog:v1";
+// v2: the compact form, about a fifth of the full one, so 11,000 birds fit in localStorage.
+export const CACHE_KEY = "animarka:catalog:v2";
 
 export function buildCatalog(raw: Raw): CatalogData {
-  const species = new Map(raw.species.species.map((s) => [s.id, toView(s)]));
+  const species = new Map(
+    decodeCompact(raw.species).species.map((s) => [s.id, toView(s)]),
+  );
   const presets = raw.presets
     .map((p) => ({ ...p, ids: p.ids.filter((id) => species.has(id)) }))
     .filter((p) => p.ids.length > 1);
@@ -69,7 +69,7 @@ export async function fetchCatalog(
 ): Promise<{ data: CatalogData; stale: boolean }> {
   try {
     const [species, presets] = await Promise.all([
-      getJson<ApiSpeciesList>(fetchFn, SPECIES_URL),
+      getJson<ApiCompact>(fetchFn, SPECIES_URL),
       getJson<ApiPreset[]>(fetchFn, PRESETS_URL),
     ]);
     const raw = { species, presets };

@@ -9,7 +9,7 @@ Build the landing page for animarka. It should feel like opening a beautiful fie
 ## What animarka is (facts only, never invent more)
 
 - A free web tool that turns birds you pick into an illustrated wildlife poster.
-- 1,161 bird species. Search by name, scientific name or family. Names in English and Hebrew.
+- 11,011 bird species, every one in field guide art and 1,180 also in woodblock. Search by name, scientific name or family. Names in English and Hebrew.
 - Two art styles of the same birds: **Field guide** (soft, detailed colour plates) and **Woodblock** (bold, printmaking look). One click switches the whole poster and every bird keeps its place.
 - Three layouts: **Scattered**, **Grid**, **Centerpiece** (one big bird in the middle, you choose which). Shuffle for a new arrangement.
 - Make it yours: tap a bird to mirror it, drag one onto another to swap, drag one off the poster to remove it, make every bird face left or right at once, rename any bird by clicking its name, edit the title, 8 backgrounds, 3 poster shapes (3:4, 2:3, 4:5), labels as names, numbers with a legend, or no text.
@@ -19,7 +19,7 @@ Build the landing page for animarka. It should feel like opening a beautiful fie
 - The art is AI generated, from two open sets: field guide art by Huashu (huashu-bird-sticker, CC BY 4.0) and woodblock art by Adam Oberley, Teddy Warner and contributors (HABirdDashboard, MIT). Credit both on the page. Never call the art hand painted or say an artist drew it.
 - No account, no sign up.
 
-Do not invent testimonials, user counts, ratings, press logos or reviews. Real numbers only: 1,161 birds, 2 styles, 3 layouts, 8 backgrounds, 11 sets, 4 print sizes.
+Do not invent testimonials, user counts, ratings, press logos or reviews. Real numbers only: 11,011 birds, 1,180 in woodblock, 2 styles, 3 layouts, 8 backgrounds, 11 sets, 4 print sizes.
 
 ## Voice and copy rules
 
@@ -37,13 +37,13 @@ Do not invent testimonials, user counts, ratings, press logos or reviews. Real n
   - "Every bird you love, on one poster."
   - "Your birds. Your poster."
   - "Make a bird poster that is truly yours."
-  - "1,161 birds. One wall."
-- Subline: "Pick birds from 1,161 species, choose an illustrated style, and arrange them your way. Free, in your browser, no sign up."
+  - "11,011 birds. One wall."
+- Subline: "Pick birds from 11,011 species, choose an illustrated style, and arrange them your way. Free, in your browser, no sign up."
 - Primary button: "Make your poster". Secondary: "Start from a set".
 - Visual: a real poster from the app, large and crisp. Ideas: the poster switching between Field guide and Woodblock; birds settling into place; a living field guide plate. Use real renders from our render pipeline (`/render/[id]`), never stock images.
 
 **2. How it works.** Three steps.
-- "Pick your birds." Search 1,161 species or start from a ready set.
+- "Pick your birds." Search 11,011 species or start from a ready set.
 - "Make it yours." Choose a style, a layout and a background. Mirror, swap and rename any bird.
 - "Share or print." Send a link, download a free preview, or get the print file (coming soon).
 
@@ -52,7 +52,7 @@ Do not invent testimonials, user counts, ratings, press logos or reviews. Real n
 - Woodblock: "Bold shapes and strong lines, like a printmaker's proof."
 - A toggle or slider that shows the same poster in both styles.
 
-**4. Ready sets.** "Start from a set." A gallery of real posters made from the sets (Birds of Israel, Owls of the world, Garden birds of North America, Birds of prey...). Each card opens the builder with that set. Line: "Or build your own from 1,161 species."
+**4. Ready sets.** "Start from a set." A gallery of real posters made from the sets (Birds of Israel, Owls of the world, Garden birds of North America, Birds of prey...). Each card opens the builder with that set. Line: "Or build your own from 11,011 species."
 
 **5. Make it yours.** "Small touches, big difference." Show the real interactions: tap to mirror, drag to swap, drag off to remove, Face left / Face right, rename a bird, 8 backgrounds, 3 layouts, English or Hebrew names. Short looping demos are better than words.
 
@@ -65,7 +65,7 @@ Do not invent testimonials, user counts, ratings, press logos or reviews. Real n
 - Is it free? (Building, sharing and the preview image are free. The print file will be paid.)
 - Do I need an account? (No.)
 - Who made the art? (Two open, AI generated sets, with credit and licences.)
-- Can I use Hebrew names? (Yes, 595 birds have a Hebrew name; the rest keep English.)
+- Can I use Hebrew names? (Yes, 1,129 birds have a Hebrew name; the rest keep English.)
 - Where can I print it? (Any print shop. The file is 300 DPI.)
 - Is the art accurate? (It is AI generated and can contain mistakes. Tell us if a bird looks wrong.)
 

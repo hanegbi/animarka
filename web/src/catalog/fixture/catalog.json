@@ -363,14 +363,6 @@
             "medium": "/api/v1/files/art/fg/mareca-strepera/5fa3f036e7-640.webp",
             "thumb": "/api/v1/files/art/fg/mareca-strepera/5fa3f036e7-200.webp",
             "w": 1023
-          },
-          "wb": {
-            "faces": "left",
-            "facesKnown": true,
-            "h": 500,
-            "medium": "/api/v1/files/art/wb/mareca-strepera/83b176918f-640.webp",
-            "thumb": "/api/v1/files/art/wb/mareca-strepera/83b176918f-200.webp",
-            "w": 605
           }
         },
         "family": "Ducks, Swans, and Geese",
@@ -1000,14 +992,6 @@
             "medium": "/api/v1/files/art/fg/botaurus-flavicollis/2aa3165857-640.webp",
             "thumb": "/api/v1/files/art/fg/botaurus-flavicollis/2aa3165857-200.webp",
             "w": 1023
-          },
-          "wb": {
-            "faces": "left",
-            "facesKnown": true,
-            "h": 667,
-            "medium": "/api/v1/files/art/wb/botaurus-flavicollis/9542190916-640.webp",
-            "thumb": "/api/v1/files/art/wb/botaurus-flavicollis/9542190916-200.webp",
-            "w": 571
           }
         },
         "family": "Herons, Egrets, and Bitterns",
@@ -1031,14 +1015,6 @@
             "medium": "/api/v1/files/art/fg/egretta-caerulea/036c59ec56-640.webp",
             "thumb": "/api/v1/files/art/fg/egretta-caerulea/036c59ec56-200.webp",
             "w": 863
-          },
-          "wb": {
-            "faces": "left",
-            "facesKnown": true,
-            "h": 731,
-            "medium": "/api/v1/files/art/wb/egretta-caerulea/6bec6a3bcb-640.webp",
-            "thumb": "/api/v1/files/art/wb/egretta-caerulea/6bec6a3bcb-200.webp",
-            "w": 587
           }
         },
         "family": "Herons, Egrets, and Bitterns",

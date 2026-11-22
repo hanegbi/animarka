@@ -13,13 +13,18 @@ CACHE = "public, max-age=300, stale-while-revalidate=86400"
 
 
 def etag_json(
-    request: Request, body: BaseModel | Sequence[BaseModel], cache: str = CACHE
+    request: Request,
+    body: BaseModel | Sequence[BaseModel] | dict[str, Any],
+    cache: str = CACHE,
 ) -> Response:
-    data: Any = (
-        [b.model_dump(by_alias=True) for b in body]
-        if not isinstance(body, BaseModel)
-        else body.model_dump(by_alias=True)
-    )
+    """`body` is a model, a list of models, or plain JSON data (the compact catalog)."""
+    data: Any
+    if isinstance(body, dict):
+        data = body
+    elif isinstance(body, BaseModel):
+        data = body.model_dump(by_alias=True)
+    else:
+        data = [b.model_dump(by_alias=True) for b in body]
     raw = json.dumps(data, ensure_ascii=False, separators=(",", ":"), sort_keys=True).encode()
     tag = '"' + hashlib.sha256(raw).hexdigest()[:32] + '"'
     headers = {"ETag": tag, "Cache-Control": cache, "Vary": "Accept-Encoding"}

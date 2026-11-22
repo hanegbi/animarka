@@ -1,8 +1,8 @@
 import { LIVE, expect, test } from "./test";
 
 const isApi = (url: string) => new URL(url).pathname.startsWith("/api/v1/");
-/** The catalog JSON has its own budget, see docs/DECISIONS.md (M2.6). Gzipped, from the real API. */
-const CATALOG_KB = 120;
+/** The catalog JSON has its own budget, see docs/DECISIONS.md (M2.6, Compact catalog). Gzipped, from the real API. */
+const CATALOG_KB = 450;
 
 type Resource = { url: string; type: string; bytes: number };
 

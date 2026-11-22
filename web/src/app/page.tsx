@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Landing } from "@/landing/Landing";
 
 const description =
-  "Pick birds from 1,161 species, choose an illustrated style, and arrange them your way. Free, in your browser, no sign up.";
+  "Pick birds from 11,011 species, choose an illustrated style, and arrange them your way. Free, in your browser, no sign up.";
 
 export const metadata: Metadata = {
   title: "animarka: illustrated bird posters, made by you",

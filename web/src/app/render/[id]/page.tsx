@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { SPECIES_URL, type ApiSpeciesList } from "@/catalog/api";
+import { SPECIES_URL } from "@/catalog/api";
+import { decodeCompact, type ApiCompact } from "@/catalog/compact";
 import { BACKGROUND_IDS, STYLE_IDS, viewLookup } from "@/catalog/lookup";
 import { toView, type SpeciesView } from "@/catalog/species-view";
 import { validToken } from "@/lib/render-token";
@@ -35,7 +36,7 @@ async function Render({
   ]);
   if (!posterRes.ok || !catalogRes.ok) notFound();
   const { state: raw } = (await posterRes.json()) as { state: unknown };
-  const list = (await catalogRes.json()) as ApiSpeciesList;
+  const list = decodeCompact((await catalogRes.json()) as ApiCompact);
 
   const views = new Map<string, SpeciesView>(
     list.species.map((s) => [s.id, toView(s)]),

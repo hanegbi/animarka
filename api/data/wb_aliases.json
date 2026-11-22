@@ -1,0 +1,27 @@
+{
+  "_note": "Woodblock files named with an older scientific name, mapped to the species.json name of the same bird. Hand checked, one to one renames only: merged species (two old species now one) are left out, so a bird never gets another bird's picture.",
+  "aliases": {
+    "accipiter-cooperii": "astur-cooperii",
+    "accipiter-gentilis": "astur-gentilis",
+    "bubulcus-ibis": "ardea-ibis",
+    "coccothraustes-vespertinus": "hesperiphona-vespertina",
+    "corvus-monedula": "coloeus-monedula",
+    "dryobates-villosus": "leuconotopicus-villosus",
+    "emberiza-melanocephala": "melophus-melanocephalus",
+    "emberiza-pusilla": "schoeniclus-pusillus",
+    "emberiza-rustica": "schoeniclus-rusticus",
+    "emberiza-schoeniclus": "schoeniclus-schoeniclus",
+    "emberiza-spodocephala": "schoeniclus-spodocephalus",
+    "glossopsitta-concinna": "trichoglossus-concinnus",
+    "icterus-bullockii": "icterus-bullockiorum",
+    "leiothlypis-lucidae": "leiothlypis-luciae",
+    "oreothlypis-ruficapilla": "leiothlypis-ruficapilla",
+    "oressochen-jubatus": "neochen-jubata",
+    "oressochen-melanopterus": "chloephaga-melanoptera",
+    "phalacrocorax-auritus": "nannopterum-auritum",
+    "regulus-calendula": "corthylio-calendula",
+    "troglodytes-hiemalis": "nannus-hiemalis",
+    "troglodytes-pacificus": "nannus-pacificus",
+    "troglodytes-troglodytes": "nannus-troglodytes"
+  }
+}

@@ -105,7 +105,7 @@ Non goals for version 1:
 | License | CC BY 4.0, attribution required | repo says MIT, but the art began in a non commercial project |
 
 Rules:
-- Version 1 catalog is the **1,161 species that exist in both sets**, matched by scientific name slug (`genus-species`).
+- The catalog is **every bird in the field guide set, 11,011 species** (owner, 2026-11-22). 1,180 of them also have woodblock art, matched by scientific name slug (`genus-species`) plus a hand checked list of renamed woodblock files (`api/data/wb_aliases.json`). A bird with one style keeps its own art on a poster in the other style; the picker tags it and the style switch says how many birds stay as they are. Woodblock files that are not birds, or are merged species, are left out.
 - Show attribution for both sources in the footer and on the export page.
 - Both sets are AI generated. Add a "report a wrong bird" link per species.
 - Field guide birds all look left. Woodblock birds look either way. See section 6.4.
@@ -131,7 +131,7 @@ The prototype already shows 6.1 to 6.5. Keep what works and improve whatever you
 - "Your poster" tray shows everything selected across families, with a count such as "14 birds from 5 families". Tap to remove.
 - "Surprise mix" builds a random poster of 12 to 16 birds. "Clear poster" empties it.
 - Presets (new): ready sets such as "Birds of Israel", "Owls of the world", "Garden birds of North America". Stored as data, not code.
-- With 1,161 species the list must be virtualized and thumbnails lazy loaded.
+- With 11,011 species the list must be virtualized and thumbnails lazy loaded.
 
 #### 6.2 The poster
 - Portrait 3:4 by default. Also 2:3, 4:5 and A series, plus landscape.
@@ -293,7 +293,7 @@ Type: a serif with character for the poster title and headings, a clean sans for
 |---|---|---|
 | M0 | Repo, tooling, Docker Compose, CI, design decisions made | `docker compose up` runs web, api, db, redis, rabbitmq. Theme chosen through the rule of five. |
 | M1 | Poster builder in Next.js with the 118 prototype birds | Full parity with the prototype plus the phone bottom sheet, undo, the three layouts and backgrounds with the 3 example images. Playwright suite green. |
-| M2 | Catalog backend | Ingest job loads all 1,161 shared species. API serves species, families, presets. Web uses the API with a virtualized list. |
+| M2 | Catalog backend | Ingest job loads every bird with art in either set (11,011 since 2026-11-22; 1,161 shared at first). API serves species, families, presets. Web uses the API with a virtualized list. |
 | M3 | Async pipeline | RabbitMQ and Celery in place. Facing detection run on the full catalog with a review page. Style switch is correct for every species. |
 | M4 | Share and export | Share links work. Free preview and print ready render through the queue with progress. |
 | M5 | Payments | Lemon Squeezy checkout, webhook, emailed download link. |

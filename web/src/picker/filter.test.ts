@@ -137,7 +137,7 @@ describe("list actions", () => {
 
 describe("status line and tray label", () => {
   it("writes big counts with a thousands separator", () => {
-    expect(num(1161)).toBe("1,161");
+    expect(num(11011)).toBe("11,011");
     expect(num(12)).toBe("12");
   });
 

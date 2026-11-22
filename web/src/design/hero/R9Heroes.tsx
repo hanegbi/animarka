@@ -18,7 +18,7 @@ const SHADOW_BIRD: CSSProperties = {
     "drop-shadow(0 22px 26px rgb(var(--lp-shadow) / 0.2)) drop-shadow(0 4px 6px rgb(var(--lp-shadow) / 0.12))",
 };
 const SUB =
-  "Pick birds from 1,161 species, choose an illustrated style, and arrange them your way. Free, in your browser, no sign up.";
+  "Pick birds from 11,011 species, choose an illustrated style, and arrange them your way. Free, in your browser, no sign up.";
 
 const display =
   "font-[family-name:var(--font-display)] font-medium tracking-[-0.025em] text-[var(--lp-forest)] text-balance";

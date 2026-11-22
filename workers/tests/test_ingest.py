@@ -91,14 +91,26 @@ def test_slug_and_file_patterns() -> None:
     assert set(files_by_slug(fetcher.trees["o/fg"], FG)) == {"tyto-alba", "bubo-bubo", "only-fg"}
 
 
-def test_match_needs_both_styles_and_metadata_and_sorts_by_taxonomy() -> None:
+def test_match_keeps_every_bird_with_any_style_and_sorts_by_taxonomy() -> None:
     f = FakeFetcher()
     trees = {"fg": f.trees["o/fg"], "wb": f.trees["o/wb"]}
     matches = match_species(f.species, trees, {"fg": FG, "wb": WB})
-    assert [m.slug for m in matches] == ["bubo-bubo", "tyto-alba"]
+    # One style is enough; a file with no species.json entry is still left out.
+    assert [m.slug for m in matches] == ["bubo-bubo", "tyto-alba", "only-fg"]
+    assert set(matches[2].files) == {"fg"}
     assert (
         matches[1].files["wb"].path.endswith("tyto-alba.png")
     )  # the flight pose is not the main art
+
+
+def test_aliases_give_a_renamed_bird_its_art_but_an_exact_name_wins() -> None:
+    f = FakeFetcher()
+    trees = {"fg": f.trees["o/fg"], "wb": f.trees["o/wb"]}
+    aliases = {"wb": {"not-inmeta": "only-fg", "bubo-bubo": "tyto-alba"}}
+    matches = {m.slug: m for m in match_species(f.species, trees, {"fg": FG, "wb": WB}, aliases)}
+    assert matches["only-fg"].files["wb"].path.endswith("not-inmeta.png")
+    assert matches["tyto-alba"].files["wb"].path.endswith("tyto-alba.png")
+    assert "not-inmeta" not in matches
 
 
 def test_species_row_keeps_launch_languages_and_mass() -> None:
@@ -151,8 +163,8 @@ def test_plan_and_artworks_end_to_end(db: Session, tmp_path: Path) -> None:
     fetcher = FakeFetcher()
     storage = LocalStorage(tmp_path)
     p = plan(db, fetcher, SOURCES)
-    assert p.counts["matched"] == 2
-    assert db.scalar(select(func.count()).select_from(Species)) == 2
+    assert p.counts["matched"] == 3 and p.counts["with_wb"] == 2
+    assert db.scalar(select(func.count()).select_from(Species)) == 3
     owl = db.get(Species, "tyto-alba")
     assert owl is not None and owl.names["he"] == "תנשמת"
 
@@ -163,9 +175,9 @@ def test_plan_and_artworks_end_to_end(db: Session, tmp_path: Path) -> None:
         for style, e in m.files.items()
     ]
     db.commit()
-    assert results == ["stored"] * 4
+    assert results == ["stored"] * 5
     rows = db.scalars(select(Artwork)).all()
-    assert len(rows) == 4
+    assert len(rows) == 5
     wb_owl = next(r for r in rows if r.species_id == "tyto-alba" and r.style_id == "wb")
     assert (wb_owl.faces, wb_owl.faces_source) == ("right", "manual")
     assert (wb_owl.width, wb_owl.height) == (120, 80)
@@ -180,5 +192,5 @@ def test_plan_and_artworks_end_to_end(db: Session, tmp_path: Path) -> None:
         for m in plan(db, fetcher, SOURCES).matches
         for style, e in m.files.items()
     ]
-    assert again == ["skipped"] * 4
+    assert again == ["skipped"] * 5
     assert fetcher.raw_calls == ["data/species.json"]

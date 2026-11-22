@@ -31,11 +31,18 @@ function scrollParent(el: HTMLElement): HTMLElement {
 
 /**
  * C2. Picture cards in a virtualized multi select listbox. Only the visible rows are in the page, so
- * 1,161 birds stay fast. Arrow keys move, Space or Enter toggles, so a keyboard user does not tab through every card.
+ * 11,011 birds stay fast. Arrow keys move, Space or Enter toggles, so a keyboard user does not tab through every card.
  *
  * The list does not scroll by itself. It is virtualized against the panel that already scrolls, with
  * the space above the list as the scroll margin, so the panel keeps one scroll bar.
  */
+/** When a bird lacks the poster's style: the tag names the art it does have. */
+const OWN: Record<string, string> = { wb: "Field guide", fg: "Woodblock" };
+const ONLY: Record<string, string> = {
+  wb: "field guide art only",
+  fg: "woodblock art only",
+};
+
 export function BirdGrid({
   items,
   selected,
@@ -185,7 +192,11 @@ export function BirdGrid({
                   key={s.id}
                   role="option"
                   aria-selected={on}
-                  aria-label={name}
+                  aria-label={
+                    s.art[style]
+                      ? name
+                      : `${name}, ${ONLY[style] ?? "one style only"}`
+                  }
                   data-index={index}
                   data-id={s.id}
                   tabIndex={index === active ? 0 : -1}
@@ -215,6 +226,16 @@ export function BirdGrid({
                   >
                     {name}
                   </span>
+                  {!s.art[style] && (
+                    // The bird has no art in the poster's style and keeps its own on the poster.
+                    <span
+                      aria-hidden
+                      data-one-style
+                      className="bg-muted text-muted-foreground absolute start-1 top-1 rounded-[4px] px-1 text-[12px] leading-5"
+                    >
+                      {OWN[style]}
+                    </span>
+                  )}
                   {on && (
                     <span
                       aria-hidden

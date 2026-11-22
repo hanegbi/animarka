@@ -1,4 +1,4 @@
-"""Match the two art sets by scientific name slug, genus-species in lower case."""
+"""Match the art sets to species.json by scientific name slug, genus-species in lower case."""
 
 import re
 from dataclasses import dataclass
@@ -33,16 +33,28 @@ def match_species(
     species: list[dict[str, Any]],
     trees: dict[str, list[TreeEntry]],
     patterns: dict[str, str],
+    aliases: dict[str, dict[str, str]] | None = None,
 ) -> list[Match]:
-    """Species that have art in every style and an entry in species.json, in taxonomic order."""
+    """Every species.json bird with art in at least one style, in taxonomic order.
+
+    A bird keeps the styles it has: most have only field guide art. `aliases` maps, per style,
+    a file's older scientific name to the species.json name, so a renamed bird gets its art;
+    an exact name always wins over an alias. Files with no species.json entry (non-birds, merged
+    species) are left out.
+    """
     by_style = {style: files_by_slug(trees[style], patterns[style]) for style in patterns}
+    for style, mapping in (aliases or {}).items():
+        files = by_style.get(style)
+        if files is None:
+            continue
+        for old, new in mapping.items():
+            if old in files and new not in files:
+                files[new] = files[old]
     meta = {slug_of(s["id"]): s for s in species}
-    common = set(meta)
-    for files in by_style.values():
-        common &= set(files)
-    matches = [
-        Match(slug, meta[slug], {style: by_style[style][slug] for style in by_style})
-        for slug in common
-    ]
+    matches = []
+    for slug, m in meta.items():
+        found = {style: by_style[style][slug] for style in by_style if slug in by_style[style]}
+        if found:
+            matches.append(Match(slug, m, found))
     matches.sort(key=lambda m: (m.meta.get("taxonomy", {}).get("seq", 0), m.slug))
     return matches
