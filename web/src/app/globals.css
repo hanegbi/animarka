@@ -111,3 +111,9 @@
     transition: none;
   }
 }
+
+/* One clear button in search fields: ours. The browser's own blue x is hidden (B8). */
+input[type="search"]::-webkit-search-cancel-button {
+  appearance: none;
+  display: none;
+}
