@@ -6,7 +6,6 @@
 import os
 
 import uvicorn
-
 from animarka_core.logs import UVICORN_LOG_CONFIG
 
 
