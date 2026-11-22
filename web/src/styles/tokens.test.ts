@@ -57,6 +57,7 @@ describe("no raw colors outside the token file", () => {
   // Design sample pages are dev only. Poster paper colors are data, not tokens.
   const ALLOWED = [
     "styles/tokens.css",
+    "styles/landing-tokens.css",
     "catalog/backgrounds.ts",
     "design/",
     "app/design/",

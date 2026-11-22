@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { HEROES } from "@/design/hero/R9Heroes";
 import { frauncesDisplay } from "@/landing/fonts";
+import "@/styles/landing-tokens.css";
 
 /** Round R9 hero options, one at a time: /design/hero?o=1 to 5. Dev only. */
 async function Option({

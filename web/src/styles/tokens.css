@@ -90,27 +90,3 @@
     color-scheme: dark;
   }
 }
-
-/*
- * Landing page only (R9). Scoped to [data-landing], so the builder can never pick these up.
- * Vermilion is the accent: on the hero subject, display type of 36 px and up, and small marks.
- * Never on small text (3.26:1 on ivory) and never as a button colour.
- */
-[data-landing] {
-  --lp-ivory: #f6f1e4;
-  --lp-paper: #f8f4ea;
-  --lp-paper-2: #ece5d5;
-  --lp-forest: #1f4a3a;
-  --lp-forest-muted: #4a5f55; /* body text: 6.1:1 on ivory, 5.5:1 on paper 2 */
-  --lp-on-forest: #f6f1e4;
-  --lp-on-forest-muted: #c9d6cc; /* 6.7:1 on forest */
-  --lp-vermilion: #f04a24;
-  --lp-oak: #c8a676;
-  --lp-oak-dark: #9a7748;
-  --lp-shadow: 54 40 22; /* warm umber, as rgb channels for layered shadows */
-  /* One texture layer: a fine paper grain, umber specks at low alpha over the field. */
-  --lp-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.21  0 0 0 0 0.16  0 0 0 0 0.09  0.55 0 0 0 -0.25'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
-  --lp-shadow-print:
-    0 1px 1px rgb(var(--lp-shadow) / 0.1), 0 6px 12px -2px rgb(var(--lp-shadow) / 0.12),
-    0 24px 48px -12px rgb(var(--lp-shadow) / 0.22), 0 56px 96px -32px rgb(var(--lp-shadow) / 0.28);
-}
