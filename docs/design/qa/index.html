@@ -1,0 +1,108 @@
+<title>animarka QA Fixes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one review document, an item per section: what changed, how it is tested, then before and after at desktop and phone. */
+:root {
+  --paper: #f6f1e4; --card: #fffdf8; --ink: #1f4a3a; --text: #1e1b16; --muted: #5e574b; --rule: #ddd4bf; --soft: #ece5d5; --accent: #1e56b0; --on-ink: #f6f1e4;
+  --display: "Fraunces", Georgia, serif; --body: "Inter", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper: #131a17; --card: #1a2420; --ink: #b9d8c6; --text: #ebe6d8; --muted: #a7b4ac; --rule: #2d3a34; --soft: #202a26; --accent: #8db4f0; --on-ink: #131a17; color-scheme: dark } }
+:root[data-theme="dark"] { --paper: #131a17; --card: #1a2420; --ink: #b9d8c6; --text: #ebe6d8; --muted: #a7b4ac; --rule: #2d3a34; --soft: #202a26; --accent: #8db4f0; --on-ink: #131a17; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--text); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1520px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 96px; display: flex; flex-direction: column; gap: 56px; }
+h1, h2 { font-family: var(--display); font-weight: 500; color: var(--ink); margin: 0; text-wrap: balance }
+h1 { font-size: clamp(34px, 5vw, 54px); line-height: 1.04 } h2 { font-size: 26px; line-height: 1.2 }
+p { margin: 0 }
+header { display: flex; flex-direction: column; gap: 14px; max-width: 80ch }
+.lede { color: var(--muted); font-size: 17px }
+.jump { display: flex; flex-wrap: wrap; gap: 8px }
+.jump a { color: var(--ink); text-decoration: none; border: 1px solid var(--rule); background: var(--card); border-radius: 8px; padding: 8px 12px; font-size: 14px }
+.jump a:hover { border-color: var(--ink) }
+section { display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 16px }
+.code { font: 600 13px/1 var(--body); color: var(--on-ink); background: var(--ink); padding: 5px 8px; border-radius: 6px; margin-right: 8px; vertical-align: 3px }
+.what { max-width: 92ch }
+.test { color: var(--muted); font-size: 14px; max-width: 92ch }
+.note { color: var(--muted); font-size: 14px; max-width: 92ch; border-left: 3px solid var(--accent); padding-left: 12px }
+.pair { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; min-width: 0 }
+.labels { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--muted) }
+.labels span:last-child { color: var(--ink) }
+.pair img { width: 100%; height: auto; display: block; border-radius: 4px }
+.row { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); gap: 16px; align-items: start }
+.row.one { grid-template-columns: minmax(0, 1fr) }
+.full { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); gap: 16px; align-items: start }
+.answer { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 20px; max-width: 92ch }
+a { color: var(--accent) }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px }
+@media (max-width: 1000px) { .row, .full { grid-template-columns: 1fr } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>The 12 QA fixes, before and after</h1>
+    <p class="lede">Each item in your order: what changed, the test that holds it, then before and after at desktop and phone. Every fix is its own commit on master. At the end, the full landing page at both sizes.</p>
+  </header>
+  <nav class="jump" aria-label="Items" id="jump"></nav>
+  <div class="answer" role="note"><b>Checks on the final code:</b> 164 unit tests, 289 browser tests at 390 and 1280 (axe, no sideways scroll, budgets) and 46 API tests pass. Builder 299 KB, landing 291 KB before images, landing hero visible in about 290 ms on 4G.</div>
+  <div id="list" style="display:flex;flex-direction:column;gap:56px"></div>
+</div>
+
+<script>
+// [id, code, title, what changed, test, images: [file, label, phone?]...], optional note
+const ITEMS = [
+  ["b1", "B1", "A drag never leaves a bird invisible",
+   "A bird was hidden while the drag state held its id, and nothing cleared it when a very fast drag lost its end. Now a missed release, a cancelled pointer, the window losing focus, the page hiding and Escape all end the drag, and a bird is hidden only while a pointer is really down.",
+   "Tests: three fast drags in a row, a release outside any bird, Escape and blur mid drag; every bird stays at full opacity.",
+   [["b1-desktop.webp", "After three one jump drags, every bird is drawn", false, true]],
+   "The bug was intermittent, so there is no before picture; the poster after three of the fastest possible drags is shown."],
+  ["b2", "B2", "Share never sticks on Saving",
+   "The clipboard now gets 1.5 seconds. When it hangs or says no, the copy link box opens with the link and the button is free again; when it answers, the button says Link copied. An unchanged poster reuses its saved link instead of saving a new poster on every click.",
+   "Tests: a clipboard that never answers shows the link box in time; a second click saves nothing new; a change saves a new poster; a working clipboard says Link copied.",
+   [["b2-desktop.webp", "After: a hanging clipboard shows the link to copy", false, true]]],
+  ["b4", "B4", "The title gets the same room as the sides",
+   "The poster edge margin goes from 4 to 6 poster units: the title's letters now start 48 px from the top on a 597 px poster (was 36), in line with the space beside and below the birds. Margins stay in poster units, so the print file matches the screen.",
+   "Test: the title sits between 7.5% and 10% of the width from the top, at 390 and 1280. Centerpiece snapshots updated.",
+   [["b4-b6-desktop.webp", "Desktop", false], ["b4-b6-phone.webp", "Phone", true]]],
+  ["b6", "B6", "Scattered without rows or empty bands",
+   "A masonry: seeded slot sizes go to the shortest column, every second column starts half a slot lower, spare height is shared out unevenly, columns differ a little in width and birds drift inside them. Labels sit right under their bird, inside the slot. Same seed, same poster; a swap still moves only two birds. The same pictures as B4 show both changes.",
+   "Tests: no empty band taller than one bird, no rows between neighbours, real size variation, a swap moves only two birds, plus all the old rules from 1 to 150 birds.",
+   [["b4-b6-desktop.webp", "Desktop (before is the left poster)", false], ["b4-b6-phone.webp", "Phone", true]]],
+  ["b8", "B8", "One clear button in search",
+   "The browser's own blue x is hidden; ours stays.",
+   "Test: the page hides the native button, and ours shows when there is text.",
+   [["b8-desktop.webp", "Desktop", false, false]]],
+  ["b11", "B11", "No builder text under 12 px",
+   "Panel headings (still the only uppercase text) and the family count go from 11 to 12 px. Picker bird names go to 12 px on up to three lines, with a slightly smaller picture and taller rows, so no name is cut.",
+   "Test: no text outside the poster is under 12 px, at 390 and 1280.",
+   [["b11-picker-desktop.webp", "Picker, desktop", false, false], ["b11-builder-phone.webp", "Builder, phone", true]]],
+  ["l3", "L3, L2, L1, L5", "Blue hero, bills clear, phone order, images",
+   "L3: cobalt palette (paper, stage, forest, ink, muted, cobalt, cobalt text) and three blue birds, European roller, blue jay and common kingfisher, all in the live catalog, with the white sticker outlines removed and a soft shadow. L2: every bill sits clear of the letters, 51 px at 1440 and 39 px at 1280. L1: on phones the headline and buttons come first and the birds stand below. L5: all hero images load at once, the roller first, each at a size that matches how wide it shows.",
+   "Tests: three blue birds and the caption; no bill within 8 px of a letter and, on phones, no bird on a letter; the main button on the first screen; eager loading, one high priority image, small and full sources.",
+   [["hero-desktop.webp", "Desktop", false], ["hero-phone.webp", "Phone", true]],
+   "The colour check found the cobalt has no close echo in the art: the roller reads as turquoise (hue about 200) and only the jay is near cobalt (hue 259). Blue family colours cover about 7 to 12% of the hero, but most of it is turquoise. If you want a tighter match, the accent could move toward the birds' blue, or a bluer bird could replace the roller."],
+  ["l6", "L6", "The final call poster is shown whole",
+   "The poster no longer hangs into the footer line: the band is padded and the poster sits centred with its full shadow.",
+   "Test: the poster ends inside the band, above the footer, at 390 and 1280.",
+   [["l6-desktop.webp", "Desktop", false], ["l6-phone.webp", "Phone", true]]],
+  ["l7", "L7", "Every link is tall enough to hit",
+   "Nav links, the wordmark, footer links and Report a wrong bird are at least 44 px tall on phones and 32 px on desktop. Credit links inside the sentence get transparent padding, so the text looks the same. The after pictures outline each link's hit area.",
+   "Test: no link under 44 px on phones or 32 px on desktop.",
+   [["l7-nav-desktop.webp", "Top bar, desktop", false], ["l7-footer-phone.webp", "Footer, phone", true], ["l7-footer-desktop.webp", "Footer, desktop", false, false, true]]],
+];
+const jump = document.getElementById("jump"), list = document.getElementById("list");
+for (const [id, code, title, what, test, imgs, note] of ITEMS) {
+  const a = document.createElement("a"); a.href = "#" + id; a.textContent = code; jump.append(a);
+  const s = document.createElement("section"); s.id = id;
+  const pairs = imgs.map(([f, label, phone, both = true]) =>
+    `<div class="pair"><div class="labels"><span>${both ? "Before" : ""}</span><span>${label}${both ? ", after" : ""}</span></div><img src="${f}" alt="${title}: ${label}" loading="lazy"></div>`);
+  const wide = imgs.filter((i) => !i[2]).length, narrow = imgs.filter((i) => i[2]).length;
+  s.innerHTML = `<h2><span class="code">${code}</span>${title}</h2><p class="what">${what}</p><p class="test">${test}</p>${note ? `<p class="note">${note}</p>` : ""}
+    <div class="row${wide && narrow ? "" : " one"}">${pairs.join("")}</div>`;
+  list.append(s);
+}
+const f = document.createElement("section"); f.id = "full";
+f.innerHTML = `<h2>The landing page, full length</h2><div class="full"><div class="pair"><div class="labels"><span></span><span>Desktop, 1440 px</span></div><img src="landing-full-desktop.webp" alt="The full landing page at desktop size" loading="lazy"></div><div class="pair"><div class="labels"><span></span><span>Phone, 390 px</span></div><img src="landing-full-phone.webp" alt="The full landing page at phone size" loading="lazy"></div></div>`;
+list.append(f);
+const a = document.createElement("a"); a.href = "#full"; a.textContent = "Full page"; jump.append(a);
+</script>
