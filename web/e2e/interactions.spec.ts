@@ -484,7 +484,6 @@ test("in Numbers mode the legend names can be renamed too", async ({
   await legend.locator("[data-name-edit]").first().click();
   const box = page.getByRole("textbox", { name: "Bird name on the poster" });
   await expect(box).toBeFocused();
-  await expect(page.getByText("Enter to save, Esc to cancel")).toBeVisible();
   await box.fill("Owl one");
   await box.press("Enter");
   await expect(legend.locator("li").first()).toContainText("Owl one");
@@ -496,27 +495,21 @@ test("in Numbers mode the legend names can be renamed too", async ({
   await expect(page.locator("[data-label]").getByText("Owl one")).toBeVisible();
 });
 
-test("the rename card has Save, Cancel and Use original name", async ({
+test("renaming happens in place with no pop-up, readable even on a small poster", async ({
   page,
 }) => {
   await open(page);
   const owl = animal(page, ONE);
   await owl.locator("[data-name-edit]").click();
-  const card = page.getByRole("dialog", { name: "Rename this bird" });
-  await card
-    .getByRole("textbox", { name: "Bird name on the poster" })
-    .fill("Hoot");
-  await card.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  const box = page.getByRole("textbox", { name: "Bird name on the poster" });
+  const size = await box.evaluate((el) =>
+    parseFloat(getComputedStyle(el).fontSize),
+  );
+  expect(size).toBeGreaterThanOrEqual(14);
+  await box.fill("Hoot");
+  // Clicking away saves.
+  await page.locator("[data-poster-title]").click();
   await expect(owl.locator("[data-label]")).toHaveText("Hoot");
-  await owl.locator("[data-name-edit]").click();
-  await card.getByRole("button", { name: "Use original name" }).click();
-  await expect(owl.locator("[data-label]")).toHaveText("Eurasian Eagle-Owl");
-  await owl.locator("[data-name-edit]").click();
-  await card
-    .getByRole("textbox", { name: "Bird name on the poster" })
-    .fill("Gone");
-  await card.getByRole("button", { name: "Cancel" }).click();
-  await expect(card).toHaveCount(0);
-  await expect(owl.locator("[data-label]")).toHaveText("Eurasian Eagle-Owl");
   await expect(owl).toHaveAttribute("data-mirrored", "false");
 });

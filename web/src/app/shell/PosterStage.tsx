@@ -43,7 +43,13 @@ function EmptyPoster({ phone }: { phone?: boolean }) {
           {preset && (
             <Button
               variant="outline"
-              onClick={() => dispatch({ type: "replaceWith", ids: preset.ids })}
+              onClick={() =>
+                dispatch({
+                  type: "replaceWith",
+                  ids: preset.ids,
+                  title: preset.title,
+                })
+              }
             >
               {preset.title}
             </Button>

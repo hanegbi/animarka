@@ -9,50 +9,48 @@ import {
   type SyntheticEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import { Button } from "@/components/ui/button";
 import { MAX_NAME } from "@/poster/state/types";
 
-const CARD_W = 280;
-const MARGIN = 8;
-
 /**
- * A bird's name on the poster, or in the legend, that you can click to rename.
+ * A bird's name on the poster, or in the legend, that you edit in place.
  * At rest: a dotted underline and a small pencil on hover say it is editable.
- * Click: a small rename card opens under the name, at normal UI size (the poster text can be tiny),
- * with Save, Cancel and, when renamed, "Use original name". Enter saves, Escape cancels.
- * Clicks and keys stay out of the bird, so it does not mirror, drag or move while you type.
+ * Click: a text box opens right over the name, at least 14 px tall text so it is readable even on a
+ * small poster, with a green outline. Enter or clicking away saves, Escape cancels, an empty name goes
+ * back to the catalog name. No pop-up. Clicks and keys stay out of the bird, so it does not mirror,
+ * drag or move while you type.
  */
 export function EditableName({
   name,
-  original,
   onChange,
 }: {
   name: string;
-  /** The catalog name, offered back when the bird was renamed. */
+  /** Kept for callers; an empty name already restores the catalog name. */
   original?: string;
   onChange: (name: string) => void;
 }) {
-  const anchor = useRef<HTMLSpanElement>(null);
-  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
-  const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
-  const stop = (e: SyntheticEvent) => e.stopPropagation();
+  const anchor = useRef<HTMLSpanElement>(null);
+  const [rect, setRect] = useState<{
+    x: number;
+    y: number;
+    w: number;
+    font: number;
+  } | null>(null);
 
+  // The box is drawn above the page, exactly over the name, so the poster's own clipping never cuts it.
   useLayoutEffect(() => {
-    if (!open) return;
+    if (!editing) return;
     const place = () => {
-      const r = anchor.current?.getBoundingClientRect();
-      if (!r) return;
-      const left = Math.min(
-        Math.max(MARGIN, r.left + r.width / 2 - CARD_W / 2),
-        window.innerWidth - CARD_W - MARGIN,
-      );
-      const below = r.bottom + MARGIN;
-      const top =
-        below + 170 > window.innerHeight
-          ? Math.max(MARGIN, r.top - 170 - MARGIN)
-          : below;
-      setPos({ left, top });
+      const el = anchor.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setRect({
+        x: r.left + r.width / 2,
+        y: r.top + r.height / 2,
+        w: r.width,
+        font: parseFloat(getComputedStyle(el).fontSize) || 14,
+      });
     };
     place();
     window.addEventListener("resize", place);
@@ -61,108 +59,66 @@ export function EditableName({
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
     };
-  }, [open]);
+  }, [editing]);
+  const stop = (e: SyntheticEvent) => e.stopPropagation();
 
-  const close = (save: boolean, value = draft) => {
-    setOpen(false);
-    if (save && value.trim() !== name) onChange(value);
+  const done = (save: boolean) => {
+    setEditing(false);
+    if (save && draft.trim() !== name) onChange(draft);
   };
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    if (e.key === "Enter") close(true);
-    else if (e.key === "Escape") close(false);
+    if (e.key === "Enter") done(true);
+    else if (e.key === "Escape") done(false);
   };
-  const renamed = original !== undefined && name !== original;
 
   return (
-    <>
-      {/* Not a separate control: it sits inside the bird's button. Keyboard users press F2 on the bird. */}
-      <span
-        ref={anchor}
-        className={`group/name decoration-primary/60 cursor-text underline-offset-[0.25em] hover:underline hover:decoration-dotted ${
-          open ? "underline decoration-solid" : ""
-        }`}
-        title="Click to rename"
-        onPointerDown={stop}
-        onClick={(e) => {
-          e.stopPropagation();
-          setDraft(name);
-          setOpen(true);
-        }}
-        data-name-edit
-      >
-        <span className="poster-label-text">{name}</span>
+    // Not a separate control: it sits inside the bird's button. Keyboard users press F2 on the bird.
+    <span
+      ref={anchor}
+      className="group/name decoration-primary/60 relative cursor-text underline-offset-[0.25em] hover:underline hover:decoration-dotted"
+      title={editing ? undefined : "Click to rename"}
+      onPointerDown={stop}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (editing) return;
+        setDraft(name);
+        setEditing(true);
+      }}
+      data-name-edit
+    >
+      {/* The name keeps its place while editing, so nothing on the poster moves. */}
+      <span className={`poster-label-text ${editing ? "invisible" : ""}`}>
+        {name}
+      </span>
+      {!editing && (
         <PencilIcon
           aria-hidden
           className="text-primary ms-[0.3em] inline-block size-[0.9em] align-[-0.1em] opacity-0 transition-opacity group-hover/name:opacity-80"
         />
-      </span>
-      {open &&
-        pos &&
+      )}
+      {editing &&
+        rect &&
         createPortal(
-          <>
-            {/* A click outside cancels. */}
-            <div
-              className="fixed inset-0 z-40"
-              onPointerDown={() => close(false)}
-              aria-hidden
-            />
-            <div
-              role="dialog"
-              aria-label="Rename this bird"
-              className="bg-popover text-popover-foreground fixed z-50 flex flex-col gap-3 rounded-xl border p-3 font-sans shadow-xl"
-              style={{ left: pos.left, top: pos.top, width: CARD_W }}
-              onPointerDown={stop}
-              onClick={stop}
-            >
-              <label className="flex flex-col gap-1.5">
-                <span className="text-muted-foreground text-[11px] font-semibold tracking-wide uppercase">
-                  Name on the poster
-                </span>
-                <input
-                  autoFocus
-                  value={draft}
-                  maxLength={MAX_NAME}
-                  aria-label="Bird name on the poster"
-                  aria-describedby="rename-hint"
-                  onChange={(e) => setDraft(e.target.value)}
-                  onFocus={(e) => e.currentTarget.select()}
-                  onKeyDown={onKeyDown}
-                  className="focus-visible:ring-ring/50 h-10 w-full rounded-[10px] border bg-transparent px-3 text-sm outline-none focus-visible:ring-3"
-                />
-              </label>
-              <p id="rename-hint" className="text-muted-foreground text-[12px]">
-                Enter to save, Esc to cancel
-              </p>
-              <div className="flex items-center justify-between gap-2">
-                {renamed ? (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => close(true, original)}
-                  >
-                    Use original name
-                  </Button>
-                ) : (
-                  <span />
-                )}
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => close(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button size="sm" onClick={() => close(true)}>
-                    Save
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </>,
+          <input
+            autoFocus
+            value={draft}
+            maxLength={MAX_NAME}
+            aria-label="Bird name on the poster"
+            onChange={(e) => setDraft(e.target.value)}
+            onFocus={(e) => e.currentTarget.select()}
+            onBlur={() => done(true)}
+            onKeyDown={onKeyDown}
+            className="bg-card text-card-foreground fixed z-50 -translate-x-1/2 -translate-y-1/2 rounded-md border-0 px-2 py-1 text-center font-sans leading-tight shadow-[0_0_0_2px_var(--primary),0_6px_16px_rgb(0_0_0/0.18)] outline-none"
+            style={{
+              left: Math.min(Math.max(rect.x, 96), window.innerWidth - 96),
+              top: rect.y,
+              fontSize: Math.max(rect.font, 14),
+              width: Math.max(rect.w + 24, 176),
+            }}
+          />,
           document.body,
         )}
-    </>
+    </span>
   );
 }

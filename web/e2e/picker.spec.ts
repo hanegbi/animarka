@@ -192,19 +192,17 @@ test("surprise mix builds 12 to 16 birds and clear empties the poster", async ({
   ).toBeVisible();
 });
 
-test("presets replace the poster, and a one family preset names it", async ({
-  page,
-  catalog,
-}) => {
+test("a set replaces the poster and names it", async ({ page, catalog }) => {
   await open(page);
   const owls = catalog.preset("owls-of-the-world");
   await pickPreset(page, owls.title);
   await expect(onPoster(page)).toHaveCount(owls.ids.length);
+  await expect(page.locator("[data-poster-title]")).toHaveValue(owls.title);
   const hummingbirds = catalog.preset("hummingbirds");
   await pickPreset(page, hummingbirds.title);
   await expect(onPoster(page)).toHaveCount(hummingbirds.ids.length);
   await expect(page.locator("[data-poster-title]")).toHaveValue(
-    catalog.get(hummingbirds.ids[0]).family,
+    hummingbirds.title,
   );
 });
 

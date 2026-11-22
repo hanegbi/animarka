@@ -138,7 +138,7 @@ export function Picker() {
               className="justify-start truncate"
               title={p.description}
               onClick={() => {
-                dispatch({ type: "replaceWith", ids: p.ids });
+                dispatch({ type: "replaceWith", ids: p.ids, title: p.title });
                 setSetsOpen(false);
               }}
             >

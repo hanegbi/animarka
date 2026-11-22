@@ -67,7 +67,8 @@ export type PosterAction =
   | { type: "toggle"; id: string }
   | { type: "addMany"; ids: string[] }
   | { type: "removeMany"; ids: string[] }
-  | { type: "replaceWith"; ids: string[] }
+  /** `title` names the poster after a set; it stays until the user edits it. */
+  | { type: "replaceWith"; ids: string[]; title?: string }
   | { type: "clear" }
   | { type: "surprise"; seed: number }
   /** `center` hands the centerpiece spot to another bird in the same step. */

@@ -119,7 +119,13 @@ export function reduce(
         .filter((id) => ctx.catalog.has(id))
         .slice(0, MAX_BIRDS);
       // Replacing the poster resets mirrors, like the prototype's "Only this family".
-      return setOrder({ ...state, flip: {}, center: undefined }, order, ctx);
+      const next = setOrder(
+        { ...state, flip: {}, center: undefined },
+        order,
+        ctx,
+      );
+      const title = action.title?.trim().slice(0, 32);
+      return title ? { ...next, title, titleAuto: false } : next;
     }
     case "clear":
       return state.order.length

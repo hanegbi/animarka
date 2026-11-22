@@ -484,3 +484,16 @@ describe("custom bird names", () => {
     expect(s.names).toEqual({});
   });
 });
+
+describe("a set names the poster", () => {
+  it("replaceWith with a title sets it and stops the automatic title", () => {
+    const s = run(start(["a"]), {
+      type: "replaceWith",
+      ids: ["a", "b"],
+      title: "Garden birds",
+    });
+    expect(s.title).toBe("Garden birds");
+    expect(s.titleAuto).toBe(false);
+    expect(run(s, { type: "toggle", id: "c" }).title).toBe("Garden birds");
+  });
+});
