@@ -1,6 +1,10 @@
+from typing import Any
+
+from animarka_core.logs import configure_logging
 from animarka_core.queues import build_queues, work_exchange
 from animarka_core.settings import get_settings
 from celery import Celery
+from celery.signals import setup_logging
 
 settings = get_settings()
 
@@ -34,3 +38,9 @@ app.conf.update(
     accept_content=["json"],
     timezone="UTC",
 )
+
+
+@setup_logging.connect
+def _json_logs(**_: Any) -> None:
+    """Celery leaves logging alone when this signal has a receiver, so worker logs are JSON too."""
+    configure_logging()

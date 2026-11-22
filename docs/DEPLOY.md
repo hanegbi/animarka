@@ -34,3 +34,10 @@ docker compose -f infra/compose/docker-compose.prod.yml --env-file infra/compose
 - Only ports 80 and 443 are open. The database, Redis and RabbitMQ are on the internal network only.
 
 Still to come in M6: nightly backups (M6.3) and deploy from CI (M6.4).
+
+## Health, logs and queues
+
+- Every service has a health check. The API's checks Postgres and Redis at `/readyz`; `/healthz` only says the process answers.
+- Logs are one JSON object per line (`ts`, `level`, `logger`, `msg`, plus fields such as `method`, `path`, `status`, `ms` for each API request). Read them with
+  `docker compose -f infra/compose/docker-compose.prod.yml --env-file infra/compose/.env logs -f api worker`.
+- The queue dashboard (Flower) is at `https://$DOMAIN/flower`, behind basic auth: set `FLOWER_USER` and `FLOWER_PASSWORD` in `.env`.

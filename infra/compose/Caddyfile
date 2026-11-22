@@ -1,6 +1,10 @@
 # Caddy gets and renews the TLS certificate for $DOMAIN by itself.
 {$DOMAIN} {
 	encode zstd gzip
+	# Flower checks its own basic auth (FLOWER_USER, FLOWER_PASSWORD in .env).
+	handle /flower* {
+		reverse_proxy flower:5555
+	}
 	reverse_proxy web:3000
 	header {
 		Strict-Transport-Security "max-age=31536000"
