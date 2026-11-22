@@ -8,7 +8,7 @@ A natural history museum shop and a printed field guide. Every section is a plat
 
 ## System (landing only)
 
-Tokens live in `web/src/styles/tokens.css` under `[data-landing]`, so the builder can never use them.
+Tokens live in `web/src/styles/landing-tokens.css`, imported by landing routes only and scoped to `[data-landing]`, so they never ship with the builder.
 
 | Token | Value | Use |
 |---|---|---|

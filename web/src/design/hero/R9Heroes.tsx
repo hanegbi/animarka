@@ -6,7 +6,7 @@ import { KnockoutHeadline } from "./Knockout";
  * Round R9: five hero options for the landing page. Every option is the real first screen:
  * the top bar plus the hero, on ivory paper grain, one big real subject, vermilion only where it
  * belongs to the subject (15 to 30% of the hero, measured). Tokens live in
- * src/styles/tokens.css under [data-landing].
+ * src/styles/landing-tokens.css under [data-landing].
  */
 
 export const FIELD: CSSProperties = {
