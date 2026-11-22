@@ -17,6 +17,8 @@ dev = ["animarka-api", "animarka-workers", "ruff>=0.8", "mypy>=1.13", "pytest>=8
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# Third party design skills (charles-*) ship their own scripts; they are tools, not app code.
+extend-exclude = [".agents"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
