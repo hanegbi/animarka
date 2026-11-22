@@ -92,11 +92,13 @@ export default function ExportDialog({ onClose }: { onClose: () => void }) {
               {state.order.length} birds, {state.size} poster.
             </p>
           </div>
-          <form method="dialog">
-            <Button variant="ghost" size="sm">
-              Close
-            </Button>
-          </form>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => ref.current?.close()}
+          >
+            Close
+          </Button>
         </div>
 
         <section

@@ -186,7 +186,6 @@ export function BirdGrid({
                   data-index={index}
                   data-id={s.id}
                   tabIndex={index === active ? 0 : -1}
-                  title={`${on ? "Remove from poster" : "Add to poster"}: ${s.sci}, ${s.family}`}
                   onClick={() => {
                     setActive(index);
                     onToggle(s.id);

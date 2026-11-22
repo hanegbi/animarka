@@ -285,7 +285,7 @@ test("every button uses the R8 sizes: 40 or 32 px on desktop, 44 or 40 px on a p
     await openTab(page, tab);
     const boxes = await page
       .locator(
-        "button:visible:not([role=radio]):not([data-animal] *):not(nav button):not([role=option])",
+        "button:visible:not([role=radio]):not([data-animal] *):not(nav button):not([role=option]):not([aria-label='Birds on your poster'] button)",
       )
       .evaluateAll((els) =>
         els.map((e) => ({

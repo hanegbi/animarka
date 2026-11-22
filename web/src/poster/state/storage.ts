@@ -3,6 +3,7 @@ import {
   LABEL_MODES,
   LANGS,
   LAYOUTS,
+  MAX_NAME,
   ORIENTATIONS,
   SIZES,
   type PosterContext,
@@ -40,6 +41,13 @@ export function sanitize(raw: unknown, ctx: PosterContext): PosterState | null {
     for (const id of Object.keys(r.flip)) if (on.has(id)) flip[id] = true;
   }
 
+  const names: Record<string, string> = {};
+  if (r.names && typeof r.names === "object") {
+    for (const [id, n] of Object.entries(r.names as Record<string, unknown>))
+      if (on.has(id) && typeof n === "string" && n.trim())
+        names[id] = n.trim().slice(0, MAX_NAME);
+  }
+
   const titleAuto = typeof r.titleAuto === "boolean" ? r.titleAuto : true;
   const rawTitle = typeof r.title === "string" ? r.title.slice(0, 60) : "";
   const title =
@@ -49,6 +57,7 @@ export function sanitize(raw: unknown, ctx: PosterContext): PosterState | null {
     ...base,
     order,
     flip,
+    ...(Object.keys(names).length ? { names } : {}),
     center:
       typeof r.center === "string" && on.has(r.center) ? r.center : undefined,
     seed:

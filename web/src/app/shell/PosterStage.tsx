@@ -92,6 +92,7 @@ export function PosterStage({ phone }: { phone?: boolean }) {
           catalog={ctx.catalog}
           className="shadow-md"
           onTitleChange={(title) => dispatch({ type: "setTitle", title })}
+          onNameChange={(id, name) => dispatch({ type: "setName", id, name })}
           onMirror={(id) => dispatch({ type: "mirror", id })}
           // No message on remove (owner call, R8). Undo in the header brings a bird back.
           onRemove={(id) => dispatch({ type: "toggle", id })}

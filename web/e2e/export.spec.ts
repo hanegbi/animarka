@@ -69,6 +69,16 @@ test.describe("share and export", () => {
     await expect(dialog).toHaveCount(0);
   });
 
+  test("the Close button closes the export dialog", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator(poster)).toHaveCount(12);
+    await page.getByRole("button", { name: "Export" }).click();
+    const dialog = page.getByRole("dialog", { name: "Export your poster" });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Close" }).click();
+    await expect(dialog).toHaveCount(0);
+  });
+
   test("the export code loads only when Export is pressed", async ({
     page,
   }) => {

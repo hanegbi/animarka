@@ -43,11 +43,8 @@ export function SearchField({
           </button>
         )}
       </div>
-      <p
-        className="text-muted-foreground mt-1.5 text-xs"
-        aria-live="polite"
-        role="status"
-      >
+      {/* Read aloud, not shown: the owner found the visible count line noisy. */}
+      <p className="sr-only" aria-live="polite" role="status">
         {status}
       </p>
     </div>

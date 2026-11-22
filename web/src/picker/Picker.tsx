@@ -153,7 +153,7 @@ export function Picker() {
               className="justify-start truncate"
               title={p.description}
               onClick={() => {
-                act({ type: "replaceWith", ids: p.ids }, `${p.title} added`);
+                dispatch({ type: "replaceWith", ids: p.ids });
                 setSetsOpen(false);
               }}
             >
@@ -170,9 +170,7 @@ export function Picker() {
             className="text-muted-foreground font-sans text-[11px] font-semibold tracking-wide uppercase"
           >
             Your poster{" "}
-            <span className="tracking-normal normal-case">
-              · {trayLabel(state.order, species)}
-            </span>
+            <span className="sr-only">, {trayLabel(state.order, species)}</span>
           </h2>
           <Button
             variant="ghost"
@@ -225,9 +223,7 @@ export function Picker() {
               size="sm"
               disabled={actions.onlyDisabled}
               title="Replace the poster with just these birds"
-              onClick={() =>
-                act({ type: "replaceWith", ids }, "Poster replaced")
-              }
+              onClick={() => dispatch({ type: "replaceWith", ids })}
             >
               {actions.onlyLabel}
             </Button>

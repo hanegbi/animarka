@@ -88,6 +88,7 @@ Filled in as each round is answered. See the rounds table in `docs/PLAN.md`.
 | R8.1 | 2026-11-22 | Remove and credits | No pop-up when a bird is removed; header Undo brings it back. Art credits move behind a Credits button in the header | | Owner asks. Credit stays one click away because CC BY 4.0 requires it |
 | M4 | 2026-11-22 | Share and export UI (R6) | Share in the header saves and copies the link (shows it to select if the clipboard is blocked). Export opens a native dialog: free watermarked preview with progress and download, print file shown as coming with a purchase, share link at the bottom. On phones Export is an icon in the header | | Built from my recommendation without a five option round, because the owner said not to wait. The dialog loads on demand, so the page stays at 297 KB |
 | M4 | 2026-11-22 | Render worker | Playwright Chromium in the worker opens a signed print route and screenshots it. Same poster and options reuse the finished file. PDF and 300 DPI print sizes come with M5 payments | | One renderer for preview and print keeps the file identical to the builder |
+| R8.2 | 2026-11-22 | Owner fixes | Click a bird's name on the poster to rename it (F2 from the keyboard); the art still mirrors. Names are saved with the poster and in share links. Count lines under the search and in the poster strip are read aloud only. Strip pictures 44 px with a fixed two row height, so Add all no longer moves the buttons. No card tooltips, no message on replace, the export Close button works | | Owner asks |
 
 ## Open questions
 

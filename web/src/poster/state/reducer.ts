@@ -2,6 +2,7 @@ import { facing } from "./mirror";
 import { seededShuffle } from "./random";
 import {
   MAX_BIRDS,
+  MAX_NAME,
   type PosterAction,
   type PosterContext,
   type PosterState,
@@ -55,7 +56,11 @@ function pruned(state: PosterState): PosterState {
   for (const id of Object.keys(state.flip)) if (on.has(id)) flip[id] = true;
   const center =
     state.center && on.has(state.center) ? state.center : undefined;
-  return { ...state, flip, center };
+  if (!state.names) return { ...state, flip, center };
+  const names: Record<string, string> = {};
+  for (const [id, n] of Object.entries(state.names))
+    if (on.has(id)) names[id] = n;
+  return { ...state, flip, center, names };
 }
 
 function setOrder(
@@ -190,6 +195,16 @@ export function reduce(
       const titleAuto = !action.title.trim();
       const next = { ...state, title: action.title, titleAuto };
       return titleAuto ? withAutoTitle(next, ctx) : next;
+    }
+    case "setName": {
+      if (!state.order.includes(action.id)) return state;
+      const name = action.name.trim().slice(0, MAX_NAME);
+      const names = { ...state.names };
+      if (name) names[action.id] = name;
+      else delete names[action.id];
+      if ((state.names?.[action.id] ?? "") === (names[action.id] ?? ""))
+        return state;
+      return { ...state, names };
     }
     case "faceAll": {
       // Art is shown looking left unless flipped (see mirror.ts), so "left" clears every flip and

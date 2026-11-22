@@ -6,8 +6,14 @@ import { useState } from "react";
 import { artSrc, displayName, type SpeciesView } from "@/catalog/species-view";
 import type { Lang } from "@/poster/state/types";
 
-/** How many pictures show before a "+N" button: two rows in the picker panel. */
-const COLLAPSED = 14;
+/** Seven per row, two rows: thirteen pictures and a "+N" button when there are more. */
+const COLLAPSED = 13;
+/**
+ * The strip always takes two rows of height (2 x 44 px + 4 px gap), so adding or removing birds never
+ * moves the buttons below it. Showing every bird with "+N" is the only thing that grows it.
+ */
+const STRIP =
+  "grid min-h-[92px] content-start grid-cols-[repeat(7,44px)] gap-1";
 
 /**
  * R8 C1. The birds on the poster, as round pictures pinned under the search. One click takes a bird
@@ -31,7 +37,7 @@ export function Tray({
   const [expanded, setExpanded] = useState(false);
   if (!order.length) {
     return (
-      <p className="text-muted-foreground text-sm">
+      <p className="text-muted-foreground flex min-h-[92px] items-center text-sm">
         Nothing yet. Tap birds below, or try Surprise mix.
       </p>
     );
@@ -39,7 +45,7 @@ export function Tray({
   const visible = expanded ? order : order.slice(0, COLLAPSED);
   const hidden = order.length - visible.length;
   return (
-    <ul aria-label="Birds on your poster" className="flex flex-wrap gap-1.5">
+    <ul aria-label="Birds on your poster" className={STRIP}>
       {visible.map((id) => {
         const s = species.get(id);
         if (!s) return null;
@@ -50,16 +56,16 @@ export function Tray({
               type="button"
               onClick={() => onRemove(id, name)}
               aria-label={`Remove ${name} from poster`}
-              className="group/thumb bg-card hover:border-primary focus-visible:ring-ring/50 relative grid size-10 place-items-center rounded-full border outline-none focus-visible:ring-3 max-[1099px]:size-11"
+              className="group/thumb bg-card hover:border-primary focus-visible:ring-ring/50 relative grid size-11 place-items-center rounded-full border outline-none focus-visible:ring-3"
             >
               <img
                 src={artSrc(s, style, "thumb")}
                 alt=""
-                width={26}
-                height={26}
+                width={30}
+                height={30}
                 loading="lazy"
-                // A 26 px box in a 40 px circle: even its corners stay inside the ring.
-                className="size-[26px] object-contain max-[1099px]:size-7"
+                // A 30 px box in a 44 px circle: even its corners stay inside the ring.
+                className="size-[30px] object-contain"
               />
               <span
                 aria-hidden
@@ -84,9 +90,9 @@ export function Tray({
             type="button"
             onClick={() => setExpanded((e) => !e)}
             aria-expanded={expanded}
-            className="bg-muted text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 h-10 rounded-full px-3 text-[13px] font-medium outline-none focus-visible:ring-3 max-[1099px]:h-11"
+            className="bg-muted text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 size-11 rounded-full text-[13px] font-medium outline-none focus-visible:ring-3"
           >
-            {expanded ? "Show less" : `+${hidden}`}
+            {expanded ? "Less" : `+${hidden}`}
           </button>
         </li>
       )}

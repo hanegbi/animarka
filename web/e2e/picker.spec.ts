@@ -245,3 +245,29 @@ test("the poster is saved and comes back after a reload", async ({ page }) => {
   ).toBeVisible();
   await expect(onPoster(page)).toHaveCount(1);
 });
+
+test("Add all and Remove these do not make the buttons jump", async ({
+  page,
+}) => {
+  await open(page);
+  await chip(page, "Owls").click();
+  const add = page.getByRole("button", { name: /^Add all/ });
+  const y0 = (await add.boundingBox())!.y;
+  await add.click();
+  const remove = page.getByRole("button", { name: /^Remove these/ });
+  await expect(remove).toBeVisible();
+  expect(Math.abs((await remove.boundingBox())!.y - y0)).toBeLessThan(1);
+  await remove.click();
+  await expect(page.getByRole("button", { name: /^Add all/ })).toBeVisible();
+  expect(
+    Math.abs(
+      (await page.getByRole("button", { name: /^Add all/ }).boundingBox())!.y -
+        y0,
+    ),
+  ).toBeLessThan(1);
+});
+
+test("bird cards have no hover tooltip", async ({ page }) => {
+  await open(page);
+  expect(await page.locator("[role=option][title]").count()).toBe(0);
+});

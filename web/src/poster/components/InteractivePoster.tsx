@@ -78,6 +78,11 @@ function InteractiveShell({
   const settling = ctx.settling.has(id);
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "F2") {
+      e.preventDefault();
+      e.currentTarget.querySelector<HTMLElement>("[data-name-edit]")?.click();
+      return;
+    }
     const action = keyToAction(e.key);
     if (!action) return;
     e.preventDefault();
@@ -93,7 +98,7 @@ function InteractiveShell({
       {...drag.listeners}
       role="button"
       aria-roledescription="draggable bird"
-      aria-label={`${name}. Press Enter to mirror it. Arrow keys move it. Delete removes it. Drag it onto another bird to swap.`}
+      aria-label={`${name}. Press Enter to mirror it, F2 to rename it. Arrow keys move it. Delete removes it. Drag it onto another bird to swap.`}
       tabIndex={0}
       className="poster-animal focus-visible:ring-ring absolute cursor-grab rounded-[1cqw] outline-none focus-visible:ring-2 active:cursor-grabbing"
       style={{

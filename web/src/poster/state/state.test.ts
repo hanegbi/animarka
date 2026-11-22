@@ -462,3 +462,25 @@ describe("face all", () => {
     expect(s.center).toBe("c");
   });
 });
+
+describe("custom bird names", () => {
+  it("renames, trims, caps the length, and an empty name goes back to the catalog name", () => {
+    let s = start(["a", "b"]);
+    s = run(s, { type: "setName", id: "a", name: "  Our owl  " });
+    expect(s.names).toEqual({ a: "Our owl" });
+    s = run(s, { type: "setName", id: "a", name: "x".repeat(60) });
+    expect(s.names?.a).toHaveLength(40);
+    s = run(s, { type: "setName", id: "a", name: "   " });
+    expect(s.names).toEqual({});
+    expect(run(s, { type: "setName", id: "zz", name: "Nope" })).toBe(s);
+  });
+
+  it("drops the name when the bird leaves the poster, and keeps names through save and load", () => {
+    let s = run(start(["a", "b"]), { type: "setName", id: "b", name: "Bea" });
+    expect(sanitize(JSON.parse(JSON.stringify(s)), fakeCtx)?.names).toEqual({
+      b: "Bea",
+    });
+    s = run(s, { type: "toggle", id: "b" });
+    expect(s.names).toEqual({});
+  });
+});

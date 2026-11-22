@@ -9,6 +9,8 @@ export type Orientation = "portrait" | "landscape";
 export const SIZES = ["3:4", "2:3", "4:5"] as const;
 /** The most birds one poster holds. Every layout is tested up to this count. */
 export const MAX_BIRDS = 150;
+/** Longest name a user can type on a bird. */
+export const MAX_NAME = 40;
 
 export type SizeId = (typeof SIZES)[number];
 
@@ -27,6 +29,8 @@ export type PosterState = {
   flip: Record<string, true>;
   /** Centerpiece override. Empty means the heaviest species. */
   center?: string;
+  /** Names the user typed on the poster, by species. Empty means the catalog name. */
+  names?: Record<string, string>;
   seed: number;
   title: string;
   /** True until the user edits the title. The title then follows the selection. */
@@ -70,6 +74,8 @@ export type PosterAction =
   | { type: "swap"; a: string; b: string; center?: string }
   /** Turn every bird to look the same way. */
   | { type: "faceAll"; dir: "left" | "right" }
+  /** Rename a bird on this poster. An empty name goes back to the catalog name. */
+  | { type: "setName"; id: string; name: string }
   | { type: "move"; id: string; delta: number }
   | { type: "mirror"; id: string }
   | { type: "shuffle"; seed: number }

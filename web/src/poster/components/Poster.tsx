@@ -7,6 +7,7 @@ import { frameAspect } from "@/poster/layout/sizing";
 import { unionBox } from "@/poster/layout/clamp";
 import type { Box, LayoutResult } from "@/poster/layout/types";
 import { effectiveMirror } from "@/poster/state/mirror";
+import { EditableName } from "./EditableName";
 import type { CatalogLookup, PosterState } from "@/poster/state/types";
 
 /** Everything is positioned in `cqw`: layout units are percent of the poster width. */
@@ -58,6 +59,8 @@ export type PosterProps = {
   AnimalShell?: ComponentType<AnimalShellProps>;
   /** Drawn on top of the poster, for example the empty state. */
   overlay?: ReactNode;
+  /** Called when the user renames a bird by clicking its name. Without it names are plain text. */
+  onNameChange?: (id: string, name: string) => void;
 };
 
 export function Poster({
@@ -70,6 +73,7 @@ export function Poster({
   onTitleChange,
   AnimalShell = PlainShell,
   overlay,
+  onNameChange,
 }: PosterProps) {
   const result = layout ?? layoutForState(state, species);
   const { frame, items } = result;
@@ -127,7 +131,7 @@ export function Poster({
 
       {items.map((item) => {
         const sp = species.get(item.id)!;
-        const name = displayName(sp, state.lang);
+        const name = state.names?.[item.id] ?? displayName(sp, state.lang);
         const block = unionBox(item.art, item.label, item.number);
         const mirrored = effectiveMirror(state, item.id, catalog);
         return (
@@ -164,7 +168,14 @@ export function Poster({
                 }}
                 data-label
               >
-                <span className="poster-label-text">{name}</span>
+                {onNameChange ? (
+                  <EditableName
+                    name={name}
+                    onChange={(n) => onNameChange(item.id, n)}
+                  />
+                ) : (
+                  <span className="poster-label-text">{name}</span>
+                )}
               </p>
             )}
             {item.number && (
@@ -202,7 +213,8 @@ export function Poster({
           {items.map((item) => (
             <li key={item.id} className="truncate">
               <b className="me-[0.4em]">{item.index + 1}</b>
-              {displayName(species.get(item.id)!, state.lang)}
+              {state.names?.[item.id] ??
+                displayName(species.get(item.id)!, state.lang)}
             </li>
           ))}
         </ol>

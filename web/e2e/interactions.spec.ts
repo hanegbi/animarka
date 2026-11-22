@@ -304,12 +304,50 @@ test("clearing the poster shows a message with Undo that brings everything back"
   await expect(page.locator("[data-animal]")).toHaveCount(12);
 });
 
-test("replacing the poster with a preset says so", async ({ page }) => {
+test("replacing the poster with a preset or Only these shows no message", async ({
+  page,
+}) => {
   await open(page);
   await pickPreset(page, "Owls of the world");
-  await expect(page.locator("[data-sonner-toast]")).toContainText(
-    "Owls of the world added",
-  );
+  await expect(page.locator("[data-animal]").first()).toBeVisible();
+  await page.getByRole("searchbox", { name: "Search birds" }).fill("kestrel");
+  await page.getByRole("button", { name: /^Only these/ }).click();
+  await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);
+});
+
+test("clicking a bird's name renames it on the poster, and the bird does not mirror", async ({
+  page,
+}) => {
+  await open(page);
+  const owl = animal(page, ONE);
+  await owl.locator("[data-name-edit]").click();
+  const box = page.getByRole("textbox", { name: "Bird name on the poster" });
+  await expect(box).toBeFocused();
+  await box.fill("Our big owl");
+  await box.press("Enter");
+  await expect(owl.locator("[data-label]")).toHaveText("Our big owl");
+  await expect(owl).toHaveAttribute("data-mirrored", "false");
+  // Escape keeps the old name; an empty name goes back to the catalog name.
+  await owl.locator("[data-name-edit]").click();
+  await box.fill("Never mind");
+  await box.press("Escape");
+  await expect(owl.locator("[data-label]")).toHaveText("Our big owl");
+  await owl.locator("[data-name-edit]").click();
+  await box.fill("");
+  await box.press("Enter");
+  await expect(owl.locator("[data-label]")).toHaveText("Eurasian Eagle-Owl");
+  // A rename is one undo step.
+  await owl.locator("[data-name-edit]").click();
+  await box.fill("Ollie");
+  await box.press("Enter");
+  await undoHeader(page).click();
+  await expect(owl.locator("[data-label]")).toHaveText("Eurasian Eagle-Owl");
+});
+
+test("clicking the bird art still mirrors it", async ({ page }) => {
+  await open(page);
+  await tap(page, ONE);
+  await expect(animal(page, ONE)).toHaveAttribute("data-mirrored", "true");
 });
 
 test("adding and removing with the cards does not nag with messages", async ({
@@ -416,4 +454,17 @@ test("the picker panel never scrolls sideways", async ({ page }) => {
       .map((e) => e.tagName + "." + String(e.className).slice(0, 40)),
   );
   expect(wide).toEqual([]);
+});
+
+test("keyboard: F2 on a bird renames it", async ({ page }) => {
+  await open(page);
+  await animal(page, ONE).focus();
+  await page.keyboard.press("F2");
+  const box = page.getByRole("textbox", { name: "Bird name on the poster" });
+  await expect(box).toBeFocused();
+  await box.fill("Keyboard owl");
+  await box.press("Enter");
+  await expect(animal(page, ONE).locator("[data-label]")).toHaveText(
+    "Keyboard owl",
+  );
 });
