@@ -32,6 +32,49 @@ test.describe("share and export", () => {
     await expect(page.locator("[data-poster-title]")).toHaveValue("Our garden");
   });
 
+  test("Share shows the link to copy when the clipboard never answers, and reuses the saved poster", async ({
+    page,
+  }, info) => {
+    test.skip(
+      info.project.name.startsWith("phone"),
+      "Share sits in the desktop header; phones share from Export",
+    );
+    // A clipboard that hangs forever, like the one that left Share stuck on Saving.
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, "clipboard", {
+        value: { writeText: () => new Promise(() => {}) },
+        configurable: true,
+      });
+    });
+    let saves = 0;
+    page.on("request", (r) => {
+      if (
+        r.method() === "POST" &&
+        new URL(r.url()).pathname === "/api/v1/posters"
+      )
+        saves++;
+    });
+    await page.goto("/make");
+    await expect(page.locator(poster)).toHaveCount(12);
+    const share = page.getByRole("button", { name: "Share" }).first();
+    await share.click();
+    const box = page.getByLabel("Copy this link");
+    await expect(box).toBeVisible({ timeout: 4000 });
+    await expect(box).toHaveValue(/\/p\/t\d{7}$/);
+    await expect(share).toBeEnabled();
+    const first = await box.inputValue();
+    await page.getByRole("button", { name: "Done" }).click();
+    await share.click();
+    await expect(box).toHaveValue(first);
+    expect(saves).toBe(1);
+    // A change to the poster saves a new one.
+    await page.getByRole("button", { name: "Done" }).click();
+    await page.locator("[data-poster-title]").fill("A new title");
+    await share.click();
+    await expect(box).not.toHaveValue(first);
+    expect(saves).toBe(2);
+  });
+
   test("a broken share link says so and offers a fresh start", async ({
     page,
   }) => {

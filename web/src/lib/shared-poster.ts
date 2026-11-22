@@ -36,8 +36,13 @@ export const sharedPoster = {
   server: () => LOADING,
 };
 
-/** Save the poster and return its share URL. */
+/** The last poster saved from this tab, so an unchanged poster keeps its link (B2). */
+let lastSaved: { key: string; url: string } | null = null;
+
+/** Save the poster and return its share URL. While the poster is unchanged, reuse the saved one. */
 export async function sharePoster(state: unknown): Promise<string> {
+  const key = JSON.stringify(state);
+  if (lastSaved?.key === key) return lastSaved.url;
   const res = await fetch("/api/v1/posters", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -45,5 +50,25 @@ export async function sharePoster(state: unknown): Promise<string> {
   });
   if (!res.ok) throw new Error(`share failed: ${res.status}`);
   const { url } = (await res.json()) as { url: string };
-  return new URL(url, window.location.origin).toString();
+  const full = new URL(url, window.location.origin).toString();
+  lastSaved = { key, url: full };
+  return full;
+}
+
+/** Copy text, but give up after `ms`: some browsers leave the clipboard promise hanging (B2). */
+export async function copyWithin(text: string, ms = 1500): Promise<boolean> {
+  if (!navigator.clipboard?.writeText) return false;
+  let timer = 0;
+  const timeout = new Promise<boolean>((resolve) => {
+    timer = window.setTimeout(() => resolve(false), ms);
+  });
+  const copy = navigator.clipboard.writeText(text).then(
+    () => true,
+    () => false,
+  );
+  try {
+    return await Promise.race([copy, timeout]);
+  } finally {
+    window.clearTimeout(timer);
+  }
 }

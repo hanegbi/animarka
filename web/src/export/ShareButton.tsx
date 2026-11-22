@@ -3,7 +3,7 @@
 import { CheckIcon, LinkIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { sharePoster } from "@/lib/shared-poster";
+import { copyWithin, sharePoster } from "@/lib/shared-poster";
 import { usePosterState } from "@/poster/state/provider";
 
 type Status = "idle" | "working" | "copied" | "show" | "error";
@@ -16,19 +16,21 @@ export function ShareButton({ iconOnly }: { iconOnly?: boolean }) {
 
   const share = async () => {
     setStatus("working");
+    let link: string;
     try {
-      const link = await sharePoster(state);
-      setUrl(link);
-      try {
-        await navigator.clipboard.writeText(link);
-        setStatus("copied");
-        setTimeout(() => setStatus("idle"), 2000);
-      } catch {
-        setStatus("show");
-      }
+      link = await sharePoster(state);
     } catch {
       setStatus("error");
       setTimeout(() => setStatus("idle"), 3000);
+      return;
+    }
+    setUrl(link);
+    // The clipboard gets 1.5 s. If it says no or never answers, the link shows to copy by hand.
+    if (await copyWithin(link)) {
+      setStatus("copied");
+      setTimeout(() => setStatus("idle"), 2000);
+    } else {
+      setStatus("show");
     }
   };
 
