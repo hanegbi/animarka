@@ -3,7 +3,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useSyncExternalStore,
   type ReactNode,
@@ -17,7 +16,6 @@ import type { Preset } from "@/catalog/presets";
 import type { SpeciesView } from "@/catalog/species-view";
 import { STARTER_IDS } from "@/catalog/starter";
 import { Button } from "@/components/ui/button";
-import { notify } from "@/lib/notify";
 import { createPosterStore, type PosterStore } from "./store";
 import type { PosterContext } from "./types";
 
@@ -75,11 +73,11 @@ export function PosterProvider({
 
 function Ready({
   data,
-  stale,
   shared,
   children,
 }: {
   data: CatalogData;
+  /** True when the catalog came from this device's saved copy. Shown nowhere for now. */
   stale?: boolean;
   shared?: unknown;
   children: ReactNode;
@@ -105,13 +103,6 @@ function Ready({
       presets: data.presets,
     };
   }, [data, shared]);
-
-  useEffect(() => {
-    if (stale)
-      notify(
-        "Showing the birds saved on this device. We could not reach the server.",
-      );
-  }, [stale]);
 
   return (
     <PosterReactContext.Provider value={value}>

@@ -14,9 +14,11 @@ import {
 import { artSrc, displayName, type SpeciesView } from "@/catalog/species-view";
 import type { Lang } from "@/poster/state/types";
 
-const MIN_CARD = 104;
+/** A card is at most 100 px wide and centred in its column. At least three per row. */
+const MIN_CARD = 96;
+const MAX_CARD = 100;
 const GAP = 8;
-const ROW_HEIGHT = 132;
+const ROW_HEIGHT = 124;
 
 /** The nearest ancestor that scrolls vertically: the picker panel on desktop, the sheet on a phone. */
 function scrollParent(el: HTMLElement): HTMLElement {
@@ -79,7 +81,7 @@ export function BirdGrid({
     return () => ro.disconnect();
   }, []);
 
-  const cols = Math.max(2, Math.floor((width + GAP) / (MIN_CARD + GAP)));
+  const cols = Math.max(3, Math.floor((width + GAP) / (MIN_CARD + GAP)));
   const rows = Math.ceil(items.length / cols);
 
   // TanStack Virtual returns functions the React Compiler cannot memoize. Nothing here depends on that.
@@ -169,6 +171,7 @@ export function BirdGrid({
               height: ROW_HEIGHT - GAP,
               gap: GAP,
               gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+              justifyItems: "center",
             }}
           >
             {Array.from({ length: cols }, (_, c) => {
@@ -191,7 +194,8 @@ export function BirdGrid({
                     onToggle(s.id);
                   }}
                   onFocus={() => setActive(index)}
-                  className={`bg-card focus-visible:ring-ring/50 relative flex cursor-pointer flex-col items-center gap-1 rounded-lg border p-1.5 text-center outline-none select-none focus-visible:ring-3 ${
+                  style={{ maxWidth: MAX_CARD }}
+                  className={`bg-card focus-visible:ring-ring/50 relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[10px] border px-1.5 py-2 text-center outline-none select-none focus-visible:ring-3 ${
                     on ? "border-primary ring-primary ring-1" : "hover:bg-muted"
                   }`}
                 >
@@ -203,7 +207,7 @@ export function BirdGrid({
                     loading="lazy"
                     decoding="async"
                     draggable={false}
-                    className="h-[72px] w-full object-contain"
+                    className="h-16 w-full object-contain"
                   />
                   <span
                     className="line-clamp-2 text-[11px] leading-tight"

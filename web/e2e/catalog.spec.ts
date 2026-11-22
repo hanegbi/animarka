@@ -45,9 +45,6 @@ test.describe("catalog from the API", () => {
     await page.route("**/api/v1/catalogs/**", (r) => r.abort());
     await page.reload();
     await expect(page.locator(poster)).toHaveCount(12);
-    await expect(
-      page.getByText("Showing the birds saved on this device"),
-    ).toBeVisible();
   });
 });
 

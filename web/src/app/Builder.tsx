@@ -3,17 +3,11 @@
 import { DESKTOP_QUERY, useMediaQuery } from "@/lib/use-media-query";
 import { DesktopShell } from "./shell/DesktopShell";
 import { PhoneShell } from "./shell/PhoneShell";
-import { ToasterHost } from "./ToasterHost";
 
 /** Picks the shell for the window: desktop (R2 S2) at 1100 px and wider, phone (R2 P3) below that. */
 export function Builder() {
   const desktop = useMediaQuery(DESKTOP_QUERY);
-  return (
-    <>
-      {desktop ? <DesktopShell /> : <PhoneShell />}
-      <ToasterHost />
-    </>
-  );
+  return <>{desktop ? <DesktopShell /> : <PhoneShell />}</>;
 }
 
 const pulse = "animate-pulse motion-reduce:animate-none bg-muted";

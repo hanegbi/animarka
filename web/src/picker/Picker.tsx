@@ -3,13 +3,12 @@
 import { ChevronDownIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { notify, notifyUndoable } from "@/lib/notify";
 import {
   useCatalog,
   usePosterActions,
   usePosterState,
 } from "@/poster/state/provider";
-import { MAX_BIRDS, type PosterAction } from "@/poster/state/types";
+import { MAX_BIRDS } from "@/poster/state/types";
 import { BirdGrid } from "./BirdGrid";
 import { FamilyChips } from "./FamilyChips";
 import {
@@ -64,7 +63,7 @@ function SearchMiss({
 /** The bird picker: search, sets, the birds on your poster, family chips, list actions and the card list. */
 export function Picker() {
   const state = usePosterState();
-  const { dispatch, undo } = usePosterActions();
+  const { dispatch } = usePosterActions();
   const { species, list, presets } = useCatalog();
   const [view, setView] = useState(ALL);
   const [query, setQuery] = useState("");
@@ -82,22 +81,8 @@ export function Picker() {
   const actions = listActions(shown, view, query, state.order);
   const ids = shown.map((s) => s.id);
 
-  /** Run an action. If it changed the poster a lot, say so with an Undo button. */
-  const act = (action: PosterAction, message?: string) => {
-    const changed = dispatch(action);
-    if (changed && message) notifyUndoable(message, undo);
-  };
-
-  /** Tap a card: add or remove the bird. A full poster says why nothing happened. */
-  const toggle = (id: string) => {
-    if (!selected.has(id) && state.order.length >= MAX_BIRDS) {
-      notify(
-        `A poster holds up to ${MAX_BIRDS} birds. Remove one to add another.`,
-      );
-      return;
-    }
-    dispatch({ type: "toggle", id });
-  };
+  /** Tap a card: add or remove the bird. A full poster ignores adds (the strip says "Full"). */
+  const toggle = (id: string) => dispatch({ type: "toggle", id });
 
   const changeView = useCallback((next: string) => {
     setView(next);
@@ -129,10 +114,10 @@ export function Picker() {
           variant="outline"
           size="sm"
           onClick={() =>
-            act(
-              { type: "surprise", seed: Math.floor(Math.random() * 1e6) },
-              "New surprise mix",
-            )
+            dispatch({
+              type: "surprise",
+              seed: Math.floor(Math.random() * 1e6),
+            })
           }
         >
           Surprise mix
@@ -171,12 +156,17 @@ export function Picker() {
           >
             Your poster{" "}
             <span className="sr-only">, {trayLabel(state.order, species)}</span>
+            {state.order.length >= MAX_BIRDS && (
+              <span className="text-foreground ms-1 tracking-normal normal-case">
+                · Full, {MAX_BIRDS} birds
+              </span>
+            )}
           </h2>
           <Button
             variant="ghost"
             size="sm"
             disabled={!state.order.length}
-            onClick={() => act({ type: "clear" }, "Poster cleared")}
+            onClick={() => dispatch({ type: "clear" })}
           >
             Clear poster
           </Button>
@@ -207,10 +197,7 @@ export function Picker() {
               disabled={actions.addAllDisabled}
               onClick={() =>
                 actions.allOn
-                  ? act(
-                      { type: "removeMany", ids },
-                      `Removed ${ids.length} ${ids.length === 1 ? "bird" : "birds"}`,
-                    )
+                  ? dispatch({ type: "removeMany", ids })
                   : dispatch({ type: "addMany", ids })
               }
             >

@@ -292,16 +292,18 @@ test("Direction: face right turns every bird, face left turns them back, a singl
   await expect(page.getByText("Mixed")).toBeVisible();
 });
 
-test("clearing the poster shows a message with Undo that brings everything back", async ({
+test("clearing the poster and Surprise mix show no message, and header Undo brings the birds back", async ({
   page,
 }) => {
   await open(page);
+  await page.getByRole("button", { name: "Surprise mix" }).click();
   await page.getByRole("button", { name: "Clear poster" }).click();
   await expect(page.locator("[data-animal]")).toHaveCount(0);
-  const toast = page.locator("[data-sonner-toast]");
-  await expect(toast).toContainText("Poster cleared");
-  await toast.getByRole("button", { name: "Undo" }).click();
-  await expect(page.locator("[data-animal]")).toHaveCount(12);
+  await expect(
+    page.locator("[data-sonner-toast], [role=status][data-toast]"),
+  ).toHaveCount(0);
+  await undoHeader(page).click();
+  await expect(page.locator("[data-animal]").first()).toBeVisible();
 });
 
 test("replacing the poster with a preset or Only these shows no message", async ({
@@ -467,4 +469,54 @@ test("keyboard: F2 on a bird renames it", async ({ page }) => {
   await expect(animal(page, ONE).locator("[data-label]")).toHaveText(
     "Keyboard owl",
   );
+});
+
+test("in Numbers mode the legend names can be renamed too", async ({
+  page,
+}) => {
+  await open(page);
+  await openTab(page, "Style");
+  await page
+    .getByRole("radiogroup", { name: "Labels" })
+    .getByRole("radio", { name: "Numbers" })
+    .click();
+  const legend = page.locator("[data-legend]");
+  await legend.locator("[data-name-edit]").first().click();
+  const box = page.getByRole("textbox", { name: "Bird name on the poster" });
+  await expect(box).toBeFocused();
+  await expect(page.getByText("Enter to save, Esc to cancel")).toBeVisible();
+  await box.fill("Owl one");
+  await box.press("Enter");
+  await expect(legend.locator("li").first()).toContainText("Owl one");
+  // The same name shows under the bird when labels go back to names.
+  await page
+    .getByRole("radiogroup", { name: "Labels" })
+    .getByRole("radio", { name: "Names" })
+    .click();
+  await expect(page.locator("[data-label]").getByText("Owl one")).toBeVisible();
+});
+
+test("the rename card has Save, Cancel and Use original name", async ({
+  page,
+}) => {
+  await open(page);
+  const owl = animal(page, ONE);
+  await owl.locator("[data-name-edit]").click();
+  const card = page.getByRole("dialog", { name: "Rename this bird" });
+  await card
+    .getByRole("textbox", { name: "Bird name on the poster" })
+    .fill("Hoot");
+  await card.getByRole("button", { name: "Save" }).click();
+  await expect(owl.locator("[data-label]")).toHaveText("Hoot");
+  await owl.locator("[data-name-edit]").click();
+  await card.getByRole("button", { name: "Use original name" }).click();
+  await expect(owl.locator("[data-label]")).toHaveText("Eurasian Eagle-Owl");
+  await owl.locator("[data-name-edit]").click();
+  await card
+    .getByRole("textbox", { name: "Bird name on the poster" })
+    .fill("Gone");
+  await card.getByRole("button", { name: "Cancel" }).click();
+  await expect(card).toHaveCount(0);
+  await expect(owl.locator("[data-label]")).toHaveText("Eurasian Eagle-Owl");
+  await expect(owl).toHaveAttribute("data-mirrored", "false");
 });

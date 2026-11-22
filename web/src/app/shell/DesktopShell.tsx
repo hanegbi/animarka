@@ -12,7 +12,7 @@ import { PosterStage } from "./PosterStage";
 export function DesktopShell() {
   useUndoShortcuts();
   return (
-    <div className="grid h-dvh grid-cols-[360px_minmax(0,1fr)_280px] grid-rows-[auto_minmax(0,1fr)]">
+    <div className="grid h-dvh grid-cols-[400px_minmax(0,1fr)_280px] grid-rows-[auto_minmax(0,1fr)]">
       <header className="bg-card col-span-3 flex h-14 items-center justify-between border-b px-4">
         <span className="font-heading text-2xl font-bold">animarka</span>
         <div

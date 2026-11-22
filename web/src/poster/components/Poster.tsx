@@ -171,6 +171,7 @@ export function Poster({
                 {onNameChange ? (
                   <EditableName
                     name={name}
+                    original={displayName(sp, state.lang)}
                     onChange={(n) => onNameChange(item.id, n)}
                   />
                 ) : (
@@ -213,8 +214,19 @@ export function Poster({
           {items.map((item) => (
             <li key={item.id} className="truncate">
               <b className="me-[0.4em]">{item.index + 1}</b>
-              {state.names?.[item.id] ??
-                displayName(species.get(item.id)!, state.lang)}
+              {onNameChange ? (
+                <EditableName
+                  original={displayName(species.get(item.id)!, state.lang)}
+                  name={
+                    state.names?.[item.id] ??
+                    displayName(species.get(item.id)!, state.lang)
+                  }
+                  onChange={(n) => onNameChange(item.id, n)}
+                />
+              ) : (
+                (state.names?.[item.id] ??
+                displayName(species.get(item.id)!, state.lang))
+              )}
             </li>
           ))}
         </ol>
