@@ -10,30 +10,30 @@ export function Faq({
 }) {
   const [open, setOpen] = useState(0);
   return (
-    <div className="border-t">
+    <div className="border-t border-[rgb(var(--lp-shadow)/0.18)]">
       {items.map(([q, a], i) => {
         const on = open === i;
         return (
-          <div key={q} className="border-b">
+          <div key={q} className="border-b border-[rgb(var(--lp-shadow)/0.18)]">
             <h3>
               <button
                 type="button"
                 aria-expanded={on}
                 aria-controls={`faq-${i}`}
                 onClick={() => setOpen(on ? -1 : i)}
-                className="focus-visible:ring-ring/50 flex w-full items-center justify-between gap-4 rounded-md py-5 text-start text-lg font-medium outline-none focus-visible:ring-3"
+                className="flex w-full items-center justify-between gap-4 py-6 text-start text-xl leading-snug font-medium transition-colors duration-200 hover:text-[var(--lp-forest-muted)]"
               >
                 {q}
                 <span
                   aria-hidden
-                  className={`text-primary text-2xl leading-none transition-transform motion-reduce:transition-none ${on ? "rotate-45" : ""}`}
+                  className={`text-2xl leading-none transition-transform duration-200 ease-out motion-reduce:transition-none ${on ? "rotate-45" : ""}`}
                 >
                   +
                 </span>
               </button>
             </h3>
             <div id={`faq-${i}`} hidden={!on}>
-              <p className="text-muted-foreground max-w-[64ch] pb-5 leading-relaxed">
+              <p className="max-w-[64ch] pb-6 text-lg leading-relaxed text-[var(--lp-forest-muted)]">
                 {a}
               </p>
             </div>

@@ -7,10 +7,13 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
 });
+// Not preloaded: the builder fetches it when a heading needs it, and the landing page, which
+// uses the optical size cut instead (landing/fonts.ts), never downloads it at all.
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
   display: "swap",
+  preload: false,
 });
 // Hebrew companions. Not preloaded, so English visitors do not pay for them.
 const heebo = Heebo({

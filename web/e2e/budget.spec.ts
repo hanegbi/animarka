@@ -130,7 +130,7 @@ test("the landing page is under 300 KB before images and shows its headline fast
   const start = Date.now();
   await page.goto("/", { waitUntil: "commit" });
   await page.getByRole("heading", { level: 1 }).waitFor();
-  await page.locator("[data-gallery-wall] img").first().waitFor();
+  await page.locator("#hero-tanager").waitFor();
   const ms = Date.now() - start;
   console.log(
     `[${info.project.name}] landing hero visible after ${ms} ms on 4G`,

@@ -3,6 +3,11 @@
 @import "shadcn/tailwind.css";
 @import "../styles/tokens.css";
 
+/* The landing page builds its own utilities in styles/landing-tokens.css, so its classes never
+   ship with the builder (the builder is at its 300 KB budget). */
+@source not "../landing";
+@source not "../design/hero";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
