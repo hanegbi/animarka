@@ -77,7 +77,7 @@ const BIRDS: BirdProps[] = [
     sizes: "(min-width: 1024px) 48vw, 56vw",
     alt: "A southern cassowary from the field guide set",
     className:
-      "right-[-10%] bottom-[-8%] z-0 w-[72%] sm:right-[2%] sm:w-[40%] lg:top-[6%] lg:right-[2%] lg:bottom-auto lg:w-[47%]",
+      "right-[-10%] bottom-0 z-0 w-[72%] sm:right-[2%] sm:w-[40%] lg:top-[6%] lg:right-[2%] lg:bottom-auto lg:w-[47%]",
     main: true,
   },
   {
@@ -89,7 +89,7 @@ const BIRDS: BirdProps[] = [
     sizes: "(min-width: 1024px) 26vw, 40vw",
     alt: "A shoebill from the field guide set",
     className:
-      "bottom-[-6%] left-[14%] z-10 w-[46%] sm:left-[28%] sm:w-[26%] lg:top-[36%] lg:bottom-auto lg:left-[39%] lg:w-[26%]",
+      "bottom-0 left-[14%] z-10 w-[46%] sm:left-[28%] sm:w-[26%] lg:top-[36%] lg:bottom-auto lg:left-[39%] lg:w-[26%]",
   },
   {
     id: "hero-kingfisher",

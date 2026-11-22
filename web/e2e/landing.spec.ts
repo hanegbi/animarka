@@ -217,6 +217,14 @@ test.describe("landing page", () => {
           ? "text"
           : getComputedStyle(title).backgroundClip,
         onSub: Math.max(...ids.map((id) => meet(box(bird(id)), box(sub)))),
+        onCaption: Math.max(
+          ...ids.map((id) =>
+            meet(
+              box(bird(id)),
+              box([...document.querySelectorAll("[data-hero] p")].at(-1)!),
+            ),
+          ),
+        ),
         onButtons: Math.max(
           ...ids.flatMap((id) =>
             buttons.map((b) => meet(box(bird(id)), box(b))),
@@ -232,6 +240,8 @@ test.describe("landing page", () => {
     expect(r.zFront).toBeGreaterThan(r.zBack);
     // Birds never cover the line under the headline or the buttons.
     expect(r.onSub).toBe(0);
+    // ... nor the plate caption, at any size.
+    expect(r.onCaption).toBe(0);
     expect(r.onButtons).toBe(0);
     if (!phone) {
       // On wide screens a body passes behind the headline, which turns to paper there.
