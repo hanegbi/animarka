@@ -58,7 +58,7 @@ export function SetsCarousel({ sets }: { sets: LandingSet[] }) {
     }
   };
   const arrow =
-    "grid size-11 place-items-center rounded-full border border-[rgb(var(--lp-shadow)/0.2)] bg-[var(--lp-paper)] text-[var(--lp-forest)] transition-[background-color,opacity] duration-200 hover:bg-[var(--lp-paper-2)] disabled:opacity-35";
+    "grid size-11 place-items-center rounded-full border border-[rgb(var(--lp-shadow)/0.2)] bg-[var(--lp-paper)] text-[var(--lp-forest)] transition-[background-color,opacity] duration-150 hover:bg-[var(--lp-paper-2)] disabled:opacity-35";
 
   return (
     <div className="flex flex-col gap-6">
@@ -66,7 +66,7 @@ export function SetsCarousel({ sets }: { sets: LandingSet[] }) {
         ref={row}
         aria-label="Ready sets"
         onKeyDown={onKey}
-        className="lp-gutter flex snap-x snap-mandatory [scrollbar-width:none] gap-5 overflow-x-auto pt-2 pb-6 [&::-webkit-scrollbar]:hidden"
+        className="lp-gutter flex snap-x snap-mandatory [scrollbar-width:none] gap-6 overflow-x-auto pt-2 pb-6 [&::-webkit-scrollbar]:hidden"
       >
         {sets.map((s) => (
           <li
@@ -75,7 +75,7 @@ export function SetsCarousel({ sets }: { sets: LandingSet[] }) {
           >
             <a
               href={`/make?set=${s.id}`}
-              className="lp-card group flex w-full flex-col gap-4 rounded-[6px] bg-[var(--lp-paper)] p-3 pb-4"
+              className="lp-card group flex w-full flex-col gap-4 rounded-[6px] bg-[var(--lp-paper)] p-4"
             >
               <div className="aspect-[3/4] overflow-hidden rounded-[3px] bg-[var(--lp-paper-2)]">
                 <img
@@ -99,7 +99,7 @@ export function SetsCarousel({ sets }: { sets: LandingSet[] }) {
           </li>
         ))}
       </ul>
-      <div className="lp-wrap flex justify-center gap-3">
+      <div className="lp-wrap flex justify-center gap-4">
         <button
           type="button"
           className={arrow}

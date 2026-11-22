@@ -34,7 +34,7 @@ export function CompareSlider() {
 
   return (
     <div
-      className="relative aspect-[3/4] w-full max-w-[520px] overflow-hidden rounded-[4px] select-none"
+      className="relative aspect-[3/4] w-full max-w-[520px] overflow-hidden rounded-[3px] select-none"
       style={{ boxShadow: "var(--lp-shadow-print)" }}
       data-compare
     >
@@ -60,7 +60,7 @@ export function CompareSlider() {
         className="pointer-events-none absolute inset-y-0 w-[2px] -translate-x-1/2 bg-[var(--lp-paper)] shadow-[0_0_0_1px_rgb(var(--lp-shadow)/0.12)]"
         style={{ left: `${x}%`, transition: ease }}
       >
-        <span className="absolute top-[5.5%] left-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[var(--lp-paper)] text-[var(--lp-forest)] shadow-[0_2px_8px_rgb(var(--lp-shadow)/0.3)]">
+        <span className="absolute top-[5.5%] left-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[var(--lp-paper)] text-[var(--lp-vermilion)] shadow-[0_2px_8px_rgb(var(--lp-shadow)/0.3)]">
           <svg
             viewBox="0 0 24 24"
             className="size-4"

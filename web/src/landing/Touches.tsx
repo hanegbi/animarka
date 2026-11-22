@@ -47,7 +47,7 @@ function Plate({
     >
       <div
         aria-hidden
-        className={`relative ${wide ? "aspect-[2/1] lg:aspect-square" : "aspect-square"} overflow-hidden rounded-[6px] bg-[var(--lp-paper)] shadow-[0_1px_2px_rgb(var(--lp-shadow)/0.12),0_12px_28px_-14px_rgb(var(--lp-shadow)/0.35)]`}
+        className={`relative ${wide ? "aspect-[2/1] lg:aspect-square" : "aspect-square"} lp-plate overflow-hidden rounded-[6px] bg-[var(--lp-paper)]`}
       >
         {children}
       </div>
@@ -67,7 +67,10 @@ const label =
 export function Touches() {
   return (
     <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-5">
-      <Plate title="Tap to mirror" line="Any bird turns to face the other way.">
+      <Plate
+        title="Tap to mirror"
+        line="Turn any bird to face the other way, or all of them at once."
+      >
         <div className="lp-demo-mirror absolute top-[22%] left-1/2 w-[58%] -translate-x-1/2">
           <img
             src="/landing/r9/t-kingfisher.webp"
@@ -78,7 +81,7 @@ export function Touches() {
             className="w-full"
           />
         </div>
-        <span className="lp-demo-tap absolute top-[44%] left-1/2 size-12 -translate-x-1/2 rounded-full border-2 border-[var(--lp-forest)]" />
+        <span className="lp-demo-tap absolute top-[44%] left-1/2 size-12 -translate-x-1/2 rounded-full border-2 border-[var(--lp-vermilion)]" />
         <span className={`${label} bottom-[12%]`}>Common Kingfisher</span>
       </Plate>
 
@@ -114,7 +117,7 @@ export function Touches() {
             loading="lazy"
             className="w-full"
           />
-          <span className="lp-demo-bin absolute -top-2 -right-2 grid size-7 place-items-center rounded-full bg-[var(--lp-forest)] text-[var(--lp-on-forest)]">
+          <span className="lp-demo-bin absolute -top-2 -right-2 grid size-7 place-items-center rounded-full bg-[var(--lp-vermilion)] text-[var(--lp-paper)]">
             <svg
               viewBox="0 0 24 24"
               className="size-4"

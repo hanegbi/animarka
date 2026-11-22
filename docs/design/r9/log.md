@@ -50,4 +50,10 @@ What changed while building:
 - The field guide art is about 1,024 px wide. Birds shown above 1x are a little soft on retina screens; only the poster render is sharp everywhere.
 - Fraunces with the optical size axis is a second font file. Check the 300 KB landing budget in the build and drop the plain Fraunces from the landing route if needed.
 - The knockout lines up with a small client script; in the build, try CSS container units first.
-- Waiting for the owner's pick before items 2 to 9.
+
+## Round 1 result and the build
+
+- Owner picked H1, then asked for three birds: scarlet tanager (the red), griffon vulture behind, Eurasian eagle owl in front. Hero red 17% on desktop and phone.
+- Items 2 to 9 built in one pass; tokens and utilities for the landing load on `/` only (builder 297 KB, landing 290 KB, hero in about 250 ms on 4G).
+- Polish: one card shadow token, radius 6 px for interface and 3 px for prints, tracking by size, every duration 120 to 260 ms, hover gated to real hover.
+- After audit and before and after pairs: `audit.md` section 3, `after/`.

@@ -78,3 +78,37 @@ So the CTA stays Deep forest with an Ivory label, and vermilion is reserved for 
 | #D7D3C7 | card edges, second tone | 4.5% | 0.867 0.017 91.6 |
 | #9F744B | art orange (content) | 1.3% | 0.593 0.078 64.0 |
 | #206345 | CTA green (hero) | 3.2% of hero | 0.449 0.084 160.5 |
+
+## 3. After (R9 build, rerun of both audits)
+
+Page: `/` after the R9 build. Same tools as above on full page captures at 1440 and 390.
+
+### Unslop, sign by sign
+
+| Sign before | Now |
+|---|---|
+| Template look, one rhythm, heading left and content right everywhere | Fixed. Hero split, steps as a three plate row, styles mirrored (picture left), sets centred with a full bleed row, demos as a five plate grid, print split on the dark band, questions in one centred column, final call with a poster rising from the edge |
+| No full bleed | Fixed. Steps band, set row, demos band and the dark print band run edge to edge |
+| Flat field | Fixed. Ivory with a paper grain; tones alternate ivory, #F8F4EA, #ECE5D5, dark forest |
+| Three small framed posters, thick black frames | Fixed. One knockout hero with three birds from the art, no frames |
+| Icon tile feature list | Fixed. Five looping CSS demos with real art |
+| Two mechanisms in the slider; line cuts names; handle on a bird | Fixed. One control, snaps to the gaps between columns, handle in the title band, labels fade near the line, a full 3 by 4 grid |
+| Dividers between steps | Removed. The rules above the two style descriptions went too; dividers stay only in the accordion and between "today" and "coming soon" |
+| Carousel scrollbar, uneven cards | Fixed. Hidden scrollbar, arrows, arrow keys, swipe, equal heights, titles clamp to two lines |
+| Owl in a circle | Fixed. Full woodblock owl with a soft shadow on the dark band |
+| Generic headings, "wall" three times, italic numerals | Fixed. "Make it yours, bird by bird.", "Share it today. Print it soon.", "wall" once; numerals upright |
+| Credits missing | Fixed. Footer credits with links and licences, "AI generated, may contain errors.", a report link |
+
+Still present, on purpose: cream with a serif display and one warm accent. The brief sets this palette; the paper grain, the knockout and the real art are what keep it from reading as the default.
+
+### Colour
+
+| | Before | After |
+|---|---|---|
+| Hero accent share | 3% green | 17% vermilion, desktop and phone (subject only) |
+| Loudest spot | none | the hero's red, then the dark band |
+| Page accent share | 0% | 2% desktop, 1.6% phone |
+| Temperature (coloured pixels) | warm 61 / cool 38 | warm 34 / cool 65 (forest type and band); the warm field is neutral and not counted |
+| Lightness range | 0.76 | 0.61 to 0.62, with the dark band as the one deep stop |
+
+The tool flags the page wide accent (2%, it suggests 5 to 12%). That is deliberate: the brief puts vermilion on the subject, so it fills the hero and appears elsewhere only as small marks (slider handle, demo tap ring and trash badge, the questions' plus sign). Adding area would mean colouring things that are not the subject.

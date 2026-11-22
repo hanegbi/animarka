@@ -93,7 +93,7 @@ export function Hero() {
           <KnockoutHeadline
             id="hero-title"
             birds={KNOCK}
-            className="max-w-[9.6ch] font-[family-name:var(--font-display)] text-[56px] leading-[0.95] font-medium tracking-[-0.025em] text-balance text-[var(--lp-forest)] sm:text-[84px] lg:text-[clamp(112px,10vw,144px)] lg:leading-[0.92]"
+            className="max-w-[9.6ch] font-[family-name:var(--font-display)] text-[56px] leading-[0.95] font-medium text-balance text-[var(--lp-forest)] sm:text-[84px] lg:text-[clamp(112px,10vw,144px)] lg:leading-[0.92]"
           >
             Every bird you love, on one poster.
           </KnockoutHeadline>

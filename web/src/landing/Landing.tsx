@@ -113,7 +113,7 @@ export function Landing() {
         <div className="lp-wrap flex h-16 items-center justify-between gap-6">
           <Link
             href="/"
-            className="font-[family-name:var(--font-display)] text-[26px] font-medium tracking-[-0.02em]"
+            className="font-[family-name:var(--font-display)] text-[26px] font-medium tracking-[-0.01em] transition-opacity duration-150 hover:opacity-75"
           >
             animarka
           </Link>
@@ -129,7 +129,7 @@ export function Landing() {
           <Link
             href="/make"
             prefetch={false}
-            className="lp-btn inline-flex h-10 items-center rounded-[6px] px-4 text-sm font-medium"
+            className="lp-btn inline-flex h-11 items-center rounded-[6px] px-4 text-sm font-medium sm:h-10"
           >
             Make your poster
           </Link>
@@ -153,7 +153,7 @@ export function Landing() {
             <ol className="grid gap-12 md:grid-cols-3 md:gap-8">
               {STEPS.map((s, i) => (
                 <li key={s.t} className="flex flex-col gap-6">
-                  <div className="aspect-square overflow-hidden rounded-[6px] bg-[var(--lp-paper)] shadow-[0_1px_2px_rgb(var(--lp-shadow)/0.12),0_16px_36px_-18px_rgb(var(--lp-shadow)/0.45)]">
+                  <div className="lp-plate aspect-square overflow-hidden rounded-[6px] bg-[var(--lp-paper)]">
                     <img
                       src={`/landing/r9/${s.img}.webp`}
                       alt={s.alt}
@@ -198,7 +198,7 @@ export function Landing() {
                 poster, and every bird keeps its place.
               </p>
               <dl className="grid gap-8 sm:grid-cols-2">
-                <div className="flex flex-col gap-2 border-t border-[rgb(var(--lp-shadow)/0.18)] pt-4">
+                <div className="flex flex-col gap-2">
                   <dt className="font-[family-name:var(--font-display)] text-2xl">
                     Field guide
                   </dt>
@@ -206,7 +206,7 @@ export function Landing() {
                     Soft colour plates with every feather in place.
                   </dd>
                 </div>
-                <div className="flex flex-col gap-2 border-t border-[rgb(var(--lp-shadow)/0.18)] pt-4">
+                <div className="flex flex-col gap-2">
                   <dt className="font-[family-name:var(--font-display)] text-2xl">
                     Woodblock
                   </dt>
@@ -241,8 +241,9 @@ export function Landing() {
                 Make it yours, bird by bird.
               </h2>
               <p className="max-w-[44ch] text-lg text-[var(--lp-forest-muted)]">
-                Tap, drag and type right on the poster. Then pick one of eight
-                backgrounds, three shapes, and write your own title.
+                Tap, drag and type right on the poster. Then choose Scattered,
+                Grid or Centerpiece, one of eight backgrounds and three shapes,
+                and write your own title.
               </p>
             </div>
             <Touches />
@@ -337,7 +338,7 @@ export function Landing() {
               width={600}
               height={800}
               loading="lazy"
-              className="mx-auto -mb-24 w-[280px] translate-y-0 rounded-t-[3px] sm:w-[340px] md:me-8"
+              className="mx-auto -mb-24 w-[280px] rounded-t-[3px] sm:w-[340px] md:me-8"
               style={{ boxShadow: "var(--lp-shadow-print)" }}
             />
           </div>
