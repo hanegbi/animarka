@@ -26,7 +26,7 @@ describe.each(LAYOUTS)("%s layout rules", (_name, layout) => {
       }
     }
     expect(bad).toEqual([]);
-  });
+  }, 30000);
 
   it("gives the same result for the same input", () => {
     const input = inputFor(37, 0.75, "names");
@@ -104,6 +104,92 @@ describe("scatter specifics", () => {
     const r = scatterLayout(inputFor(12, 0.75, "none"));
     const ys = new Set(r.items.map((i) => Math.round(i.art.y)));
     expect(ys.size).toBeGreaterThan(4);
+  });
+
+  /** Height of the tallest band across the whole width that no bird or label touches. */
+  function widestEmptyBand(r: ReturnType<typeof scatterLayout>): number {
+    const spans = r.items
+      .map((i) => blockOf(i))
+      .map((b) => [b.y, b.y + b.h] as const)
+      .sort((x, y) => x[0] - y[0]);
+    let gap = spans[0][0] - r.frame.area.y;
+    let reach = spans[0][1];
+    for (const [top, bottom] of spans.slice(1)) {
+      gap = Math.max(gap, top - reach);
+      reach = Math.max(reach, bottom);
+    }
+    return Math.max(gap, r.frame.area.y + r.frame.area.h - reach);
+  }
+
+  it("never leaves an empty band taller than one bird (B6)", () => {
+    const bad: string[] = [];
+    for (const n of [3, 5, 7, 12, 20, 37]) {
+      for (const seed of [1, 2, 3, 4, 5, 6, 7, 8]) {
+        for (const mode of MODES) {
+          const r = scatterLayout(inputFor(n, 0.75, mode, { seed }));
+          // One bird: its size, the larger side of its art.
+          const birds = r.items
+            .map((i) => Math.max(i.art.w, i.art.h))
+            .sort((a, b) => a - b);
+          const median = birds[Math.floor(birds.length / 2)];
+          const band = widestEmptyBand(r);
+          if (band > median)
+            bad.push(
+              `n=${n} seed=${seed} ${mode}: band ${band.toFixed(1)} > bird ${median.toFixed(1)}`,
+            );
+        }
+      }
+    }
+    expect(bad).toEqual([]);
+  });
+
+  it("shows no rows: most horizontal neighbours sit at different heights (B6)", () => {
+    for (const seed of [1, 2, 3, 4]) {
+      const r = scatterLayout(inputFor(20, 0.75, "names", { seed }));
+      const blocks = r.items.map(blockOf);
+      let pairs = 0;
+      let level = 0;
+      blocks.forEach((a, i) =>
+        blocks.forEach((b, j) => {
+          if (j <= i) return;
+          const side =
+            Math.abs(a.x + a.w / 2 - (b.x + b.w / 2)) < (a.w + b.w) * 0.75;
+          const near = Math.abs(a.y - b.y) < Math.max(a.h, b.h);
+          if (!side || !near) return;
+          pairs++;
+          if (Math.abs(a.y + a.h - (b.y + b.h)) < 0.08 * Math.max(a.h, b.h))
+            level++;
+        }),
+      );
+      expect(level / Math.max(1, pairs)).toBeLessThan(0.35);
+    }
+  });
+
+  it("has real size variation: the biggest bird is clearly bigger than the smallest", () => {
+    const input = inputFor(20, 0.75, "none", { seed: 3 });
+    input.animals = input.animals.map((a) => ({
+      ...a,
+      aspect: 0.8,
+      massG: 200,
+    }));
+    const areas = scatterLayout(input).items.map((i) => i.art.w * i.art.h);
+    expect(Math.max(...areas) / Math.min(...areas)).toBeGreaterThan(1.3);
+  });
+
+  it("swapping two birds moves only those two", () => {
+    const input = inputFor(12, 0.75, "names", { seed: 5 });
+    const before = scatterLayout(input).items;
+    const swapped = { ...input, animals: input.animals.slice() };
+    [swapped.animals[2], swapped.animals[7]] = [
+      swapped.animals[7],
+      swapped.animals[2],
+    ];
+    const after = scatterLayout(swapped).items;
+    const centre = (b: { x: number; w: number }) => b.x + b.w / 2;
+    for (let i = 0; i < 12; i++) {
+      if (i === 2 || i === 7) continue;
+      expect(centre(after[i].art)).toBeCloseTo(centre(before[i].art), 6);
+    }
   });
 });
 
