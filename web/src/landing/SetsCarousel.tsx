@@ -91,7 +91,7 @@ export function SetsCarousel({ sets }: { sets: LandingSet[] }) {
                 <span className="line-clamp-2 min-h-[2lh] font-[family-name:var(--font-display)] text-xl leading-tight font-medium">
                   {s.title}
                 </span>
-                <span className="text-sm text-[var(--lp-forest-muted)]">
+                <span className="text-sm text-[var(--lp-muted)]">
                   {s.n} birds
                 </span>
               </div>

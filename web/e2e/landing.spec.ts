@@ -13,7 +13,7 @@ test.describe("landing page", () => {
       }),
     ).toBeVisible();
     await expect(page.locator("[data-hero-bird]")).toHaveCount(3);
-    await expect(page.locator("#hero-tanager")).toBeVisible();
+    await expect(page.locator("#hero-roller")).toBeVisible();
     await page.getByRole("link", { name: "Start from a set" }).click();
     await expect(page).toHaveURL(/#sets$/);
     await expect(
@@ -26,6 +26,104 @@ test.describe("landing page", () => {
       .click();
     await expect(page).toHaveURL(/\/make$/);
     await expect(page.locator("[data-poster] [data-animal]")).toHaveCount(12);
+  });
+
+  test("the hero shows three blue birds, named in the plate caption (L3)", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    for (const id of ["hero-roller", "hero-jay", "hero-kingfisher"])
+      await expect(page.locator(`#${id}`)).toBeVisible();
+    const caption = page.locator("[data-hero] p").last();
+    await expect(caption).toContainText("European roller");
+    await expect(caption.locator("i")).toHaveText([
+      "Coracias garrulus",
+      "Cyanocitta cristata",
+      "Alcedo atthis",
+    ]);
+  });
+
+  test("no bill touches a letter of the headline, and on phones no bird does (L1, L2)", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    const r = await page.evaluate(() => {
+      const h = document.getElementById("hero-title")!;
+      const words: { w: string; l: number; r: number; t: number; b: number }[] =
+        [];
+      const walker = document.createTreeWalker(h, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const t = walker.currentNode as Text;
+        for (const m of t.textContent!.matchAll(/\S+/g)) {
+          const rg = document.createRange();
+          rg.setStart(t, m.index!);
+          rg.setEnd(t, m.index! + m[0].length);
+          // The ink of the letters, a little inside the line box.
+          for (const b of rg.getClientRects())
+            words.push({
+              w: m[0],
+              l: b.left,
+              r: b.right,
+              t: b.top + b.height * 0.18,
+              b: b.bottom - b.height * 0.12,
+            });
+        }
+      }
+      const hits: string[] = [];
+      const touch: string[] = [];
+      for (const el of document.querySelectorAll<HTMLElement>(
+        "[data-hero-bird]",
+      )) {
+        const b = el.getBoundingClientRect();
+        const [fx, fy] = el.dataset.bill!.split(",").map(Number);
+        const x = b.left + fx * b.width;
+        const y = b.top + fy * b.height;
+        for (const w of words) {
+          const dx = Math.max(w.l - x, 0, x - w.r);
+          const dy = Math.max(w.t - y, 0, y - w.b);
+          if (Math.hypot(dx, dy) < 8) hits.push(`${el.id} bill on ${w.w}`);
+          if (
+            innerWidth < 700 &&
+            b.left < w.r &&
+            b.right > w.l &&
+            b.top < w.b &&
+            b.bottom > w.t
+          )
+            touch.push(`${el.id} on ${w.w}`);
+        }
+      }
+      return { hits, touch };
+    });
+    expect(r.hits).toEqual([]);
+    expect(r.touch).toEqual([]);
+    // The main button is on the first screen without scrolling.
+    await expect(
+      page
+        .getByRole("main")
+        .getByRole("link", { name: "Make your poster" })
+        .first(),
+    ).toBeInViewport();
+  });
+
+  test("hero images load at once, the main one first, at the size they are shown (L5)", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const birds = page.locator("[data-hero-bird]");
+    await expect(birds).toHaveCount(3);
+    for (const el of await birds.all()) {
+      await expect(el).toHaveAttribute("loading", "eager");
+      await expect(el).toHaveAttribute("srcset", /-sm\.webp 560w/);
+      await expect(el).toHaveAttribute("sizes", /vw/);
+    }
+    await expect(
+      page.locator('[data-hero-bird][fetchpriority="high"]'),
+    ).toHaveCount(1);
+    await expect(page.locator("#hero-roller")).toHaveAttribute(
+      "fetchpriority",
+      "high",
+    );
   });
 
   test("a set card opens the builder with that set, named after it", async ({

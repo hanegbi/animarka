@@ -21,19 +21,19 @@ export function Faq({
                 aria-expanded={on}
                 aria-controls={`faq-${i}`}
                 onClick={() => setOpen(on ? -1 : i)}
-                className="flex w-full items-center justify-between gap-4 py-6 text-start text-xl leading-snug font-medium transition-colors duration-200 hover:text-[var(--lp-forest-muted)]"
+                className="flex w-full items-center justify-between gap-4 py-6 text-start text-xl leading-snug font-medium transition-colors duration-200 hover:text-[var(--lp-muted)]"
               >
                 {q}
                 <span
                   aria-hidden
-                  className={`text-2xl leading-none text-[var(--lp-vermilion)] transition-transform duration-200 ease-out motion-reduce:transition-none ${on ? "rotate-45" : ""}`}
+                  className={`text-2xl leading-none text-[var(--lp-cobalt)] transition-transform duration-200 ease-out motion-reduce:transition-none ${on ? "rotate-45" : ""}`}
                 >
                   +
                 </span>
               </button>
             </h3>
             <div id={`faq-${i}`} hidden={!on}>
-              <p className="max-w-[64ch] pb-6 text-lg leading-relaxed text-[var(--lp-forest-muted)]">
+              <p className="max-w-[64ch] pb-6 text-lg leading-relaxed text-[var(--lp-muted)]">
                 {a}
               </p>
             </div>

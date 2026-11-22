@@ -119,7 +119,7 @@ export function Landing() {
           </Link>
           <nav
             aria-label="Sections"
-            className="lp-nav hidden gap-8 text-[15px] text-[var(--lp-forest-muted)] md:flex"
+            className="lp-nav hidden gap-8 text-[15px] text-[var(--lp-muted)] md:flex"
           >
             <a href="#how">How it works</a>
             <a href="#styles">Styles</a>
@@ -146,7 +146,7 @@ export function Landing() {
               <h2 id="how" className={h2}>
                 Three steps to a poster.
               </h2>
-              <p className="max-w-[34ch] text-lg text-[var(--lp-forest-muted)]">
+              <p className="max-w-[34ch] text-lg text-[var(--lp-muted)]">
                 From a search box to a poster you can share, in one place.
               </p>
             </div>
@@ -172,7 +172,7 @@ export function Landing() {
                     </span>
                     <div className="flex flex-col gap-2">
                       <h3 className="text-2xl leading-tight">{s.t}</h3>
-                      <p className="text-[var(--lp-forest-muted)]">{s.d}</p>
+                      <p className="text-[var(--lp-muted)]">{s.d}</p>
                     </div>
                   </div>
                 </li>
@@ -193,7 +193,7 @@ export function Landing() {
               <h2 id="styles" className={h2}>
                 Two ways to see the same birds.
               </h2>
-              <p className="text-lg text-[var(--lp-forest-muted)]">
+              <p className="text-lg text-[var(--lp-muted)]">
                 Drag the line. In the builder one click switches the whole
                 poster, and every bird keeps its place.
               </p>
@@ -202,7 +202,7 @@ export function Landing() {
                   <dt className="font-[family-name:var(--font-display)] text-2xl">
                     Field guide
                   </dt>
-                  <dd className="text-[var(--lp-forest-muted)]">
+                  <dd className="text-[var(--lp-muted)]">
                     Soft colour plates with every feather in place.
                   </dd>
                 </div>
@@ -210,7 +210,7 @@ export function Landing() {
                   <dt className="font-[family-name:var(--font-display)] text-2xl">
                     Woodblock
                   </dt>
-                  <dd className="text-[var(--lp-forest-muted)]">
+                  <dd className="text-[var(--lp-muted)]">
                     Bold shapes and strong lines, like a printmaker&apos;s
                     proof.
                   </dd>
@@ -226,7 +226,7 @@ export function Landing() {
             <h2 id="sets" className={h2}>
               Start from a set.
             </h2>
-            <p className="text-lg text-[var(--lp-forest-muted)]">
+            <p className="text-lg text-[var(--lp-muted)]">
               Or build your own from 1,161 species.
             </p>
           </div>
@@ -240,7 +240,7 @@ export function Landing() {
               <h2 id="yours" className={h2}>
                 Make it yours, bird by bird.
               </h2>
-              <p className="max-w-[44ch] text-lg text-[var(--lp-forest-muted)]">
+              <p className="max-w-[44ch] text-lg text-[var(--lp-muted)]">
                 Tap, drag and type right on the poster. Then choose Scattered,
                 Grid or Centerpiece, one of eight backgrounds and three shapes,
                 and write your own title.
@@ -307,7 +307,7 @@ export function Landing() {
               <h2 id="questions" className={h2}>
                 Questions.
               </h2>
-              <p className="text-lg text-[var(--lp-forest-muted)]">
+              <p className="text-lg text-[var(--lp-muted)]">
                 The builder is free, so the quickest answer is often to try it.
               </p>
             </div>
@@ -325,7 +325,7 @@ export function Landing() {
               >
                 Your wall is waiting.
               </h2>
-              <p className="text-lg text-[var(--lp-forest-muted)]">
+              <p className="text-lg text-[var(--lp-muted)]">
                 Free, in your browser, no sign up.
               </p>
               <div>
@@ -351,14 +351,14 @@ export function Landing() {
             <span className="font-[family-name:var(--font-display)] text-2xl font-medium">
               animarka
             </span>
-            <span className="text-[var(--lp-forest-muted)]">
+            <span className="text-[var(--lp-muted)]">
               Illustrated bird posters, made by you.
             </span>
             <Link href="/make" prefetch={false} className="lp-link font-medium">
               Make your poster
             </Link>
           </div>
-          <div className="grid gap-4 border-t border-[rgb(var(--lp-shadow)/0.12)] pt-8 text-sm leading-relaxed text-[var(--lp-forest-muted)] md:grid-cols-[2fr_1fr] md:gap-12">
+          <div className="grid gap-4 border-t border-[rgb(var(--lp-shadow)/0.12)] pt-8 text-sm leading-relaxed text-[var(--lp-muted)] md:grid-cols-[2fr_1fr] md:gap-12">
             <p>
               Field guide art by Huashu, from{" "}
               <Ext href="https://github.com/alchaincyf/huashu-bird-sticker">

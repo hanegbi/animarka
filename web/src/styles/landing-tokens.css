@@ -8,18 +8,22 @@
 /*
  * Landing page only (R9). Imported by landing routes only, so these never ship with the builder,
  * and scoped to [data-landing] as a second guard.
- * Vermilion is the accent: on the hero subject, display type of 36 px and up, and small marks.
- * Never on small text (3.26:1 on ivory) and never as a button colour.
+ * Cobalt is the accent (L3): large shapes, icons, the plus signs, the slider handle, focus rings,
+ * most of it from the hero birds. Any blue text uses cobalt text; cobalt itself never on text under
+ * 24 px. Split: about 60% paper and stage, 30% forest and ink, 10% cobalt.
  */
 [data-landing] {
   --lp-ivory: #f6f1e4;
   --lp-paper: #f8f4ea;
-  --lp-paper-2: #ece5d5;
+  --lp-paper-2: #ece5d5; /* the stage */
+  --lp-stage: #ece5d5;
   --lp-forest: #1f4a3a;
-  --lp-forest-muted: #4a5f55; /* body text: 6.1:1 on ivory, 5.5:1 on paper 2 */
   --lp-on-forest: #f6f1e4;
   --lp-on-forest-muted: #c9d6cc; /* 6.7:1 on forest */
-  --lp-vermilion: #f04a24;
+  --lp-ink: #1e1b16; /* body text: 15.2:1 on paper */
+  --lp-muted: #5e574b; /* secondary text: 6.3:1 on paper, 5.7:1 on stage */
+  --lp-cobalt: #2364c8; /* shapes and icons: 5.0:1 on paper, 4.5:1 on stage */
+  --lp-cobalt-text: #1e56b0; /* blue text and links: 6.2:1 on paper */
   --lp-oak: #c8a676;
   --lp-oak-dark: #9a7748;
   --lp-shadow: 54 40 22; /* warm umber, as rgb channels for layered shadows */
@@ -43,7 +47,7 @@
   --lp-ease: cubic-bezier(0.22, 1, 0.36, 1);
   background-color: var(--lp-ivory);
   background-image: var(--lp-grain);
-  color: var(--lp-forest);
+  color: var(--lp-ink);
 }
 [data-landing] :is(h1, h2, h3, h4) {
   font-family: var(--font-display), Georgia, serif;
@@ -75,7 +79,7 @@
   text-decoration-color: var(--lp-forest);
 }
 [data-landing] :is(a, button, input, [tabindex]):focus-visible {
-  outline: 2px solid var(--lp-forest);
+  outline: 2px solid var(--lp-cobalt);
   outline-offset: 3px;
   border-radius: 4px;
 }
