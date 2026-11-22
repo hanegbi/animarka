@@ -16,7 +16,7 @@ test.describe("share and export", () => {
     );
     if (browserName === "chromium")
       await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-    await page.goto("/");
+    await page.goto("/make");
     await expect(page.locator(poster)).toHaveCount(12);
     await page.locator("[data-poster-title]").fill("Our garden");
     await page.getByRole("button", { name: "Share" }).first().click();
@@ -46,7 +46,7 @@ test.describe("share and export", () => {
   test("Export makes a preview with progress, then offers the download", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/make");
     await expect(page.locator(poster)).toHaveCount(12);
     await page.getByRole("button", { name: "Export" }).click();
     const dialog = page.getByRole("dialog", { name: "Export your poster" });
@@ -70,7 +70,7 @@ test.describe("share and export", () => {
   });
 
   test("the Close button closes the export dialog", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/make");
     await expect(page.locator(poster)).toHaveCount(12);
     await page.getByRole("button", { name: "Export" }).click();
     const dialog = page.getByRole("dialog", { name: "Export your poster" });
@@ -87,7 +87,7 @@ test.describe("share and export", () => {
       "request",
       (r) => r.resourceType() === "script" && scripts.push(r.url()),
     );
-    await page.goto("/");
+    await page.goto("/make");
     await expect(page.locator(poster)).toHaveCount(12);
     const before = scripts.length;
     await page.getByRole("button", { name: "Export" }).click();

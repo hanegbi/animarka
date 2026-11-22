@@ -27,7 +27,7 @@ export function SharedPoster({ id }: { id: string }) {
             It may be mistyped. You can start a new poster instead.
           </p>
           <Link
-            href="/"
+            href="/make"
             className="bg-primary text-primary-foreground inline-flex h-10 items-center rounded-[10px] px-4 text-sm font-medium"
           >
             Start a poster

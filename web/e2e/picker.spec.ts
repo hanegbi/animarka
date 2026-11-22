@@ -5,7 +5,7 @@ import { expect, test } from "./test";
 
 /** A fresh visitor: no saved poster, so the 12 bird starter poster shows. */
 async function open(page: Page) {
-  await page.goto("/");
+  await page.goto("/make");
   await expect(
     page.getByRole("heading", { name: /Your poster/ }),
   ).toBeVisible();

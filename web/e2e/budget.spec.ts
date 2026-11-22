@@ -25,7 +25,7 @@ async function measure(page: import("@playwright/test").Page) {
       bytes: e.encodedDataLength,
     }),
   );
-  await page.goto("/", { waitUntil: "networkidle" });
+  await page.goto("/make", { waitUntil: "networkidle" });
   await page.locator("[data-animal]").first().waitFor();
   await page.waitForTimeout(500);
   return done;
@@ -91,7 +91,7 @@ test("the first poster is visible within 2 seconds on a 4G connection", async ({
     uploadThroughput: (1 * 1024 * 1024) / 8,
   });
   const start = Date.now();
-  await page.goto("/", { waitUntil: "commit" });
+  await page.goto("/make", { waitUntil: "commit" });
   await page
     .locator("[data-poster] [data-animal]")
     .first()

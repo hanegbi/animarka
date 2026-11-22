@@ -1,0 +1,136 @@
+<title>animarka Landing Round</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one long review document; each part of the landing page is a band with its five options stacked, desktop images full width. */
+:root {
+  --paper: #f8f4ea; --card: #ffffff; --ink: #1e1b16; --muted: #5e574b; --rule: #ddd5c2; --forest: #2c6b4f; --on-forest: #f8f4ea; --tint: #e6eee9; --soft: #efeadf;
+  --display: "Fraunces", Georgia, serif; --body: "Inter", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper: #14171a; --card: #1d2125; --ink: #ede8dc; --muted: #a8a294; --rule: #31373d; --forest: #b8935a; --on-forest: #14171a; --tint: #2a2a24; --soft: #23272b; color-scheme: dark } }
+:root[data-theme="dark"] { --paper: #14171a; --card: #1d2125; --ink: #ede8dc; --muted: #a8a294; --rule: #31373d; --forest: #b8935a; --on-forest: #14171a; --tint: #2a2a24; --soft: #23272b; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1360px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 96px; display: flex; flex-direction: column; gap: 48px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; margin: 0; text-wrap: balance }
+h1 { font-size: 40px; line-height: 1.1 } h2 { font-size: 28px } h3 { font-size: 19px }
+p { margin: 0 }
+.lede { color: var(--muted); font-size: 17px; max-width: 72ch }
+.answer { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
+.answer code { font: 600 15px/1 ui-monospace, Menlo, monospace; background: var(--tint); padding: 6px 10px; border-radius: 8px }
+.jump { display: flex; flex-wrap: wrap; gap: 8px }
+.jump a { color: var(--ink); text-decoration: none; border: 1px solid var(--rule); background: var(--card); border-radius: 99px; padding: 6px 12px; font-size: 14px }
+.jump a:hover { border-color: var(--forest) }
+section { display: flex; flex-direction: column; gap: 20px; scroll-margin-top: 16px }
+.opts { display: flex; flex-direction: column; gap: 24px }
+.opt { background: var(--card); border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) 300px }
+.opt.rec { border-color: var(--forest); box-shadow: 0 0 0 1px var(--forest) }
+.shot { background: var(--soft); border-right: 1px solid var(--rule); display: grid; place-items: center; padding: 12px }
+.shot img { width: 100%; height: auto; display: block; border-radius: 6px }
+.meta { padding: 18px; display: flex; flex-direction: column; gap: 10px }
+.title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap }
+.code { font: 600 13px/1 ui-monospace, Menlo, monospace; background: var(--ink); color: var(--paper); padding: 5px 8px; border-radius: 7px }
+.badge { font-size: 12px; font-weight: 600; color: var(--on-forest); background: var(--forest); padding: 4px 9px; border-radius: 99px }
+.desc { font-size: 14px }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 13.5px; color: var(--muted); margin: 0 }
+dt { font-weight: 600; color: var(--ink) } dd { margin: 0 }
+.src { font-size: 13px; color: var(--muted) } .src a { color: var(--forest) }
+.why { font-size: 13.5px; background: var(--tint); border-radius: 8px; padding: 8px 10px }
+a:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px }
+@media (max-width: 900px) { .opt { grid-template-columns: 1fr } .shot { border-right: 0; border-bottom: 1px solid var(--rule) } h1 { font-size: 30px } }
+</style>
+
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <h1>The landing page, five ways for each part</h1>
+    <p class="lede">Ten parts of the page, five real options each, built in our design system with real posters from our own renderer and the copy from the brief. Shown at desktop size. The recommended option in each part has a green outline. The phone versions are built with the options you pick.</p>
+  </header>
+  <div class="answer" role="note"><b>How to answer:</b> one code per part, for example <code>N1 H2 W1 S1 G4 F2 P2 Q2 C3 Z1</code>. Mix freely and add notes.</div>
+  <nav class="jump" aria-label="Parts" id="jump"></nav>
+  <div id="rounds"></div>
+  <div class="answer" role="note"><b>Send your picks:</b> <code>N? H? W? S? G? F? P? Q? C? Z?</code> I then build the page at <code>/</code>, desktop and phone, with tests.</div>
+</div>
+
+<script>
+const L = (author, slug) => `https://21st.dev/@${author}/components/${slug}`;
+const ROUNDS = [
+ { key: "N", title: "Top bar", opts: [
+  ["Quiet bar", "Logo left, four links in the middle, the green button right, a hairline under it.", L("olewandowski1","centered-nav-header"), "Calm and familiar, the button is always in reach.", "Plain, it does nothing memorable.", true, "The page should feel like the poster, not the menu; this keeps the bar out of the way."],
+  ["Floating pill", "A rounded bar floating over the page, slightly see through.", L("mohitsapat","navbar"), "Feels modern and light.", "The pill shape fights the paper and print look.", false],
+  ["Logo and button only", "No links at all. One job, one button.", L("olewandowski1","centered-nav-header"), "The most focused page.", "No quick way to jump to Sets or Print.", false],
+  ["Masthead", "A large centred wordmark like a book cover, links below.", L("felipemenezes098","hero-05"), "Strong field guide character.", "Takes about 100 px of height before the hero.", false],
+  ["Ink band", "A dark ink bar with paper coloured text.", L("efferd","footer"), "Frames the page like a printed book band.", "Heavy above a light hero.", false] ] },
+ { key: "H", title: "Hero", opts: [
+  ["Framed print", "Headline left, the starter poster right in a dark frame, slightly tilted like a print on a wall.", L("felipemenezes098","hero-04"), "Says poster and wall at a glance.", "The poster is small next to the text.", false],
+  ["Style switch", "Big centred headline, then a Field guide and Woodblock switch that turns the poster below between styles.", L("felipemenezes098","hero-07"), "Shows the product working in the first second, with real posters.", "The poster starts below the fold on short laptop screens.", true, "It is the one bold moment: the visitor changes a real poster before scrolling, which no stock hero can do."],
+  ["Gallery wall", "Headline left, three framed posters hung like a gallery wall.", L("ibrandify","featured-project-hero"), "Shows the range: owls, woodpeckers, kingfishers.", "Three small posters, none big enough to read.", false],
+  ["Full bleed plate", "A huge crop of the Birds of Israel poster, the headline on a paper card over it.", L("felipemenezes098","hero-05"), "Most dramatic, the birds fill the screen.", "The crop hides that it is a poster you make.", false],
+  ["Big type", "1,161 birds. One wall. set huge, with three posters below.", L("moumensoliman","hero-section-shadcnui"), "Bold and confident, the number is the hook.", "Type heavy; the posters are secondary.", false] ] },
+ { key: "W", title: "How it works", opts: [
+  ["Three steps with screenshots", "Three columns, each a real screenshot of the builder: picking, styling, exporting.", L("ln-dev7","how-it-works-01"), "Shows the real tool, honest and clear.", "Screenshots are small at this size.", true, "Real screenshots answer what it looks like inside before anyone clicks."],
+  ["Timeline", "Three numbered circles on a line, text below, one button.", L("ln-dev7","how-it-works-09"), "Very light and quick to read.", "No pictures of the tool.", false],
+  ["Step switcher", "Steps on the left; the screenshot on the right follows the step you pick.", L("chamaac","how-it-works"), "One big screenshot at a time.", "Needs a click to see steps two and three.", false],
+  ["Field notes", "Large italic numerals with short text, no images.", L("anubra266","steps"), "Elegant, very bookish.", "Text only.", false],
+  ["Pinned cards", "Three overlapping cards like notes pinned to a board.", L("chamaac","how-it-works"), "Playful.", "Cards overlap and hide content.", false] ] },
+ { key: "S", title: "Two styles", opts: [
+  ["Drag to compare", "One poster, a line you drag across: field guide on one side, woodblock on the other.", L("ibelick","image-comparison"), "The difference is felt, not just seen.", "Needs a drag to understand.", true, "Both styles of the same bird in one frame is the clearest proof that one click switches everything."],
+  ["Side by side", "Two posters next to each other with a caption under each.", L("felipemenezes098","hero-04"), "Instant to read.", "Two smaller posters.", false],
+  ["Toggle", "One poster with a two way switch beside it.", L("vamsiy78","segmented-control"), "Matches the builder's own control.", "Only one style visible at a time.", false],
+  ["Diagonal split", "One poster cut on a slant, half in each style.", L("unlumen","side-by-side-slide"), "Striking as a still image.", "The slant cuts through birds.", false],
+  ["Close up", "The same eagle owl up close in both styles.", L("wensity","before-after-card"), "Shows the art quality in detail.", "Loses the idea of a whole poster.", false] ] },
+ { key: "G", title: "Ready sets", opts: [
+  ["Gallery wall", "Seven real set posters in a masonry grid, name and bird count under each.", L("ayushmxxn","masonry-lightbox"), "Shows the variety at once.", "Busy, many small posters.", false],
+  ["Carousel", "A sideways row of set cards you scroll.", L("shadcnblockscom","gallery4"), "Compact, room for all eleven.", "Most sets are hidden off screen.", false],
+  ["Shelf", "Posters standing on a shelf line, like prints in a shop.", L("shadcnblockscom","gallery6"), "Charming shop feeling.", "Small posters, names below can misalign.", false],
+  ["List and preview", "Set names as a big list; pointing at one shows its poster.", L("ln-dev7","bento-01"), "Every set readable, one big poster.", "One poster at a time.", true, "Names are what people choose by; the large preview then shows exactly what they will get."],
+  ["Stack", "Four set posters fanned in a stack, one button to browse.", L("ayushmxxn","image-stack-carousel"), "Tactile and pretty.", "You only see the top poster.", false] ] },
+ { key: "F", title: "Make it yours", opts: [
+  ["Bento", "A tile grid: one big background sample and four feature tiles.", L("kokonutd","bento-grid"), "Covers a lot in little space.", "The generic SaaS card look.", false],
+  ["Annotated poster", "A real poster with field guide style notes pointing at what you can do: mirror, swap, rename, remove.", L("kavikatiyar","bento-product-features"), "Teaches the tool on the poster itself, like a labelled plate.", "Notes need care on phones.", true, "Annotation is how field guides teach; it fits the subject and shows each touch in place."],
+  ["Icon list", "Six features in two columns with small icons.", L("ln-dev7","bento-01"), "Clear and complete.", "Little visual pull.", false],
+  ["Four looks", "The same idea in four real looks: cream, night, sky, forest.", L("shadcnblockscom","gallery6"), "Shows range with real posters.", "Says little about the interactions.", false],
+  ["Before and after", "Where you start and where you end up, side by side.", L("wensity","before-after-card"), "A clear story.", "Only two looks.", false] ] },
+ { key: "P", title: "Print and share", opts: [
+  ["Two plans", "Two cards: free preview, and the print file marked coming soon.", L("ln-dev7","pricing-16"), "Familiar pricing pattern.", "Feels like software pricing.", false],
+  ["Frames to scale", "The four print sizes as frames drawn to scale, with the three ways to get your poster.", L("felipemenezes098","hero-04"), "Honest sizes you can picture on a wall.", "Takes more height.", true, "Seeing 18 x 24 next to A3 answers the question people really have: how big is it."],
+  ["Spec sheet", "A print shop style table of formats and sizes.", L("shadcnspace","pricing-01"), "Precise.", "Dry.", false],
+  ["Loupe", "A dark band with a magnified circle on the eagle owl.", L("unlumen","side-by-side-slide"), "Shows detail and quality.", "Dark band breaks the paper feel.", false],
+  ["Three columns", "Preview, print file and share link, each with an icon.", L("ln-dev7","how-it-works-01"), "Light and scannable.", "No pictures.", false] ] },
+ { key: "Q", title: "FAQ", opts: [
+  ["Accordion", "One column, one question open at a time.", L("ddoemonn","accordion"), "Compact.", "Answers are hidden behind clicks.", false],
+  ["Open two columns", "All six answers visible in two columns.", L("uiable","accordion-multiple"), "Nothing to click, six short answers read in seconds.", "Longer if questions grow.", true, "With six short answers, hiding them costs more than it saves."],
+  ["Heading and accordion", "Heading and a note on the left, accordion right.", L("wensity","accordion"), "Room for a contact line.", "Still hides answers.", false],
+  ["Cards", "Each question in a small card, three across.", L("boardui","accordion"), "Tidy grid.", "Card kit look.", false],
+  ["Index", "Questions and answers like glossary entries between thin rules.", L("brijr","accordion-1"), "Bookish, fits a field guide.", "Narrow answers on small screens.", false] ] },
+ { key: "C", title: "Final call", opts: [
+  ["Centred", "Headline, line and button, centred on paper.", L("felipemenezes098","cta-01"), "Simple.", "Easy to scroll past.", false],
+  ["Forest band", "A full width green band with paper text.", L("shadcndesign","cta-section-1"), "Strong stop before the footer.", "A big block of colour.", false],
+  ["Poster peek", "Headline and button left, a framed poster tilted on the right.", L("tommyjepsen","call-to-action"), "Ends on a poster, the reason to click.", "Needs a smaller layout on phones.", true, "Closing on a real framed poster restates the promise without more words."],
+  ["Marquee", "A row of set posters behind the headline.", L("ziegfiroyt","cta69"), "Rich, many posters.", "Faded posters can look muddy.", false],
+  ["Wall", "A framed poster on a tinted wall with the headline beside it.", L("shadcnstore","cta-section-2"), "Room setting.", "Close to the poster peek, with less contrast.", false] ] },
+ { key: "Z", title: "Footer", opts: [
+  ["Credits first", "Logo and button left, full art credits and the report link right.", L("efferd","footer"), "Credits are clear, which the licence needs.", "Plain.", true, "The art credits matter most here, and this gives them room without noise."],
+  ["Big wordmark", "Credits above a huge animarka wordmark.", L("shadcnui-blocks","footer-04"), "Memorable ending.", "Very large for a footer.", false],
+  ["One line", "Logo, credits and link in one row.", L("prebuiltui","footer-1"), "Minimal.", "Credits get cramped.", false],
+  ["Ink footer", "Dark footer with three columns.", L("efferd","footer"), "Classic and complete.", "Heavy after a light page.", false],
+  ["Colophon", "A centred book colophon: typefaces and art credits.", L("serafimcloud","social-links"), "A lovely bookish touch.", "Italic text is harder to scan.", false] ] },
+];
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const jump = document.getElementById("jump"), out = document.getElementById("rounds");
+for (const r of ROUNDS) {
+  jump.insertAdjacentHTML("beforeend", `<a href="#${r.key}">${esc(r.title)}</a>`);
+  const sec = document.createElement("section"); sec.id = r.key;
+  sec.innerHTML = `<h2>${esc(r.title)}</h2><div class="opts"></div>`;
+  r.opts.forEach(([name, desc, src, pro, con, rec, why], i) => {
+    const code = `${r.key}${i + 1}`;
+    sec.querySelector(".opts").insertAdjacentHTML("beforeend", `<article class="opt${rec ? " rec" : ""}">
+      <div class="shot"><img src="${code}.webp" alt="${esc(r.title)} option ${code}: ${esc(name)}" loading="lazy"></div>
+      <div class="meta"><div class="title"><span class="code">${code}</span><h3>${esc(name)}</h3>${rec ? '<span class="badge">Recommended</span>' : ""}</div>
+      <p class="desc">${esc(desc)}</p>
+      <dl><dt>Strength</dt><dd>${esc(pro)}</dd><dt>Weakness</dt><dd>${esc(con)}</dd></dl>
+      <p class="src">Source: <a href="${src}" target="_blank" rel="noopener">${esc(src.replace("https://21st.dev/", ""))}</a></p>
+      ${rec ? `<p class="why"><b>Why:</b> ${esc(why)}</p>` : ""}</div></article>`);
+  });
+  out.append(sec);
+}
+</script>

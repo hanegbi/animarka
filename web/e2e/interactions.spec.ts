@@ -3,7 +3,7 @@ import { openTab, pickPreset } from "./helpers";
 import { expect, test } from "./test";
 
 async function open(page: Page) {
-  await page.goto("/");
+  await page.goto("/make");
   await expect(
     page.getByRole("heading", { name: /Your poster/ }),
   ).toBeVisible();

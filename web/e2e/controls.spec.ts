@@ -5,7 +5,7 @@ import { GROUP_TAB, openTab, type Tab } from "./helpers";
 type Box = { x: number; y: number; w: number; h: number };
 
 async function open(page: Page) {
-  await page.goto("/");
+  await page.goto("/make");
   await expect(page.locator("[data-poster]")).toBeVisible();
   await expect(page.locator("[data-animal]")).toHaveCount(12);
 }

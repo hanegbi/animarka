@@ -24,7 +24,7 @@ test.describe("catalog from the API", () => {
     page,
   }) => {
     await page.route("**/api/v1/catalogs/**", (r) => r.abort());
-    await page.goto("/");
+    await page.goto("/make");
     const alert = page.getByRole("alert").filter({ hasText: "birds" });
     await expect(alert).toContainText("We could not load the birds");
     await page.unroute("**/api/v1/catalogs/**");
@@ -35,7 +35,7 @@ test.describe("catalog from the API", () => {
   test("when the API fails later, the copy saved on this device is used", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/make");
     await expect(page.locator(poster)).toHaveCount(12);
     await page.waitForFunction(
       () => !!localStorage.getItem("animarka:catalog:v1"),
@@ -51,7 +51,7 @@ test.describe("catalog from the API", () => {
 test("the names switch puts Hebrew names on the poster, right to left", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/make");
   await expect(page.locator(poster)).toHaveCount(12);
   const owl = names("tyto-alba");
   expect(
@@ -73,7 +73,7 @@ test("search answers in under 100 ms, from typing to the updated list", async ({
   page,
   catalog,
 }) => {
-  await page.goto("/");
+  await page.goto("/make");
   await expect(page.locator(poster)).toHaveCount(12);
   await openTab(page, "Birds");
   await expect(
